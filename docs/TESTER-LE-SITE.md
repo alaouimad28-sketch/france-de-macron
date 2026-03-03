@@ -44,11 +44,29 @@ pnpm run db:push
 Si tu préfères tout en local :
 
 ```bash
-pnpm dlx supabase@latest start
-pnpm run db:push
+pnpm run db:start
+# ou : pnpm dlx supabase@latest start
 ```
 
-*(Pour arrêter plus tard : `pnpm dlx supabase@latest stop`.)*
+Puis dans `apps/web/.env.local` : `NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321` et les clés anon / service_role affichées au démarrage. Ensuite :
+
+```bash
+pnpm run db:types
+pnpm dev
+```
+
+*(Pour arrêter : `pnpm dlx supabase@latest stop --no-backup`.)*
+
+**URLs utiles (Supabase local)** :
+
+| Service | URL |
+|--------|-----|
+| API / REST | http://127.0.0.1:54321 |
+| Studio | http://127.0.0.1:54323 |
+| Mailpit | http://127.0.0.1:54324 |
+| **MCP** (pour Cursor / IA) | http://127.0.0.1:54321/mcp |
+
+Le **serveur MCP** permet à Cursor de dialoguer avec ta base locale (exécuter du SQL, lister les tables, générer les types, voir les logs). Dans Cursor : Settings → Tools & MCP → ajouter une entrée avec l’URL `http://127.0.0.1:54321/mcp` quand Supabase est démarré.
 
 ---
 

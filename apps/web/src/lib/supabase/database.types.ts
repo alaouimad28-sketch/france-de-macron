@@ -1,210 +1,350 @@
-/**
- * Types TypeScript générés depuis le schéma Supabase.
- *
- * ⚠️  CE FICHIER EST AUTO-GÉNÉRÉ — ne pas modifier manuellement.
- *
- * Pour régénérer après une migration :
- *   supabase gen types typescript --local > apps/web/src/lib/supabase/database.types.ts
- *
- * Types enrichis manuellement disponibles dans @/types/index.ts
- */
-
-export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
 
 export type Database = {
   public: {
     Tables: {
       data_sources: {
         Row: {
+          created_at: string
           id: string
           key: string
-          name: string
-          url: string
           license: string | null
+          name: string
           update_frequency: string | null
-          created_at: string
+          url: string
         }
         Insert: {
+          created_at?: string
           id?: string
           key: string
-          name: string
-          url: string
           license?: string | null
+          name: string
           update_frequency?: string | null
-          created_at?: string
+          url: string
         }
         Update: {
+          created_at?: string
           id?: string
           key?: string
-          name?: string
-          url?: string
           license?: string | null
+          name?: string
           update_frequency?: string | null
-          created_at?: string
+          url?: string
         }
-      }
-      fuel_daily_agg: {
-        Row: {
-          day: string
-          fuel_code: string
-          avg_price_eur_per_l: number
-          min_price_eur_per_l: number | null
-          max_price_eur_per_l: number | null
-          sample_count: number | null
-          source_id: string | null
-          created_at: string
-        }
-        Insert: {
-          day: string
-          fuel_code: string
-          avg_price_eur_per_l: number
-          min_price_eur_per_l?: number | null
-          max_price_eur_per_l?: number | null
-          sample_count?: number | null
-          source_id?: string | null
-          created_at?: string
-        }
-        Update: {
-          day?: string
-          fuel_code?: string
-          avg_price_eur_per_l?: number
-          min_price_eur_per_l?: number | null
-          max_price_eur_per_l?: number | null
-          sample_count?: number | null
-          source_id?: string | null
-          created_at?: string
-        }
+        Relationships: []
       }
       events: {
         Row: {
-          id: string
+          created_at: string
           day: string
-          scope: string
-          label_fr: string
-          label_en: string | null
           icon: string | null
-          severity: number | null
-          source_url: string | null
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          day: string
-          scope: string
+          id: string
+          label_en: string | null
           label_fr: string
-          label_en?: string | null
-          icon?: string | null
-          severity?: number | null
-          source_url?: string | null
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          day?: string
-          scope?: string
-          label_fr?: string
-          label_en?: string | null
-          icon?: string | null
-          severity?: number | null
-          source_url?: string | null
-          created_at?: string
-        }
-      }
-      newsletter_signups: {
-        Row: {
-          id: string
-          email: string
-          locale: string | null
-          source: string | null
-          created_at: string
-          fingerprint_hash: string | null
-          user_agent: string | null
-          ip_hash: string | null
+          scope: string
+          severity: number
+          source_url: string | null
         }
         Insert: {
-          id?: string
-          email: string
-          locale?: string | null
-          source?: string | null
           created_at?: string
-          fingerprint_hash?: string | null
-          user_agent?: string | null
-          ip_hash?: string | null
-        }
-        Update: {
-          id?: string
-          email?: string
-          locale?: string | null
-          source?: string | null
-          created_at?: string
-          fingerprint_hash?: string | null
-          user_agent?: string | null
-          ip_hash?: string | null
-        }
-      }
-      votes: {
-        Row: {
-          id: string
-          scope: string
-          vote: 'cooked' | 'uncooked'
-          created_at: string
-          fingerprint_hash: string
-          ip_hash: string | null
-          user_agent: string | null
           day: string
-        }
-        Insert: {
+          icon?: string | null
           id?: string
+          label_en?: string | null
+          label_fr: string
           scope: string
-          vote: 'cooked' | 'uncooked'
-          created_at?: string
-          fingerprint_hash: string
-          ip_hash?: string | null
-          user_agent?: string | null
-          day?: string
+          severity?: number
+          source_url?: string | null
         }
         Update: {
-          id?: string
-          scope?: string
-          vote?: 'cooked' | 'uncooked'
           created_at?: string
-          fingerprint_hash?: string
-          ip_hash?: string | null
-          user_agent?: string | null
           day?: string
+          icon?: string | null
+          id?: string
+          label_en?: string | null
+          label_fr?: string
+          scope?: string
+          severity?: number
+          source_url?: string | null
         }
+        Relationships: []
       }
       fci_daily: {
         Row: {
-          day: string
-          score: number
-          methodology_version: string
           components: Json
-          weights: Json
           created_at: string
+          day: string
+          methodology_version: string
+          score: number
+          weights: Json
         }
         Insert: {
-          day: string
-          score: number
-          methodology_version?: string
           components?: Json
-          weights?: Json
           created_at?: string
+          day: string
+          methodology_version?: string
+          score: number
+          weights?: Json
         }
         Update: {
-          day?: string
-          score?: number
-          methodology_version?: string
           components?: Json
-          weights?: Json
           created_at?: string
+          day?: string
+          methodology_version?: string
+          score?: number
+          weights?: Json
         }
+        Relationships: []
+      }
+      fuel_daily_agg: {
+        Row: {
+          avg_price_eur_per_l: number
+          created_at: string
+          day: string
+          fuel_code: string
+          max_price_eur_per_l: number | null
+          min_price_eur_per_l: number | null
+          sample_count: number | null
+          source_id: string | null
+        }
+        Insert: {
+          avg_price_eur_per_l: number
+          created_at?: string
+          day: string
+          fuel_code: string
+          max_price_eur_per_l?: number | null
+          min_price_eur_per_l?: number | null
+          sample_count?: number | null
+          source_id?: string | null
+        }
+        Update: {
+          avg_price_eur_per_l?: number
+          created_at?: string
+          day?: string
+          fuel_code?: string
+          max_price_eur_per_l?: number | null
+          min_price_eur_per_l?: number | null
+          sample_count?: number | null
+          source_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fuel_daily_agg_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "data_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      newsletter_signups: {
+        Row: {
+          created_at: string
+          email: string
+          fingerprint_hash: string | null
+          id: string
+          ip_hash: string | null
+          locale: string
+          source: string
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          fingerprint_hash?: string | null
+          id?: string
+          ip_hash?: string | null
+          locale?: string
+          source?: string
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          fingerprint_hash?: string | null
+          id?: string
+          ip_hash?: string | null
+          locale?: string
+          source?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      votes: {
+        Row: {
+          created_at: string
+          day: string
+          fingerprint_hash: string
+          id: string
+          ip_hash: string | null
+          scope: string
+          user_agent: string | null
+          vote: string
+        }
+        Insert: {
+          created_at?: string
+          day?: string
+          fingerprint_hash: string
+          id?: string
+          ip_hash?: string | null
+          scope: string
+          user_agent?: string | null
+          vote: string
+        }
+        Update: {
+          created_at?: string
+          day?: string
+          fingerprint_hash?: string
+          id?: string
+          ip_hash?: string | null
+          scope?: string
+          user_agent?: string | null
+          vote?: string
+        }
+        Relationships: []
       }
     }
-    Views: Record<string, never>
-    Functions: Record<string, never>
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      [_ in never]: never
+    }
     Enums: {
-      vote_type: 'cooked' | 'uncooked'
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
     }
   }
 }
+
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
+
+export const Constants = {
+  public: {
+    Enums: {},
+  },
+} as const
+

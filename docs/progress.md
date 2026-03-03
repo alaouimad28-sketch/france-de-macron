@@ -40,7 +40,7 @@
 - [x] Route Handlers squelette : `/api/cron/fuel-daily`, `/api/newsletter`, `/api/votes`
 - [x] `vercel.json` avec cron 02:30 UTC
 - [x] ESLint 9 flat config (`eslint.config.mjs`), lint via `pnpm lint` (ESLint CLI)
-- [ ] Installer les fonts (Space Grotesk + Inter + JetBrains Mono via `next/font/google`)
+- [x] Installer les fonts (Space Grotesk + Inter + JetBrains Mono via `next/font/google`)
 
 ### Supabase & DB
 
@@ -53,8 +53,8 @@
 - [x] Migration 0005 : `fci_daily` + JSONB components/weights
 - [x] Migration 0006 : RLS policies complètes (lecture publique / NO insert anon)
 - [x] `database.types.ts` — types TypeScript manuels (à régénérer après migrations)
-- [ ] Appliquer les migrations sur le projet Supabase (local + prod)
-- [ ] Régénérer `database.types.ts` depuis le vrai schéma : `pnpm run db:types`
+- [x] Appliquer les migrations sur le projet Supabase (local + prod)
+- [x] Régénérer `database.types.ts` depuis le vrai schéma : `pnpm run db:types`
 - [ ] Ajouter index de performance sur `votes(scope, vote)` pour les agrégats fréquents
 
 ### Lib & types

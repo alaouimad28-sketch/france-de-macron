@@ -12,7 +12,9 @@
     "format": "prettier --write \"**/*.{ts,tsx,md,json}\" --ignore-path .gitignore",
     "format:check": "prettier --check \"**/*.{ts,tsx,md,json}\" --ignore-path .gitignore",
     "db:push": "pnpm dlx supabase@latest db push",
-    "db:types": "pnpm dlx supabase@latest gen types typescript --local > apps/web/src/lib/supabase/database.types.ts",
+    "db:start": "pnpm dlx supabase@latest start --ignore-health-check",
+    "db:types": "pnpm dlx supabase@latest gen types typescript --local > apps/web/src/lib/supabase/database.types.ts.tmp && mv apps/web/src/lib/supabase/database.types.ts.tmp apps/web/src/lib/supabase/database.types.ts",
+    "db:types:linked": "pnpm dlx supabase@latest gen types typescript --linked > apps/web/src/lib/supabase/database.types.ts.tmp && mv apps/web/src/lib/supabase/database.types.ts.tmp apps/web/src/lib/supabase/database.types.ts",
     "fuel:backfill": "pnpm --filter scripts fuel:backfill",
     "fuel:daily": "pnpm --filter scripts fuel:daily"
   },

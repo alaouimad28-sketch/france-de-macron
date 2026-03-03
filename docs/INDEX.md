@@ -112,7 +112,10 @@ docs/
 | `pnpm dev` | Lancer le serveur de dev (Next.js) |
 | `pnpm build` | Build production |
 | `pnpm lint` | Linter (ESLint) |
+| `pnpm run db:start` | Démarrer Supabase local (ignore health checks) |
 | `pnpm run db:push` | Appliquer les migrations Supabase |
 | `pnpm run db:types` | Régénérer les types TypeScript depuis le schéma |
 | `pnpm run fuel:backfill` | Backfill carburants J-30 (one-shot) |
 | `pnpm run fuel:daily` | Job quotidien (ou via cron `/api/cron/fuel-daily`) |
+
+**Supabase local** : après `pnpm run db:start`, Studio = http://127.0.0.1:54323, API = http://127.0.0.1:54321, **MCP** = http://127.0.0.1:54321/mcp (pour Cursor / requêtes IA sur la base). Voir [README](../README.md#référence-supabase-local-après-supabase-start) et [TESTER-LE-SITE.md](TESTER-LE-SITE.md).

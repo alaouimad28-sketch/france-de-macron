@@ -15,6 +15,7 @@ major_version = 15
 
 [studio]
 enabled = true
+# Port sur l'hôte. (Dans les logs, "localhost:3000" = port interne du conteneur Studio, pas ton app.)
 port = 54323
 
 [inbucket]
@@ -22,7 +23,10 @@ enabled = true
 port = 54324
 
 [storage]
-enabled = true
+# Désactivé en local uniquement (conteneur souvent "unhealthy" au start).
+# Les données API (carburants, FCI, votes, newsletter) sont en Postgres, pas ici.
+# Storage = fichiers (images, uploads). En prod Supabase, Storage reste dispo si besoin.
+enabled = false
 file_size_limit = "50MiB"
 
 [auth]

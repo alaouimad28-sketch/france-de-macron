@@ -116,6 +116,59 @@ pnpm run db:push
 pnpm run db:types
 ```
 
+**Régénération des types** (`pnpm run db:types`) : nécessite Supabase local démarré (`supabase start`). Si le projet est lié à un projet Supabase distant, utiliser `pnpm run db:types:linked` à la place (sans Docker).
+
+**Après `supabase start` (local)** : pour que l’app utilise la stack locale, dans `apps/web/.env.local` mets :
+- `NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` = la clé **Publishable** (anon) affichée au start
+- `SUPABASE_SERVICE_ROLE_KEY` = la clé **Secret** (service_role) affichée au start  
+Puis `pnpm run db:types` (déjà fait si tu viens de start), et `pnpm dev` pour lancer l’app sur http://localhost:3040.
+
+**Conflit Docker** (erreur « container name already in use ») : arrêter et nettoyer les conteneurs puis relancer :
+```bash
+pnpm dlx supabase@latest stop --no-backup
+pnpm dlx supabase@latest start
+```
+
+**Démarrage malgré services « unhealthy »** (pg_meta, studio, etc.) : pour avoir la DB + l’API quand même (et pouvoir lancer `pnpm run db:types`) :
+```bash
+pnpm run db:start
+```
+(utilise `supabase start --ignore-health-check` ; Studio peut être indisponible.)
+
+**Conteneurs « unhealthy »** (storage / pg_meta / studio) : souvent dû au projet lié (versions différentes). Lancer Supabase en mode local seul puis redémarrer :
+```bash
+pnpm dlx supabase@latest unlink
+pnpm dlx supabase@latest stop --no-backup
+pnpm dlx supabase@latest start
+```
+Pour régénérer les types sans Docker, utiliser `pnpm run db:types:linked` (après avoir relink avec `supabase link` si besoin).
+
+**Postgres « database files are incompatible »** (ex. initialisé en 17, config en 15) : un ancien volume Docker contient des données d’une autre version. Supprimer les volumes Supabase du projet puis redémarrer :
+```bash
+pnpm dlx supabase@latest stop --no-backup
+docker volume ls -q | grep supabase
+# Supprimer le(s) volume(s) listé(s), ex. :
+#   docker volume rm supabase_db_france-de-macron
+# ou tous d’un coup : docker volume rm $(docker volume ls -q | grep supabase)
+pnpm dlx supabase@latest start
+```
+
+**Démarrage bloqué ou « context canceled »** : le premier `supabase start` télécharge l’image Postgres (~650 Mo) et peut prendre plusieurs minutes. Laisser le pull aller au bout sans interrompre. Si Docker timeout ou annule : redémarrer le daemon Docker, relancer `supabase start`. Alternative : utiliser uniquement le projet Supabase hébergé (`.env` avec l’URL du projet) et `pnpm run db:types:linked` pour les types — pas besoin de Supabase local.
+
+### Référence Supabase local (après `supabase start`)
+
+| Service | URL |
+|--------|-----|
+| **Project / API** | http://127.0.0.1:54321 |
+| **REST** | http://127.0.0.1:54321/rest/v1 |
+| **Studio** | http://127.0.0.1:54323 |
+| **Mailpit** (emails) | http://127.0.0.1:54324 |
+| **Database** | `postgresql://postgres:postgres@127.0.0.1:54322/postgres` |
+
+**MCP (Model Context Protocol)** : http://127.0.0.1:54321/mcp  
+Le projet contient `.cursor/mcp.json` : Cursor utilise ce serveur automatiquement quand Supabase local est démarré (`pnpm run db:start`). Redémarre Cursor si besoin. Permet à Cursor de discuter avec ta base locale : exécuter du SQL, lister les tables, générer les types, récupérer les clés, consulter les logs. Utile en dev pour demander à l’IA « liste les tables », « exécute cette requête », etc. Pour l’activer dans Cursor : Settings → Tools & MCP → Add server → URL `http://127.0.0.1:54321/mcp` (Supabase doit être démarré).
+
 ### Tables principales
 
 | Table | Description |

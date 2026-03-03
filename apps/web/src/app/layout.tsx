@@ -1,8 +1,27 @@
 import type { Metadata, Viewport } from 'next'
+import { Inter, JetBrains_Mono, Space_Grotesk } from 'next/font/google'
 import './globals.css'
 
-// TODO: installer les fonts via next/font/google
-// import { Space_Grotesk, Inter, JetBrains_Mono } from 'next/font/google'
+const fontDisplay = Space_Grotesk({
+  subsets: ['latin'],
+  weight: ['600', '700'],
+  display: 'swap',
+  variable: '--font-display',
+})
+
+const fontBody = Inter({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+  variable: '--font-body',
+})
+
+const fontMono = JetBrains_Mono({
+  subsets: ['latin'],
+  weight: ['400', '600'],
+  display: 'swap',
+  variable: '--font-mono',
+})
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -62,7 +81,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="fr" className="dark">
+    <html
+      lang="fr"
+      className={`dark ${fontDisplay.variable} ${fontBody.variable} ${fontMono.variable}`}
+    >
       <body>
         {/* TODO: ajouter Header + Footer globaux */}
         <main>{children}</main>

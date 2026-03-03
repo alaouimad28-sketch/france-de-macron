@@ -78,28 +78,6 @@ Dashboard satirique + factuel qui répond à "on est à quel point cooked ?" ave
 2. **Serveur → API carburants → Supabase (service role)**. Via cron Vercel à 02:30 UTC.
 3. **Server Components pour les données, Client Components pour l'interactivité.**
 
-### Où commencer si le projet est neuf
-
-```bash
-# 1. Installer
-pnpm install
-
-# 2. Configurer les vars d'env
-cp .env.example apps/web/.env.local
-# → Remplir NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY
-
-# 3. Lancer Supabase en local
-pnpm exec supabase start
-
-# 4. Appliquer les migrations
-pnpm run db:push
-
-# 5. Lancer le dev
-pnpm dev
-
-# 6. Backfill des données (one-shot)
-pnpm fuel:backfill
-```
 
 ### Fichiers critiques à ne jamais casser
 

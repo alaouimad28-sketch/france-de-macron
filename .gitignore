@@ -38,6 +38,7 @@ build/
 
 # TypeScript
 *.tsbuildinfo
+**/database.types.ts.tmp
 
 # Test coverage
 coverage/
