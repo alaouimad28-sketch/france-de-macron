@@ -1,0 +1,17 @@
+{
+  "name": "scripts",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "fuel:backfill": "tsx fuel-backfill-j30/index.ts",
+    "fuel:daily": "tsx fuel-daily/index.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "tsx": "^4.19.1",
+    "typescript": "^5.5.4"
+  }
+}

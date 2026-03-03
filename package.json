@@ -1,0 +1,29 @@
+{
+  "name": "france-de-macron",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Dashboard satirique & data-driven — French Cooked Index™",
+  "scripts": {
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm --filter web build",
+    "start": "pnpm --filter web start",
+    "lint": "pnpm --filter web lint",
+    "typecheck": "pnpm --filter web typecheck",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\" --ignore-path .gitignore",
+    "format:check": "prettier --check \"**/*.{ts,tsx,md,json}\" --ignore-path .gitignore",
+    "db:push": "supabase db push",
+    "db:types": "supabase gen types typescript --local > apps/web/src/lib/supabase/database.types.ts",
+    "fuel:backfill": "pnpm --filter scripts fuel:backfill",
+    "fuel:daily": "pnpm --filter scripts fuel:daily"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "supabase": "^1.200.3",
+    "typescript": "^5.5.4"
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "packageManager": "pnpm@9.12.0"
+}

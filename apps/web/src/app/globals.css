@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   Cooked Authority Design System — CSS Variables
+   Mode clair désactivé MVP (dark-first)
+   ========================================================================== */
+
+@layer base {
+  :root {
+    /* Typographie */
+    --font-display: 'Space Grotesk', system-ui, sans-serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+    /* Radius */
+    --radius: 0.75rem;
+
+    /* Dark mode par défaut (le site cible est dark-first) */
+    --background: 222 47% 7%;         /* surface-950 */
+    --foreground: 214 32% 91%;
+
+    --card: 223 44% 14%;              /* surface-800 */
+    --card-foreground: 214 32% 91%;
+
+    --popover: 223 44% 12%;
+    --popover-foreground: 214 32% 91%;
+
+    --primary: 225 81% 53%;           /* republic-500 */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 223 30% 22%;
+    --secondary-foreground: 214 32% 91%;
+
+    --muted: 223 30% 18%;
+    --muted-foreground: 215 20% 55%;
+
+    --accent: 347 77% 60%;            /* alert-500 */
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 347 77% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 223 30% 22%;
+    --input: 223 30% 22%;
+    --ring: 225 81% 53%;
+  }
+}
+
+/* ==========================================================================
+   Base styles
+   ========================================================================== */
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+    /* Grain subtil sur le fond */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  }
+
+  h1, h2, h3 {
+    @apply font-display font-bold tracking-tight;
+  }
+}
+
+/* ==========================================================================
+   Utilitaires custom
+   ========================================================================== */
+
+@layer utilities {
+  /* Skeleton de chargement */
+  .skeleton {
+    @apply animate-shimmer bg-gradient-to-r from-muted via-secondary to-muted bg-[length:200%_100%] rounded;
+  }
+
+  /* Card glassmorphism léger */
+  .glass-card {
+    @apply bg-card/60 backdrop-blur-sm border border-border/50;
+  }
+
+  /* Badge carburant */
+  .fuel-badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-mono font-semibold;
+  }
+
+  /* FCI gauge container */
+  .fci-gauge-container {
+    @apply relative flex items-center justify-center;
+  }
+}
