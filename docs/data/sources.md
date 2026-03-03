@@ -4,29 +4,81 @@
 
 ### 1.1 Identification
 
-| Champ | Valeur |
-|---|---|
-| **Nom** | Prix des carburants en France — Données officielles |
+| Champ           | Valeur                                                     |
+| --------------- | ---------------------------------------------------------- |
+| **Nom**         | Prix des carburants en France — Données officielles        |
 | **Fournisseur** | Ministère de l'Économie (via roulez-eco.fr / data.gouv.fr) |
-| **Licence** | Licence Ouverte / Open Licence v2.0 |
-| **Mise à jour** | Quotidienne (données J-1 disponibles vers 01:00 UTC) |
-| **Couverture** | Toutes stations-service de France métropolitaine + DOM |
-| **Format** | XML zippé (ZIP contenant un fichier XML) |
+| **Licence**     | Licence Ouverte / Open Licence v2.0                        |
+| **Mise à jour** | Quotidienne (données J-1 disponibles vers 01:00 UTC)       |
+| **Couverture**  | Toutes stations-service de France métropolitaine + DOM     |
+| **Format**      | XML zippé (ZIP contenant un fichier XML)                   |
 
 ### 1.2 URLs d'accès
 
 ```
 Flux quotidien (dernier jour disponible) :
   https://donnees.roulez-eco.fr/opendata/jour
+  → Retourne un ZIP contenant le XML du jour le plus récent (ex. PrixCarburants_quotidien_YYYYMMDD.xml)
 
 Flux quotidien par date (AAAAMMJJ) :
   https://donnees.roulez-eco.fr/opendata/jour/AAAAMMJJ
   ex: https://donnees.roulez-eco.fr/opendata/jour/20241115
+  → Fonctionne pour les ~30 derniers jours uniquement. Au-delà, le serveur peut renvoyer une page HTML (200)
+  au lieu du ZIP ; le script doit détecter le type de contenu et traiter comme "données indisponibles".
 
-Archives annuelles (depuis 2007) :
+Archives annuelles (depuis 2007) — pour l'évolution sur plusieurs années :
   https://donnees.roulez-eco.fr/opendata/annee/YYYY
   ex: https://donnees.roulez-eco.fr/opendata/annee/2023
+  → Un ZIP par an (~15–30 Mo), contenant un seul XML (ex. PrixCarburants_annuel_2023.xml, ~300+ Mo décompressé).
+  → Les entrées <prix> ont un attribut maj (date) : il faut grouper par jour pour calculer les agrégats quotidiens.
 ```
+
+**Aucune clé API requise** : les données sont en open data (Licence Ouverte), libre et gratuit.  
+Référence : [Prix des carburants — Données publiques](https://www.prix-carburants.gouv.fr/rubrique/opendata/).
+
+### 1.2.1 Récupérer plusieurs années (évolution des prix)
+
+Oui, c’est possible. Les **archives annuelles** permettent d’avoir l’historique depuis 2007 :
+
+| Besoin             | Méthode                                                                                                                            |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Derniers 30 jours  | ` /opendata/jour/AAAAMMJJ` (un appel par jour)                                                                                     |
+| Une année complète | ` /opendata/annee/YYYY` (un ZIP par an, ex. 2020, 2021, 2022, 2023, 2024)                                                          |
+| Plusieurs années   | Télécharger un ZIP par année, parser le XML, extraire les prix par jour (attribut `maj`), agréger et upsert dans `fuel_daily_agg`. |
+
+Le script **fuel-backfill-annee** ingère une ou plusieurs années. Volume : ~15–30 Mo en ZIP par an, XML décompressé ~300+ Mo par an — à lancer en one-shot (pas de cron).
+
+**Commandes (depuis la racine du repo)** :
+
+```bash
+pnpm install
+pnpm run fuel:backfill:annees
+START_YEAR=2015 END_YEAR=2020 pnpm run fuel:backfill:annees
+```
+
+Prérequis : `NEXT_PUBLIC_SUPABASE_URL` et `SUPABASE_SERVICE_ROLE_KEY` (ex. dans `apps/web/.env.local`). Détail : `scripts/fuel-backfill-annee/README.md`.
+
+**Important** : les archives annuelles commencent en **2007** (pas de données 2000–2006 sur ce jeu open data).
+
+### 1.2.3 Stockage : depuis 2007 vs « depuis 2000 »
+
+| Périmètre            | Disponible ?                    | Volume source (ZIP)        | Volume source (XML décompressé) | Volume chez nous (Supabase, agrégats seuls) |
+| -------------------- | ------------------------------- | -------------------------- | ------------------------------- | ------------------------------------------- |
+| Depuis 2000          | **Non** — première année = 2007 | —                          | —                               | —                                           |
+| 2007 → 2025 (19 ans) | Oui                             | ~400–500 Mo (tous les ZIP) | ~5–6 Go (XML bruts)             | **~10–30 Mo** (fuel_daily_agg + fci_daily)  |
+| 2007 → aujourd’hui   | Oui                             | idem                       | idem                            | idem                                        |
+
+On ne conserve pas les ZIP/XML : on télécharge, on parse, on agrège par (jour, carburant), on upsert dans `fuel_daily_agg`. Le stockage réel côté projet est donc celui de la base Supabase (agrégats uniquement), très faible même sur 20 ans.
+
+### 1.2.2 Où sont stockées les données ?
+
+| Lieu                      | Rôle                                                                                                                                                                      |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Source (gouvernement)** | [donnees.roulez-eco.fr](https://donnees.roulez-eco.fr) — serveurs du ministère. Données brutes (ZIP/XML). On ne stocke pas ces fichiers nous-mêmes.                       |
+| **Notre base (Supabase)** | PostgreSQL (Supabase). Tables `fuel_daily_agg` (agrégats jour × carburant), `fci_daily` (score FCI par jour). On ne garde que les **agrégats** calculés, pas le XML brut. |
+| **Front**                 | Next.js lit uniquement dans Supabase (SSR). Le client ne contacte jamais roulez-eco.fr.                                                                                   |
+
+En résumé : la **source de vérité** est roulez-eco.fr ; notre **stockage** est Supabase (agrégats uniquement).
 
 ### 1.3 Structure XML source
 
@@ -54,6 +106,7 @@ Archives annuelles (depuis 2007) :
 ```
 
 **Notes critiques sur le parsing** :
+
 - `valeur` : prix en **millièmes d'euro** (diviser par 1000 pour obtenir €/L)
   - Exemple : `valeur="1689"` → `1.689 €/L`
 - `latitude` / `longitude` : en **degrés × 100 000** (diviser par 100 000)
@@ -63,25 +116,25 @@ Archives annuelles (depuis 2007) :
 
 ### 1.4 Codes carburant
 
-| Code XML | Code normalisé | Description |
-|---|---|---|
-| `gazole` | `gazole` | Gazole (Diesel) |
-| `sp95` | `sp95` | Sans Plomb 95 |
-| `e10` | `e10` | Sans Plomb 95-E10 (bioéthanol 10%) |
-| `sp98` | `sp98` | Sans Plomb 98 |
-| `e85` | `e85` | Superéthanol E85 |
-| `gplc` | `gplc` | GPL carburant |
+| Code XML | Code normalisé | Description                        |
+| -------- | -------------- | ---------------------------------- |
+| `gazole` | `gazole`       | Gazole (Diesel)                    |
+| `sp95`   | `sp95`         | Sans Plomb 95                      |
+| `e10`    | `e10`          | Sans Plomb 95-E10 (bioéthanol 10%) |
+| `sp98`   | `sp98`         | Sans Plomb 98                      |
+| `e85`    | `e85`          | Superéthanol E85                   |
+| `gplc`   | `gplc`         | GPL carburant                      |
 
 ### 1.5 Contraintes et limitations
 
-| Limitation | Impact | Mitigation |
-|---|---|---|
-| Données J-1 uniquement | Pas de données temps réel | Acceptable pour le MVP |
-| Couverture variable | Certaines stations ne remontent pas chaque jour | Utiliser `sample_count` pour la transparence |
-| Autoroutes biaisent la moyenne | Prix moyens légèrement élevés | Documenter, filtrer optionnellement en v2 |
-| Flux peut être indisponible | Job cron échoue | Retry + log, affichage "Données indisponibles" |
-| Archives annuelles volumineuses | >1 GB pour 5 ans | Téléchargement one-shot uniquement |
-| Encodage ISO-8859-1 | Erreurs de parsing si mal géré | Convertir explicitement vers UTF-8 |
+| Limitation                      | Impact                                          | Mitigation                                     |
+| ------------------------------- | ----------------------------------------------- | ---------------------------------------------- |
+| Données J-1 uniquement          | Pas de données temps réel                       | Acceptable pour le MVP                         |
+| Couverture variable             | Certaines stations ne remontent pas chaque jour | Utiliser `sample_count` pour la transparence   |
+| Autoroutes biaisent la moyenne  | Prix moyens légèrement élevés                   | Documenter, filtrer optionnellement en v2      |
+| Flux peut être indisponible     | Job cron échoue                                 | Retry + log, affichage "Données indisponibles" |
+| Archives annuelles volumineuses | >1 GB pour 5 ans                                | Téléchargement one-shot uniquement             |
+| Encodage ISO-8859-1             | Erreurs de parsing si mal géré                  | Convertir explicitement vers UTF-8             |
 
 ### 1.6 Fréquence de mise à jour
 
@@ -97,23 +150,23 @@ Supabase → Front : SSR Next.js (at request time, données fraîches)
 
 ### 2.1 Inflation alimentaire — INSEE
 
-| Champ | Valeur |
-|---|---|
-| Source | INSEE — Indices des Prix à la Consommation (IPC) |
-| URL | `https://api.insee.fr/series/BDM/V1/data/SERIES_BDM/001767226` |
-| Format | JSON (API REST) |
-| Fréquence | Mensuel |
-| Licence | Licence Ouverte / Open Licence v2.0 |
-| Disponibilité | Gratuit, clé API requise (inscription INSEE) |
+| Champ         | Valeur                                                         |
+| ------------- | -------------------------------------------------------------- |
+| Source        | INSEE — Indices des Prix à la Consommation (IPC)               |
+| URL           | `https://api.insee.fr/series/BDM/V1/data/SERIES_BDM/001767226` |
+| Format        | JSON (API REST)                                                |
+| Fréquence     | Mensuel                                                        |
+| Licence       | Licence Ouverte / Open Licence v2.0                            |
+| Disponibilité | Gratuit, clé API requise (inscription INSEE)                   |
 
 ### 2.2 Chômage jeunes — Eurostat
 
-| Champ | Valeur |
-|---|---|
-| Source | Eurostat — Labour Force Survey |
-| URL | API Eurostat (SDMX) |
-| Fréquence | Trimestriel |
-| Licence | Eurostat copyright (usage libre pour data non-commerciale) |
+| Champ     | Valeur                                                     |
+| --------- | ---------------------------------------------------------- |
+| Source    | Eurostat — Labour Force Survey                             |
+| URL       | API Eurostat (SDMX)                                        |
+| Fréquence | Trimestriel                                                |
+| Licence   | Eurostat copyright (usage libre pour data non-commerciale) |
 
 ### 2.3 Loyers — CLAMEUR / OLAP
 
@@ -122,12 +175,12 @@ Supabase → Front : SSR Next.js (at request time, données fraîches)
 
 ### 2.4 Données Eurostat multi-pays (v2 comparaison)
 
-| Dataset | Description |
-|---|---|
-| `prc_hpi_m` | House price index |
-| `prc_hicp_manr` | Harmonized inflation |
-| `une_rt_m` | Unemployment rate |
-| `nama_10_gdp` | GDP and main components |
+| Dataset         | Description             |
+| --------------- | ----------------------- |
+| `prc_hpi_m`     | House price index       |
+| `prc_hicp_manr` | Harmonized inflation    |
+| `une_rt_m`      | Unemployment rate       |
+| `nama_10_gdp`   | GDP and main components |
 
 ---
 

@@ -9,13 +9,18 @@
     "start": "pnpm --filter web start",
     "lint": "pnpm --filter web lint",
     "typecheck": "pnpm --filter web typecheck",
+    "typecheck:scripts": "pnpm exec tsc --noEmit -p scripts",
     "format": "prettier --write \"**/*.{ts,tsx,md,json}\" --ignore-path .gitignore",
     "format:check": "prettier --check \"**/*.{ts,tsx,md,json}\" --ignore-path .gitignore",
+    "validate": "pnpm run typecheck && pnpm run typecheck:scripts && pnpm run lint && pnpm run format:check",
     "db:push": "pnpm dlx supabase@latest db push",
+    "db:push:local": "pnpm dlx supabase@latest db push --local",
     "db:start": "pnpm dlx supabase@latest start --ignore-health-check",
     "db:types": "pnpm dlx supabase@latest gen types typescript --local > apps/web/src/lib/supabase/database.types.ts.tmp && mv apps/web/src/lib/supabase/database.types.ts.tmp apps/web/src/lib/supabase/database.types.ts",
     "db:types:linked": "pnpm dlx supabase@latest gen types typescript --linked > apps/web/src/lib/supabase/database.types.ts.tmp && mv apps/web/src/lib/supabase/database.types.ts.tmp apps/web/src/lib/supabase/database.types.ts",
     "fuel:backfill": "pnpm --filter scripts fuel:backfill",
+    "fuel:backfill:annees": "pnpm --filter scripts fuel:backfill:annees",
+    "fuel:backfill:last": "pnpm --filter scripts fuel:backfill:last",
     "fuel:daily": "pnpm --filter scripts fuel:daily"
   },
   "devDependencies": {

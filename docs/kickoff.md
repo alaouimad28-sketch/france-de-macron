@@ -52,6 +52,7 @@ CONTEXTE TECHNIQUE :
 - Stack : Next.js 16 App Router + TypeScript strict + pnpm ≥ 10 + Supabase + shadcn/ui + Recharts
 - Lint : ESLint 9 (flat config dans apps/web/eslint.config.mjs), pas de "next lint" (supprimé en Next 16)
 - Gestionnaire de paquets : pnpm (jamais npm ou yarn)
+- Supabase MCP : quand Supabase local est démarré (pnpm run db:start), tu peux utiliser le serveur MCP Supabase (souvent nommé project-0-france-de-macron-supabase-local) pour list_tables, execute_sql, list_migrations, generate_typescript_types, get_logs, etc. Utile pour inspecter le schéma ou tester des requêtes sans quitter le chat.
 - CSS : Tailwind uniquement (jamais de style inline sauf pour des valeurs dynamiques CSS custom properties)
 - Composants : Server Components par défaut, 'use client' uniquement si interaction nécessaire
 - Font : Space Grotesk (display) + Inter (body) + JetBrains Mono (données)
@@ -68,6 +69,7 @@ Dis-moi ce que tu vas faire avant de commencer, puis lance-toi.
 ### Le projet en 3 lignes
 
 Dashboard satirique + factuel qui répond à "on est à quel point cooked ?" avec :
+
 - Un score FCI 0–100 (jauge animée en hero)
 - Un graphique carburants J-30 (données officielles, backend uniquement)
 - Un CTA newsletter comme NSM (North Star Metric)
@@ -78,15 +80,26 @@ Dashboard satirique + factuel qui répond à "on est à quel point cooked ?" ave
 2. **Serveur → API carburants → Supabase (service role)**. Via cron Vercel à 02:30 UTC.
 3. **Server Components pour les données, Client Components pour l'interactivité.**
 
-
 ### Fichiers critiques à ne jamais casser
 
-| Fichier | Pourquoi critique |
-|---|---|
-| `supabase/migrations/20240101000006_rls_policies.sql` | Sécurité RLS — ne jamais affaiblir |
-| `apps/web/src/lib/supabase/server.ts` | Isolation service role |
-| `apps/web/src/types/index.ts` | Contrat de données partagé |
-| `apps/web/tailwind.config.ts` | Design tokens — ne pas renommer les couleurs |
+| Fichier                                               | Pourquoi critique                            |
+| ----------------------------------------------------- | -------------------------------------------- |
+| `supabase/migrations/20240101000006_rls_policies.sql` | Sécurité RLS — ne jamais affaiblir           |
+| `apps/web/src/lib/supabase/server.ts`                 | Isolation service role                       |
+| `apps/web/src/types/index.ts`                         | Contrat de données partagé                   |
+| `apps/web/tailwind.config.ts`                         | Design tokens — ne pas renommer les couleurs |
+
+### Supabase MCP (pour l’agent)
+
+Quand Supabase local tourne (`pnpm run db:start`), le projet expose un serveur MCP (`.cursor/mcp.json`). L’agent peut l’utiliser pour :
+
+- **list_tables** — lister les tables, colonnes, RLS, commentaires
+- **execute_sql** — exécuter du SQL en lecture (ou écriture) sur la base locale
+- **list_migrations** — lister les migrations appliquées
+- **generate_typescript_types** — régénérer les types depuis le schéma
+- **get_logs** — consulter les logs API / Postgres / Auth
+
+Le serveur apparaît dans Cursor sous un nom du type `project-0-france-de-macron-supabase-local`. À privilégier pour inspecter le schéma ou valider des requêtes sans ouvrir Studio.
 
 ### Liens de référence utiles
 

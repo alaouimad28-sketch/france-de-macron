@@ -15,9 +15,11 @@ Elle montre "à quel point on est cooked" via le **French Cooked Index™ (FCI)*
 ## 2. Objectifs
 
 ### North Star Metric (NSM)
+
 **Nombre d'emails collectés** (newsletter signups)
 
 ### Métriques secondaires
+
 - Taux de conversion : visiteur → email
 - Engagement : scroll depth, interactions modules, votes cooked/uncooked
 - Partage social (OG screenshots) — architecture prête en v1
@@ -37,18 +39,18 @@ Elle montre "à quel point on est cooked" via le **French Cooked Index™ (FCI)*
 
 ### ✅ In scope
 
-| Fonctionnalité | Description |
-|---|---|
-| Landing page | Page principale avec toutes les sections |
-| French Cooked Index™ (héro) | Gauge ring + score + microcopy ironique |
-| Module carburants J-30 | Line chart avec spikes, filtres, annotations |
-| Filtres temporels | UI 7j / 30j / 90j / 1an / 5ans (données J-30 obligatoirement) |
-| Annotations événements | Markers verticaux sur le graphique |
-| Vote cooked/uncooked | Boutons + compteur global + par section |
-| CTA Newsletter | Formulaire email avec honeypot anti-bot |
-| Page À propos | Présentation du projet |
-| Page Méthodologie | Formule FCI + sources + limites |
-| Page Disclaimer | Avertissement satirique + données |
+| Fonctionnalité              | Description                                                   |
+| --------------------------- | ------------------------------------------------------------- |
+| Landing page                | Page principale avec toutes les sections                      |
+| French Cooked Index™ (héro) | Gauge ring + score + microcopy ironique                       |
+| Module carburants J-30      | Line chart avec spikes, filtres, annotations                  |
+| Filtres temporels           | UI 7j / 30j / 90j / 1an / 5ans (données J-30 obligatoirement) |
+| Annotations événements      | Markers verticaux sur le graphique                            |
+| Vote cooked/uncooked        | Boutons + compteur global + par section                       |
+| CTA Newsletter              | Formulaire email avec honeypot anti-bot                       |
+| Page À propos               | Présentation du projet                                        |
+| Page Méthodologie           | Formule FCI + sources + limites                               |
+| Page Disclaimer             | Avertissement satirique + données                             |
 
 ### ❌ Non-goals MVP
 
@@ -111,6 +113,7 @@ Elle montre "à quel point on est cooked" via le **French Cooked Index™ (FCI)*
 ### 6.1 French Cooked Index™ (FCI Hero)
 
 **Affichage** :
+
 - Ring gauge SVG animée (arc de 270°, sens horaire)
 - Score central bold (ex: "74")
 - Label sous le score (ex: "/ 100 — On est cooked")
@@ -118,6 +121,7 @@ Elle montre "à quel point on est cooked" via le **French Cooked Index™ (FCI)*
 - Dernière mise à jour (ex: "Mis à jour le 15 nov.")
 
 **Couleurs selon le score** :
+
 - 0–24 : vert (`relief-500`)
 - 25–49 : jaune-ambre (`warning-500`)
 - 50–74 : orange-rouge (`alert-400`)
@@ -128,6 +132,7 @@ Elle montre "à quel point on est cooked" via le **French Cooked Index™ (FCI)*
 ### 6.2 Module Carburants J-30
 
 **Graphique** :
+
 - Line chart multi-carburant (Recharts `LineChart`)
 - Axe X : dates (format "dd MMM")
 - Axe Y : prix en €/L (format "1,XXX €")
@@ -137,6 +142,7 @@ Elle montre "à quel point on est cooked" via le **French Cooked Index™ (FCI)*
 - Annotations : ligne verticale + label au hover sur les événements
 
 **Filtres** :
+
 - Chips 7j / 30j / 90j / 1an / 5ans
 - MVP : données fiables sur 30j, 7j calculé dessus
 - 90j / 1an / 5ans : UI présente mais data indisponible → badge "bientôt"
@@ -146,6 +152,7 @@ Elle montre "à quel point on est cooked" via le **French Cooked Index™ (FCI)*
 ### 6.3 Vote Cooked / Uncooked
 
 **UI** :
+
 - Deux boutons : 🔥 Cooked / 🌱 Pas du tout
 - Compteur global en temps réel (ou quasi)
 - Barre de progression bicolore (ratio)
@@ -153,6 +160,7 @@ Elle montre "à quel point on est cooked" via le **French Cooked Index™ (FCI)*
 - Scope MVP : "global" uniquement
 
 **Anti-abus** :
+
 - 1 vote par scope/jour/empreinte navigateur (contrainte DB)
 - Fingerprint = hash SHA-256(userAgent + timezone + screenSize)
 - Pas d'auth, pas de cookie de tracking
@@ -160,12 +168,14 @@ Elle montre "à quel point on est cooked" via le **French Cooked Index™ (FCI)*
 ### 6.4 CTA Newsletter
 
 **Formulaire** :
+
 - Champ email visible
 - Champ `website` caché (honeypot, doit rester vide)
 - Bouton submit avec état loading
 - Message de confirmation ou erreur
 
 **Anti-spam** :
+
 - Honeypot côté serveur
 - Rate limit par IP (10 tentatives/heure en MVP via Supabase policy)
 - Contrainte unique email côté DB
@@ -174,14 +184,14 @@ Elle montre "à quel point on est cooked" via le **French Cooked Index™ (FCI)*
 
 ## 7. Contraintes techniques
 
-| Contrainte | Règle |
-|---|---|
-| Sécurité | Le client ne contacte JAMAIS l'API carburants externe |
-| Sécurité | La service role key Supabase n'est JAMAIS exposée côté client |
-| Performance | Server Components pour tout le fetch de données |
-| Données | Toute donnée externe passe par le pipeline backend → Supabase → SSR |
-| Accessibilité | WCAG AA minimum (contraste, focus, labels ARIA) |
-| SEO | Pages publiques indexables (Landing, About, Methodology, Disclaimer) |
+| Contrainte    | Règle                                                                |
+| ------------- | -------------------------------------------------------------------- |
+| Sécurité      | Le client ne contacte JAMAIS l'API carburants externe                |
+| Sécurité      | La service role key Supabase n'est JAMAIS exposée côté client        |
+| Performance   | Server Components pour tout le fetch de données                      |
+| Données       | Toute donnée externe passe par le pipeline backend → Supabase → SSR  |
+| Accessibilité | WCAG AA minimum (contraste, focus, labels ARIA)                      |
+| SEO           | Pages publiques indexables (Landing, About, Methodology, Disclaimer) |
 
 ---
 

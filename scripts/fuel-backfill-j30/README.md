@@ -56,6 +56,7 @@ Après le backfill :
 ```
 
 Règles de parsing :
+
 - `valeur` en centimes d'euro pour les anciens flux, en euros pour les flux récents
   → **Vérifier le diviseur** : si valeur > 10, diviser par 1000
 - `rupture` sans date de fin = station actuellement en rupture → exclure pour ce carburant
@@ -63,13 +64,13 @@ Règles de parsing :
 
 ## Gestion des erreurs
 
-| Erreur | Comportement |
-|---|---|
-| HTTP 404 (jour manquant) | Logger + ignorer (données indisponibles ce jour) |
-| HTTP 429 / 503 | Retry avec backoff exponentiel (max 3 tentatives) |
-| XML invalide / corrompu | Logger l'erreur + skip le jour |
-| Prix aberrant (< 0.5 ou > 5.0) | Exclure la station pour ce carburant |
-| Moins de 10 stations pour un carburant | Logger warning (donnée peu représentative) |
+| Erreur                                 | Comportement                                      |
+| -------------------------------------- | ------------------------------------------------- |
+| HTTP 404 (jour manquant)               | Logger + ignorer (données indisponibles ce jour)  |
+| HTTP 429 / 503                         | Retry avec backoff exponentiel (max 3 tentatives) |
+| XML invalide / corrompu                | Logger l'erreur + skip le jour                    |
+| Prix aberrant (< 0.5 ou > 5.0)         | Exclure la station pour ce carburant              |
+| Moins de 10 stations pour un carburant | Logger warning (donnée peu représentative)        |
 
 ## Idempotence
 
@@ -83,11 +84,13 @@ Safe à relancer autant de fois que nécessaire.
 - Parsing XML : ~8 000 stations × 6 carburants = ~50 000 entrées par jour
 - Durée estimée : 2–5 minutes selon le débit réseau
 
-## TODO (implémentation)
+## État d'implémentation
 
-- [ ] Implémenter le parsing XML (`xml2js` ou `fast-xml-parser`)
-- [ ] Implémenter le calcul d'agrégats
-- [ ] Implémenter l'upsert Supabase
-- [ ] Implémenter le retry avec backoff
-- [ ] Implémenter le calcul FCI post-backfill
-- [ ] Ajouter des tests unitaires sur le parsing
+- [x] Téléchargement ZIP + détection HTML (dates hors fenêtre ~30j)
+- [x] Parsing XML en streaming (`sax`), ruptures, filtre prix [0.5, 5.0] €/L
+- [x] Calcul agrégats (avg, min, max, sample_count) par carburant
+- [x] Upsert Supabase (`ON CONFLICT day,fuel_code`)
+- [x] Retry × 3 avec backoff (1s, 5s, 30s)
+- [x] Boucle principale 30 jours + résumé
+- [ ] Calcul FCI post-backfill (`calcAndUpsertFCI` non branché)
+- [ ] Tests unitaires sur le parsing

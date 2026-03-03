@@ -8,14 +8,11 @@ Ce dossier contient les jobs d'ingestion de données pour France de Macron.
 
 ```
 scripts/
+├── shared/              # Module partagé : download, parse, upsert (utilisé par j30, last, daily)
 ├── fuel-backfill-j30/   # Backfill initial : 30 derniers jours de données carburant
-│   ├── package.json
-│   ├── README.md
-│   └── index.ts         # Point d'entrée (placeholder)
-└── fuel-daily/          # Job quotidien : ingestion J-1
-    ├── package.json
-    ├── README.md
-    └── index.ts         # Point d'entrée (placeholder)
+├── fuel-backfill-annee/ # Backfill par archives annuelles (2007 → aujourd'hui)
+├── fuel-backfill-last/  # Rafraîchir uniquement hier (et optionnellement aujourd'hui)
+└── fuel-daily/          # Job quotidien : ingestion J-1 (ou replay avec FUEL_DATE)
 ```
 
 ## Jobs disponibles
@@ -33,6 +30,28 @@ pnpm --filter scripts fuel:backfill
 ```
 
 Voir [fuel-backfill-j30/README.md](fuel-backfill-j30/README.md) pour le détail.
+
+### `fuel:backfill:last` — Rafraîchir dernier(s) jour(s)
+
+Quand l’historique est déjà en base : rafraîchit uniquement **hier (J-1)** (et optionnellement **aujourd’hui** avec `BACKFILL_INCLUDE_TODAY=1`). Évite de relancer J30 ou annuel.
+
+```bash
+pnpm run fuel:backfill:last
+BACKFILL_INCLUDE_TODAY=1 pnpm run fuel:backfill:last
+```
+
+Voir [fuel-backfill-last/README.md](fuel-backfill-last/README.md) pour le détail.
+
+### `fuel:backfill:annees` — Backfill par archives annuelles
+
+Remplit `fuel_daily_agg` depuis 2007 jusqu'à l'année courante (ou une plage `START_YEAR` / `END_YEAR`). Utilise les ZIP annuels de donnees.roulez-eco.fr.
+
+```bash
+pnpm run fuel:backfill:annees
+START_YEAR=2015 END_YEAR=2020 pnpm run fuel:backfill:annees
+```
+
+Voir [fuel-backfill-annee/README.md](fuel-backfill-annee/README.md) pour le détail.
 
 ### `fuel:daily` — Cron quotidien
 

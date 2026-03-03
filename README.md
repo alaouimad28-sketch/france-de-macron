@@ -1,6 +1,6 @@
 # France de Macron 🇫🇷
 
-> Dashboard satirique & data-driven — *"Jusqu'où on est cooked ?"*
+> Dashboard satirique & data-driven — _"Jusqu'où on est cooked ?"_
 
 Landing page Gen Z, mobile-first, qui quantifie l'état économique de la France via le **French Cooked Index™ (FCI)** et des modules de données ouvertes (carburants, inflation…).
 
@@ -29,17 +29,17 @@ France de Macron est un outil d'information satirique et factuel, pas un manifes
 
 ## Stack technique
 
-| Couche | Choix |
-|---|---|
-| Framework | Next.js 16 (App Router) + TypeScript strict |
-| Styles | Tailwind CSS + shadcn/ui |
-| Data viz | Recharts (extensible → ECharts v2) |
-| Backend / DB | Supabase (Postgres + RLS) |
-| Auth | Aucune (MVP sans compte utilisateur) |
-| Hosting | Vercel (cible production) |
-| Gestionnaire de paquets | pnpm ≥ 10 (workspace monorepo) |
-| Linting / Format | ESLint 9 (flat config) + Prettier |
-| Commits | Conventional Commits |
+| Couche                  | Choix                                       |
+| ----------------------- | ------------------------------------------- |
+| Framework               | Next.js 16 (App Router) + TypeScript strict |
+| Styles                  | Tailwind CSS + shadcn/ui                    |
+| Data viz                | Recharts (extensible → ECharts v2)          |
+| Backend / DB            | Supabase (Postgres + RLS)                   |
+| Auth                    | Aucune (MVP sans compte utilisateur)        |
+| Hosting                 | Vercel (cible production)                   |
+| Gestionnaire de paquets | pnpm ≥ 10 (workspace monorepo)              |
+| Linting / Format        | ESLint 9 (flat config) + Prettier           |
+| Commits                 | Conventional Commits                        |
 
 ---
 
@@ -66,13 +66,13 @@ pnpm install
 cp .env.example apps/web/.env.local
 # → Remplir les valeurs (voir section ci-dessous)
 
-# 4. Initialiser Supabase en local (optionnel)
-pnpm exec supabase start
+# 4. Démarrer Supabase en local (optionnel)
+pnpm run db:start
+# ou : pnpm exec supabase start
 
-# 5. Appliquer les migrations
-pnpm run db:push
-# ou en local :
-pnpm exec supabase migration up
+# 5. Appliquer les migrations sur la base LOCALE (Supabase local doit être démarré)
+pnpm run db:push:local
+# Pour pousser vers un projet Supabase distant (nécessite supabase link) : pnpm run db:push
 
 # 6. Lancer le serveur de développement
 pnpm dev
@@ -109,42 +109,53 @@ NODE_ENV=development
 Les migrations SQL se trouvent dans `supabase/migrations/`. Elles sont **idempotentes** (safe to replay).
 
 ```bash
-# Appliquer toutes les migrations
+# Supabase LOCAL (sans supabase link) — appliquer les migrations sur la base locale
+pnpm run db:start    # démarrer Supabase local (une fois)
+pnpm run db:push:local   # appliquer les migrations
+
+# Supabase DISTANT (projet lié via supabase link) — pousser les migrations
 pnpm run db:push
 
-# Générer les types TypeScript depuis le schéma
+# Générer les types TypeScript depuis le schéma (local doit être démarré)
 pnpm run db:types
 ```
 
 **Régénération des types** (`pnpm run db:types`) : nécessite Supabase local démarré (`supabase start`). Si le projet est lié à un projet Supabase distant, utiliser `pnpm run db:types:linked` à la place (sans Docker).
 
 **Après `supabase start` (local)** : pour que l’app utilise la stack locale, dans `apps/web/.env.local` mets :
+
 - `NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = la clé **Publishable** (anon) affichée au start
 - `SUPABASE_SERVICE_ROLE_KEY` = la clé **Secret** (service_role) affichée au start  
-Puis `pnpm run db:types` (déjà fait si tu viens de start), et `pnpm dev` pour lancer l’app sur http://localhost:3040.
+  Puis `pnpm run db:types` (déjà fait si tu viens de start), et `pnpm dev` pour lancer l’app sur http://localhost:3040.
 
 **Conflit Docker** (erreur « container name already in use ») : arrêter et nettoyer les conteneurs puis relancer :
+
 ```bash
 pnpm dlx supabase@latest stop --no-backup
 pnpm dlx supabase@latest start
 ```
 
 **Démarrage malgré services « unhealthy »** (pg_meta, studio, etc.) : pour avoir la DB + l’API quand même (et pouvoir lancer `pnpm run db:types`) :
+
 ```bash
 pnpm run db:start
 ```
+
 (utilise `supabase start --ignore-health-check` ; Studio peut être indisponible.)
 
 **Conteneurs « unhealthy »** (storage / pg_meta / studio) : souvent dû au projet lié (versions différentes). Lancer Supabase en mode local seul puis redémarrer :
+
 ```bash
 pnpm dlx supabase@latest unlink
 pnpm dlx supabase@latest stop --no-backup
 pnpm dlx supabase@latest start
 ```
+
 Pour régénérer les types sans Docker, utiliser `pnpm run db:types:linked` (après avoir relink avec `supabase link` si besoin).
 
 **Postgres « database files are incompatible »** (ex. initialisé en 17, config en 15) : un ancien volume Docker contient des données d’une autre version. Supprimer les volumes Supabase du projet puis redémarrer :
+
 ```bash
 pnpm dlx supabase@latest stop --no-backup
 docker volume ls -q | grep supabase
@@ -158,27 +169,27 @@ pnpm dlx supabase@latest start
 
 ### Référence Supabase local (après `supabase start`)
 
-| Service | URL |
-|--------|-----|
-| **Project / API** | http://127.0.0.1:54321 |
-| **REST** | http://127.0.0.1:54321/rest/v1 |
-| **Studio** | http://127.0.0.1:54323 |
-| **Mailpit** (emails) | http://127.0.0.1:54324 |
-| **Database** | `postgresql://postgres:postgres@127.0.0.1:54322/postgres` |
+| Service              | URL                                                       |
+| -------------------- | --------------------------------------------------------- |
+| **Project / API**    | http://127.0.0.1:54321                                    |
+| **REST**             | http://127.0.0.1:54321/rest/v1                            |
+| **Studio**           | http://127.0.0.1:54323                                    |
+| **Mailpit** (emails) | http://127.0.0.1:54324                                    |
+| **Database**         | `postgresql://postgres:postgres@127.0.0.1:54322/postgres` |
 
 **MCP (Model Context Protocol)** : http://127.0.0.1:54321/mcp  
 Le projet contient `.cursor/mcp.json` : Cursor utilise ce serveur automatiquement quand Supabase local est démarré (`pnpm run db:start`). Redémarre Cursor si besoin. Permet à Cursor de discuter avec ta base locale : exécuter du SQL, lister les tables, générer les types, récupérer les clés, consulter les logs. Utile en dev pour demander à l’IA « liste les tables », « exécute cette requête », etc. Pour l’activer dans Cursor : Settings → Tools & MCP → Add server → URL `http://127.0.0.1:54321/mcp` (Supabase doit être démarré).
 
 ### Tables principales
 
-| Table | Description |
-|---|---|
-| `data_sources` | Inventaire des sources de données (URL, licence) |
-| `fuel_daily_agg` | Agrégats quotidiens carburants (national) |
-| `events` | Annotations d'événements sur les graphiques |
-| `newsletter_signups` | Emails collectés (NSM) |
-| `votes` | Votes cooked/uncooked par section |
-| `fci_daily` | Score French Cooked Index™ quotidien |
+| Table                | Description                                      |
+| -------------------- | ------------------------------------------------ |
+| `data_sources`       | Inventaire des sources de données (URL, licence) |
+| `fuel_daily_agg`     | Agrégats quotidiens carburants (national)        |
+| `events`             | Annotations d'événements sur les graphiques      |
+| `newsletter_signups` | Emails collectés (NSM)                           |
+| `votes`              | Votes cooked/uncooked par section                |
+| `fci_daily`          | Score French Cooked Index™ quotidien             |
 
 Voir [docs/data/pipeline.md](docs/data/pipeline.md) pour le détail du schéma et les règles RLS.
 
@@ -215,11 +226,14 @@ Voir [docs/data/pipeline.md](docs/data/pipeline.md) pour le détail.
 
 ```
 scripts/
+├── shared/              # Module partagé (download, parse, upsert)
 ├── fuel-backfill-j30/   # Backfill 30 derniers jours
-└── fuel-daily/          # Job quotidien (J-1)
+├── fuel-backfill-annee/ # Backfill par archives annuelles (2007 → aujourd'hui)
+├── fuel-backfill-last/  # Rafraîchir hier (et optionnellement aujourd'hui)
+└── fuel-daily/         # Job quotidien J-1 (ou FUEL_DATE=YYYYMMDD pour replay)
 ```
 
-Voir [scripts/README.md](scripts/README.md).
+Voir [scripts/README.md](scripts/README.md). Commandes : `pnpm run fuel:backfill` (J-30), `pnpm run fuel:backfill:last` (dernier jour), `pnpm run fuel:backfill:annees` (archives), `pnpm run fuel:daily` (quotidien ou replay).
 
 ---
 
@@ -266,6 +280,38 @@ france-de-macron/
 
 ---
 
+## Validation avant commit
+
+Depuis la racine du projet, lancer les checks suivants avant de committer :
+
+```bash
+# Tout en un (typecheck web + scripts, lint, format)
+pnpm run validate
+```
+
+Ou étape par étape :
+
+```bash
+pnpm run typecheck        # App web
+pnpm run typecheck:scripts # Scripts (shared, backfill, fuel-daily)
+pnpm run lint
+pnpm run format:check     # ou pnpm run format pour corriger
+```
+
+**Tests manuels des scripts** (Supabase local démarré + `apps/web/.env.local` configuré) :
+
+```bash
+# Rafraîchir uniquement hier
+pnpm run fuel:backfill:last
+
+# Job quotidien (replay d’une date)
+FUEL_DATE=20250302 pnpm run fuel:daily
+```
+
+Voir [docs/TESTER-LE-SITE.md](docs/TESTER-LE-SITE.md) pour le setup Supabase local.
+
+---
+
 ## Contribuer
 
 - Lire [CONTRIBUTING.md](CONTRIBUTING.md) (à créer)
@@ -280,4 +326,4 @@ france-de-macron/
 
 À définir — projet open source satirique, contributions bienvenues.
 
-> *"On est cooked, mais au moins on a des données."* 🥐
+> _"On est cooked, mais au moins on a des données."_ 🥐

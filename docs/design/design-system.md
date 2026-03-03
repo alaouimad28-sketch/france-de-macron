@@ -18,11 +18,11 @@
 
 ### 1.2 Ce que le design doit transmettre
 
-| Émotion | Mécanisme |
-|---|---|
-| "C'est sérieux" | Typo analytique, chiffres précis, sources |
-| "C'est fun" | Microcopy ironique, emojis rares, labels |
-| "C'est lisible" | Contraste élevé, hiérarchie claire |
+| Émotion             | Mécanisme                                    |
+| ------------------- | -------------------------------------------- |
+| "C'est sérieux"     | Typo analytique, chiffres précis, sources    |
+| "C'est fun"         | Microcopy ironique, emojis rares, labels     |
+| "C'est lisible"     | Contraste élevé, hiérarchie claire           |
 | "C'est partageable" | Sections avec dimensions screenshot-friendly |
 
 ---
@@ -62,13 +62,13 @@ Surface (surface)
 
 ### 2.2 Couleurs sémantiques carburant
 
-| Carburant | Couleur | Hex |
-|---|---|---|
-| Gazole | Bleu acier | `#60A5FA` |
+| Carburant      | Couleur       | Hex       |
+| -------------- | ------------- | --------- |
+| Gazole         | Bleu acier    | `#60A5FA` |
 | E10 (SP95-E10) | Vert émeraude | `#34D399` |
-| SP98 | Or | `#FBBF24` |
-| E85 | Vert lime | `#A3E635` |
-| GPLc | Violet | `#A78BFA` |
+| SP98           | Or            | `#FBBF24` |
+| E85            | Vert lime     | `#A3E635` |
+| GPLc           | Violet        | `#A78BFA` |
 
 ### 2.3 Règles d'utilisation
 
@@ -267,7 +267,7 @@ Le fond a un grain subtil (SVG noise, `opacity: 0.04`) pour ajouter de la profon
 sans nuire à la lisibilité. Applicable sur le body uniquement.
 
 ```css
-background-image: url("data:image/svg+xml,[SVG noise filter]");
+background-image: url('data:image/svg+xml,[SVG noise filter]');
 ```
 
 Pas de grain sur les cartes ou les composants (trop chargé).

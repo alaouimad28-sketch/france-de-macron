@@ -42,12 +42,24 @@ passe par Supabase avant d'atteindre le client.
 
 ---
 
+## Module partagé (`scripts/shared/`)
+
+Les jobs quotidiens (J-30, dernier jour, fuel-daily) s’appuient sur le module `scripts/shared/` qui fournit :
+
+- `downloadDayXml(date)` — télécharge le ZIP du jour, retourne le XML (lance `DayDataUnavailableError` si 404/HTML)
+- `parseDayXmlToAggregates(xml, day)` — parse en streaming, agrège par carburant, retourne `FuelDayAggregate[]`
+- `upsertFuelAggregates(supabase, rows)` — upsert dans `fuel_daily_agg` (idempotent)
+
+Voir [scripts/shared/README.md](../../scripts/shared/README.md).
+
+---
+
 ## Jobs d'ingestion
 
 ### Job 1 : fuel-backfill-j30 (one-shot)
 
 **Déclenchement** : manuel, une seule fois après le déploiement initial
-**Fichier** : `scripts/fuel-backfill-j30/index.ts`
+**Fichier** : `scripts/fuel-backfill-j30/index.ts` (utilise `scripts/shared/` pour download, parse, upsert)
 
 ```
 Pour D dans [aujourd'hui − 30j, hier] :
@@ -83,7 +95,15 @@ Fin du backfill :
   - Calculer FCI pour tous les jours backfillés
 ```
 
-### Job 2 : fuel-daily (cron quotidien)
+### Job 2 : fuel-backfill-last (rafraîchissement dernier jour)
+
+**Déclenchement** : manuel, quand l’historique est déjà en base
+**Fichier** : `scripts/fuel-backfill-last/index.ts`
+
+Rafraîchit uniquement **hier (J-1)** et optionnellement **aujourd’hui (J-0)** avec `BACKFILL_INCLUDE_TODAY=1`.
+Réutilise le module partagé `scripts/shared/` (download, parse, upsert). Commande : `pnpm run fuel:backfill:last`.
+
+### Job 3 : fuel-daily (cron quotidien)
 
 **Déclenchement** : Vercel Cron, tous les jours à 02:30 UTC
 **Endpoint** : `GET /api/cron/fuel-daily` (sécurisé par `CRON_SECRET`)
@@ -98,11 +118,10 @@ Fin du backfill :
 ```
 
 **Configuration Vercel** (`apps/web/vercel.json`) :
+
 ```json
 {
-  "crons": [
-    { "path": "/api/cron/fuel-daily", "schedule": "30 2 * * *" }
-  ]
+  "crons": [{ "path": "/api/cron/fuel-daily", "schedule": "30 2 * * *" }]
 }
 ```
 
@@ -121,6 +140,7 @@ avg_price = Σ(prix_i) / n
 ```
 
 **Pourquoi simple et pas pondérée ?**
+
 - Les données sources ne fournissent pas de volume de vente par station
 - La moyenne simple est robuste et transparente (v1)
 - En v2 : pondération par zone géographique (région) si pertinent
@@ -150,8 +170,8 @@ Exclure une station/carburant si :
 
 ```typescript
 const BASELINE = {
-  gazole: 1.38,  // €/L moyenne 2010–2019
-  e10:    1.45,  // €/L moyenne 2010–2019 (estimé — à affiner avec données réelles)
+  gazole: 1.38, // €/L moyenne 2010–2019
+  e10: 1.45, // €/L moyenne 2010–2019 (estimé — à affiner avec données réelles)
 }
 ```
 
@@ -159,24 +179,23 @@ const BASELINE = {
 
 ```typescript
 function calcFCIv1(
-  gazole30j: number[],   // 30 derniers prix gazole (du plus récent au plus ancien)
-  e10_30j: number[],     // 30 derniers prix e10
+  gazole30j: number[], // 30 derniers prix gazole (du plus récent au plus ancien)
+  e10_30j: number[], // 30 derniers prix e10
 ): number {
-
   const gazoLe_today = gazole30j[0] ?? 0
-  const e10_today    = e10_30j[0] ?? 0
+  const e10_today = e10_30j[0] ?? 0
   const gazole_30j_ago = gazole30j[29] ?? gazole30j[gazole30j.length - 1] ?? gazoLe_today
-  const e10_30j_ago    = e10_30j[29]   ?? e10_30j[e10_30j.length - 1]   ?? e10_today
+  const e10_30j_ago = e10_30j[29] ?? e10_30j[e10_30j.length - 1] ?? e10_today
 
   // 1. Score de niveau absolu (écart par rapport à la baseline 2010-2019)
-  const gazoLe_level = normalize(gazoLe_today - BASELINE.gazole, 0, 0.80, 0, 100)
-  const e10_level    = normalize(e10_today    - BASELINE.e10,    0, 0.80, 0, 100)
-  const level_score  = (gazoLe_level + e10_level) / 2
+  const gazoLe_level = normalize(gazoLe_today - BASELINE.gazole, 0, 0.8, 0, 100)
+  const e10_level = normalize(e10_today - BASELINE.e10, 0, 0.8, 0, 100)
+  const level_score = (gazoLe_level + e10_level) / 2
 
   // 2. Score de variation 30j (variation relative)
   const gazole_var30 = (gazoLe_today - gazole_30j_ago) / (gazole_30j_ago || 1)
-  const e10_var30    = (e10_today    - e10_30j_ago)    / (e10_30j_ago    || 1)
-  const var_score    = normalize(Math.max(gazole_var30, e10_var30), -0.10, 0.20, 0, 100)
+  const e10_var30 = (e10_today - e10_30j_ago) / (e10_30j_ago || 1)
+  const var_score = normalize(Math.max(gazole_var30, e10_var30), -0.1, 0.2, 0, 100)
 
   // 3. Score carburant composite
   const fuel_score = 0.6 * level_score + 0.4 * var_score
@@ -185,7 +204,13 @@ function calcFCIv1(
   return Math.round(Math.max(0, Math.min(100, fuel_score)))
 }
 
-function normalize(value: number, inMin: number, inMax: number, outMin: number, outMax: number): number {
+function normalize(
+  value: number,
+  inMin: number,
+  inMax: number,
+  outMin: number,
+  outMax: number,
+): number {
   return ((value - inMin) / (inMax - inMin)) * (outMax - outMin) + outMin
 }
 ```
@@ -196,8 +221,9 @@ function normalize(value: number, inMin: number, inMax: number, outMin: number, 
 
 ### Idempotence
 
-Toutes les écritures utilisent `INSERT ... ON CONFLICT DO UPDATE`.
+Toutes les écritures utilisent `INSERT ... ON CONFLICT (day, fuel_code) DO UPDATE`.
 Un job peut être relancé autant de fois que nécessaire sans créer de doublons.
+Si des données existent déjà partiellement, l’upsert ajoute les lignes manquantes et met à jour les existantes (aucun skip automatique : on retélécharge et on upsert à chaque run).
 
 ### Stratégie de retry
 
@@ -212,18 +238,19 @@ Si 3 tentatives échouent : log l'erreur + skip le jour
 
 ### Modes de défaillance et comportements
 
-| Scénario | Comportement |
-|---|---|
-| API carburants indisponible | Retry × 3, log, skip. Données J-1 absent du front. |
-| Fichier ZIP corrompu | Log, skip le jour |
-| Supabase indisponible | Retry × 3, job échoue. Retry automatique par Vercel Cron le lendemain. |
-| Prix aberrant (< 0.5 ou > 5.0 €) | Station exclue de l'agrégat, log warning |
-| Moins de 50 stations disponibles | Log warning (représentativité faible), données quand même stockées avec flag |
-| FCI incalculable (< 7j de données) | Upsert avec `score = null` (affiché "N/A" dans le front) |
+| Scénario                           | Comportement                                                                 |
+| ---------------------------------- | ---------------------------------------------------------------------------- |
+| API carburants indisponible        | Retry × 3, log, skip. Données J-1 absent du front.                           |
+| Fichier ZIP corrompu               | Log, skip le jour                                                            |
+| Supabase indisponible              | Retry × 3, job échoue. Retry automatique par Vercel Cron le lendemain.       |
+| Prix aberrant (< 0.5 ou > 5.0 €)   | Station exclue de l'agrégat, log warning                                     |
+| Moins de 50 stations disponibles   | Log warning (représentativité faible), données quand même stockées avec flag |
+| FCI incalculable (< 7j de données) | Upsert avec `score = null` (affiché "N/A" dans le front)                     |
 
 ### Logging
 
 Chaque job log :
+
 - Début / fin avec timestamp
 - Nombre de jours traités / skippés / en erreur
 - Nombre d'agrégats upsertés
@@ -245,7 +272,7 @@ pnpm run fuel:daily
 curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:3040/api/cron/fuel-daily
 ```
 
-Migrations : `pnpm run db:push` (racine). Supabase CLI : `pnpm exec supabase` (ou `pnpm dlx supabase` si le binaire local ne fonctionne pas).
+Migrations : en local `pnpm run db:push:local` (après `db:start`) ; projet lié `pnpm run db:push`. Supabase CLI : `pnpm exec supabase` (ou `pnpm dlx supabase` si le binaire local ne fonctionne pas).
 
 ### Production (Vercel)
 

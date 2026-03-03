@@ -9,6 +9,7 @@
 Le **French Cooked Index™ (FCI)** est un indicateur composite semi-scientifique qui mesure "à quel point l'économie française est difficile pour le quotidien des ménages ordinaires".
 
 **Score** : entier de 0 à 100.
+
 - **0** : "On vit dans le meilleur des mondes" (situation idéale vs baseline)
 - **50** : "Ça commence à piquer sérieusement"
 - **100** : "On est complètement cooked" (situation extrêmement dégradée)
@@ -41,11 +42,12 @@ Ces limites sont affichées clairement sur la page Méthodologie du site.
 
 En v1, le FCI est calculé sur **une seule composante** : les carburants.
 
-| Composante | Poids | Indicateurs inclus |
-|---|---|---|
-| Carburant | 1.0 (100%) | Prix Gazole + Prix E10 (SP95-E10) |
+| Composante | Poids      | Indicateurs inclus                |
+| ---------- | ---------- | --------------------------------- |
+| Carburant  | 1.0 (100%) | Prix Gazole + Prix E10 (SP95-E10) |
 
-*Pourquoi uniquement les carburants en v1 ?*
+_Pourquoi uniquement les carburants en v1 ?_
+
 - Données officielles disponibles quotidiennement (J-1)
 - Impact direct sur le budget des ménages
 - Données historiques disponibles depuis 2007
@@ -73,7 +75,8 @@ level_score = (gazole_level_score + e10_level_score) / 2
     = clamped à [0, 100]
 ```
 
-*Interprétation* :
+_Interprétation_ :
+
 - delta = 0 → level_score = 0 (on est à la baseline, pas de stress)
 - delta = +0.80 €/L → level_score = 100 (prix 58% au-dessus de la baseline)
 
@@ -89,7 +92,8 @@ variation_brute = max(var30_gazole, var30_e10)
 variation_score = normalize(variation_brute, -0.10, +0.20, 0, 100)
 ```
 
-*Interprétation* :
+_Interprétation_ :
+
 - -10% sur 30j → variation_score = 0 (les prix baissent, soulagement)
 - 0% → variation_score = 33 (stable)
 - +20% sur 30j → variation_score = 100 (hausse rapide, stress)
@@ -100,7 +104,7 @@ variation_score = normalize(variation_brute, -0.10, +0.20, 0, 100)
 fuel_score = 0.6 × level_score + 0.4 × variation_score
 ```
 
-*Pondération interne* : le niveau absolu (60%) est plus important que la dynamique récente (40%), car même une stabilisation à niveau élevé reste problématique.
+_Pondération interne_ : le niveau absolu (60%) est plus important que la dynamique récente (40%), car même une stabilisation à niveau élevé reste problématique.
 
 **Étape 4 : FCI v1**
 
@@ -111,12 +115,12 @@ FCI = clamp(FCI, 0, 100)
 
 ### 3.3 Labels interprétatifs
 
-| Score | Label | Couleur |
-|---|---|---|
-| 0–24 | "On respire" | Vert |
-| 25–49 | "Ça chauffe" | Jaune |
-| 50–74 | "Ça pique" | Orange |
-| 75–100 | "On est cooked" | Rouge |
+| Score  | Label           | Couleur |
+| ------ | --------------- | ------- |
+| 0–24   | "On respire"    | Vert    |
+| 25–49  | "Ça chauffe"    | Jaune   |
+| 50–74  | "Ça pique"      | Orange  |
+| 75–100 | "On est cooked" | Rouge   |
 
 ---
 
@@ -124,13 +128,13 @@ FCI = clamp(FCI, 0, 100)
 
 ### 4.1 Nouvelles composantes prévues
 
-| Composante | Indicateur | Source | Fréquence |
-|---|---|---|---|
-| Énergie | Prix carburants (actuel) | roulez-eco.fr | Quotidien |
-| Alimentation | IPC alimentaire | INSEE | Mensuel |
-| Logement | Loyers (grandes villes) | CLAMEUR | Trimestriel |
-| Travail | Chômage 15–24 ans | Eurostat | Trimestriel |
-| Pouvoir d'achat | Salaire réel vs inflation | DARES/INSEE | Trimestriel |
+| Composante      | Indicateur                | Source        | Fréquence   |
+| --------------- | ------------------------- | ------------- | ----------- |
+| Énergie         | Prix carburants (actuel)  | roulez-eco.fr | Quotidien   |
+| Alimentation    | IPC alimentaire           | INSEE         | Mensuel     |
+| Logement        | Loyers (grandes villes)   | CLAMEUR       | Trimestriel |
+| Travail         | Chômage 15–24 ans         | Eurostat      | Trimestriel |
+| Pouvoir d'achat | Salaire réel vs inflation | DARES/INSEE   | Trimestriel |
 
 ### 4.2 Pondérations v2 (proposées)
 
@@ -142,11 +146,12 @@ Travail      : 10%
 Pouvoir d'achat : 10%
 ```
 
-*Ces pondérations seront soumises à consultation publique via le mécanisme de vote.*
+_Ces pondérations seront soumises à consultation publique via le mécanisme de vote._
 
 ### 4.3 Fréquence de mise à jour v2
 
 En v2, le FCI sera mis à jour :
+
 - Quotidiennement pour la composante énergie
 - Mensuellement ou trimestriellement pour les autres (interpolation entre deux valeurs si nécessaire)
 
@@ -155,12 +160,14 @@ En v2, le FCI sera mis à jour :
 ## 5. Transparence et reproductibilité
 
 Chaque entrée dans `fci_daily` stocke :
+
 - `score` : le score final
 - `methodology_version` : la version de la formule utilisée
 - `components` : les scores de chaque composante (JSONB)
 - `weights` : les pondérations utilisées (JSONB)
 
 Cela permet de :
+
 - Retracer comment un score a été calculé à n'importe quelle date
 - Détecter les changements de méthodologie dans l'historique
 - Permettre à n'importe qui de reproduire le calcul
@@ -179,7 +186,7 @@ Cela permet de :
 
 ## 7. Historique des versions
 
-| Version | Date | Changements |
-|---|---|---|
-| v1 | Mars 2025 | Carburants uniquement (Gazole + E10) |
-| v2 | Planifié | Multi-indicateurs + pondérations révisées |
+| Version | Date      | Changements                               |
+| ------- | --------- | ----------------------------------------- |
+| v1      | Mars 2025 | Carburants uniquement (Gazole + E10)      |
+| v2      | Planifié  | Multi-indicateurs + pondérations révisées |

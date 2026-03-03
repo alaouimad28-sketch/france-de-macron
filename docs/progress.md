@@ -55,7 +55,7 @@
 - [x] `database.types.ts` — types TypeScript manuels (à régénérer après migrations)
 - [x] Appliquer les migrations sur le projet Supabase (local + prod)
 - [x] Régénérer `database.types.ts` depuis le vrai schéma : `pnpm run db:types`
-- [ ] Ajouter index de performance sur `votes(scope, vote)` pour les agrégats fréquents
+- [x] Ajouter index de performance sur `votes(scope, vote)` pour les agrégats fréquents
 
 ### Lib & types
 
@@ -88,34 +88,48 @@
 
 ### Script fuel-backfill-j30
 
-- [x] Interface et types définis (`scripts/fuel-backfill-j30/index.ts` placeholder)
+- [x] Interface et types définis ; script implémenté (download, parse, upsert, boucle)
 - [x] README avec algorithme complet
-- [ ] **Implémenter `downloadDayXml(date)`**
+- [x] **Implémenter `downloadDayXml(date)`**
   - Fetch `https://donnees.roulez-eco.fr/opendata/jour/YYYYMMDD`
   - Unzip le ZIP (package `adm-zip` ou `yauzl`)
   - Convertir ISO-8859-1 → UTF-8
   - Retry × 3 avec backoff (1s → 5s → 30s)
-- [ ] **Implémenter `parseAndAggregate(xml, day)`**
-  - Parser XML (`fast-xml-parser`)
+  - Détection réponse HTML (dates hors fenêtre ~30j) → `DayDataUnavailableError`, skip le jour
+- [x] **Implémenter `parseAndAggregate(xml, day)`**
+  - Parser XML en streaming (`sax`), même règles que script annuel
   - Filtrer stations en rupture (`<rupture>` sans `fin`)
   - Convertir valeur ÷ 1000 → €/L
   - Filtrer prix aberrants (< 0.5 ou > 5.0 €/L)
   - Calculer avg / min / max / count par `fuel_code`
-- [ ] **Implémenter `upsertAggregates(results)`**
+- [x] **Implémenter `upsertAggregates(results)`**
   - `INSERT INTO fuel_daily_agg ... ON CONFLICT DO UPDATE`
   - Utiliser `createClient()` de `@supabase/supabase-js` avec service role
-- [ ] **Implémenter la boucle principale** (30 jours, gestion des erreurs, skip sur 404)
-- [ ] Logger un résumé final (jours traités, agrégats, erreurs)
-- [ ] Tester le script en local contre Supabase local
+- [x] **Implémenter la boucle principale** (30 jours, gestion des erreurs, skip sur DayDataUnavailableError)
+- [x] Logger un résumé final (jours traités, agrégats, erreurs)
+- [x] Tester le script en local contre Supabase local (validé)
+
+- [x] **Backfill « dernier jour » (hier + aujourd’hui)** — script `fuel-backfill-last` : rafraîchit J-1 (et optionnellement J-0 avec `BACKFILL_INCLUDE_TODAY=1`), commande `pnpm fuel:backfill:last`
+
+### Script fuel-backfill-annee (archives annuelles)
+
+- [x] Script `scripts/fuel-backfill-annee/` — backfill depuis 2007
+  - Téléchargement ZIP par année (`/opendata/annee/YYYY`), unzip + XML en latin1
+  - Parse XML en streaming (`sax`), agrégats par (jour, carburant), filtre ruptures + prix ∈ [0.5, 5.0] €/L
+  - Upsert par lots dans `fuel_daily_agg` (idempotent)
+  - Commande : `pnpm run fuel:backfill:annees`, env `START_YEAR` / `END_YEAR`
+- [x] Déclarations de types (sax, adm-zip, dotenv) et `scripts/tsconfig.json` (types Node)
+- [x] Doc : `scripts/fuel-backfill-annee/README.md`, `docs/data/sources.md` (1.2.1, 1.2.2, 1.2.3), commandes dans INDEX + README racine
 
 ### Script fuel-daily
 
-- [x] Interface et types définis (`scripts/fuel-daily/index.ts` placeholder)
+- [x] Interface et types définis (`scripts/fuel-daily/index.ts`)
 - [x] README avec pseudo-code FCI v1
-- [ ] **Extraire le code commun** en `scripts/shared/` (download, parse, upsert)
-- [ ] Implémenter le job complet (utiliser le code partagé)
-- [ ] Ajouter `FUEL_DATE` env var pour le replay manuel
+- [x] **Extraire le code commun** en `scripts/shared/` (download, parse, upsert, constants, types)
+- [x] Implémenter le job complet (utilise shared : downloadDayXml, parseDayXmlToAggregates, upsertFuelAggregates)
+- [x] Ajouter `FUEL_DATE` env var pour le replay manuel (format YYYYMMDD)
 - [ ] Tester le replay d'une date spécifique
+- [ ] Brancher calcAndUpsertFCI quand FCI v1 sera implémenté
 
 ### Calcul FCI v1
 
@@ -297,7 +311,7 @@
   - [ ] Configurer toutes les variables d'env dans Vercel Secrets
   - [ ] Activer le cron Vercel (`vercel.json`)
 - [ ] Déployer Supabase en production
-  - [ ] Appliquer les migrations : `pnpm exec supabase db push --linked` (ou `pnpm run db:push` en local)
+  - [ ] Appliquer les migrations : `pnpm run db:push` (projet lié). En local : `pnpm run db:push:local` après `db:start`
   - [ ] Vérifier RLS activé sur toutes les tables (dashboard Supabase)
   - [ ] Configurer les domaines autorisés dans Supabase Auth (CORS)
 - [ ] Lancer le backfill initial en production : `pnpm fuel:backfill`
@@ -381,17 +395,25 @@
 - Décision : Recharts en MVP, migration ECharts possible en v2 si besoin zoom/brush
 - Migration `fuel_daily_agg` : constraint `chk_fuel_code` → à étendre si nouveau carburant ajouté
 
+### Mars 2025 — Pipeline & backfill
+
+- `downloadDayXml` implémenté (fetch, unzip, latin1, retry, détection HTML pour dates hors fenêtre).
+- Script **fuel-backfill-annee** : backfill par archives annuelles (2007 → aujourd’hui), parse streaming (sax), upsert `fuel_daily_agg` ; commande `pnpm run fuel:backfill:annees`.
+- **Supabase local** : ajout de `db:push:local` (`supabase db push --local`) pour appliquer les migrations sans `supabase link` ; doc mise à jour (README, TESTER-LE-SITE, INDEX, pipeline, progress).
+- **docs/data/sources.md** : URLs vérifiées, pas de clé API, fenêtre ~30j pour `/jour/AAAAMMJJ`, section multi-années (1.2.1), stockage (1.2.2), volumes 2007 vs 2000 (1.2.3).
+- Test **fuel:backfill** (J30) en local : OK (30 jours, 180 agrégats, ~53 s).
+
 ---
 
 ## Métriques à suivre
 
-| Métrique | Objectif MVP | Actuel |
-|---|---|---|
-| Emails collectés (NSM) | > 500 au lancement | 0 |
-| Taux de conversion visiteur → email | > 3% | — |
-| Score Lighthouse Performance | > 90 | — |
-| Score Lighthouse SEO | > 95 | — |
-| LCP | < 2.5s | — |
-| CLS | < 0.1 | — |
-| Sample count moyen carburant | > 1000 stations | — |
-| Uptime cron quotidien | > 99% | — |
+| Métrique                            | Objectif MVP       | Actuel |
+| ----------------------------------- | ------------------ | ------ |
+| Emails collectés (NSM)              | > 500 au lancement | 0      |
+| Taux de conversion visiteur → email | > 3%               | —      |
+| Score Lighthouse Performance        | > 90               | —      |
+| Score Lighthouse SEO                | > 95               | —      |
+| LCP                                 | < 2.5s             | —      |
+| CLS                                 | < 0.1              | —      |
+| Sample count moyen carburant        | > 1000 stations    | —      |
+| Uptime cron quotidien               | > 99%              | —      |

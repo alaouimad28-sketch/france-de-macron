@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json() as Record<string, unknown>
+    const body = (await request.json()) as Record<string, unknown>
 
     if (!body['scope'] || !['cooked', 'uncooked'].includes(body['vote'] as string)) {
       return NextResponse.json({ error: 'Invalid payload' }, { status: 400 })
@@ -47,10 +47,7 @@ export async function POST(request: NextRequest) {
     // const supabase = createServiceClient()
     // await supabase.from('votes').insert({ ... })
 
-    return NextResponse.json(
-      { success: false, error: 'Not implemented yet' },
-      { status: 501 },
-    )
+    return NextResponse.json({ success: false, error: 'Not implemented yet' }, { status: 501 })
   } catch {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }

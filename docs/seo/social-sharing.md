@@ -6,18 +6,19 @@
 
 ### 1.1 Pages indexables (MVP)
 
-| Page | URL | Index | Description SEO |
-|---|---|---|---|
-| Landing | `/` | ✅ | Dashboard FCI + carburants |
-| À propos | `/about` | ✅ | Présentation du projet |
-| Méthodologie | `/methodology` | ✅ | Transparence FCI |
-| Disclaimer | `/disclaimer` | ✅ | Avertissement légal |
+| Page         | URL            | Index | Description SEO            |
+| ------------ | -------------- | ----- | -------------------------- |
+| Landing      | `/`            | ✅    | Dashboard FCI + carburants |
+| À propos     | `/about`       | ✅    | Présentation du projet     |
+| Méthodologie | `/methodology` | ✅    | Transparence FCI           |
+| Disclaimer   | `/disclaimer`  | ✅    | Avertissement légal        |
 
 ### 1.2 Metadata (Next.js `generateMetadata`)
 
 Chaque page définit ses propres `title`, `description`, et OG tags via l'export `metadata` de Next.js App Router.
 
 Structure dans `layout.tsx` :
+
 ```typescript
 export const metadata: Metadata = {
   title: {
@@ -33,10 +34,12 @@ export const metadata: Metadata = {
 ### 1.3 Robots.txt
 
 Toutes les pages publiques sont indexables. Bloquer :
+
 - `/api/*` (endpoints backend, pas de contenu pour les crawlers)
 - `/_next/*` (assets Next.js)
 
 Créer `apps/web/public/robots.txt` :
+
 ```
 User-agent: *
 Allow: /
@@ -63,6 +66,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 ### 1.5 Structured Data (JSON-LD)
 
 Ajouter sur la landing page :
+
 ```json
 {
   "@context": "https://schema.org",
@@ -87,6 +91,7 @@ Ajouter sur la landing page :
 **MVP** : Une image OG statique `public/og-image.png` (1200×630px).
 
 Design requis :
+
 - Fond sombre (`surface-950`)
 - Logo + titre en gros
 - Score FCI du jour (si dynamique) ou valeur fixe "74"
@@ -129,6 +134,7 @@ export async function GET(request: Request) {
 ```
 
 Utiliser dans `generateMetadata` de la landing :
+
 ```typescript
 openGraph: {
   images: [`/api/og?score=${fciScore}&label=${encodeURIComponent(fciLabel)}`]
@@ -138,6 +144,7 @@ openGraph: {
 ### 2.3 OG par section (v2)
 
 Chaque indicateur aurait sa propre OG image :
+
 - `/api/og/fuel?price=1.879&trend=up`
 - `/api/og/fci?score=74`
 
@@ -148,6 +155,7 @@ Chaque indicateur aurait sa propre OG image :
 ### 3.1 Screenshots "viral-ready"
 
 Chaque module est conçu pour être screenshot-able :
+
 - Dimensions adaptées aux stories (ratio 9:16 ou 4:5)
 - Contraste fort, lisible en petite taille
 - Inclure le nom du site dans le module (watermark discret)
@@ -169,6 +177,7 @@ async function shareModule(title: string, text: string, url: string) {
 ```
 
 Texte de partage suggéré :
+
 ```
 "FCI aujourd'hui : 74/100 — On est cooked.
 Prix carburant en hausse de 3,2% en 30 jours.
@@ -178,6 +187,7 @@ france-de-macron.fr"
 ### 3.3 Vote "cooked" comme mème
 
 Le ratio cooked/uncooked est partageable comme "poll" :
+
 - `"74% des visiteurs pensent qu'on est cooked. Et toi ?"`
 - URL avec pre-rempli → CTA vote
 
@@ -187,12 +197,12 @@ Le ratio cooked/uncooked est partageable comme "poll" :
 
 ### 4.1 Objectifs (Google PageSpeed)
 
-| Métrique | Objectif | Actuel (à mesurer) |
-|---|---|---|
-| LCP (Largest Contentful Paint) | < 2.5s | — |
-| CLS (Cumulative Layout Shift) | < 0.1 | — |
-| FID / INP | < 100ms | — |
-| Lighthouse Score | > 90 | — |
+| Métrique                       | Objectif | Actuel (à mesurer) |
+| ------------------------------ | -------- | ------------------ |
+| LCP (Largest Contentful Paint) | < 2.5s   | —                  |
+| CLS (Cumulative Layout Shift)  | < 0.1    | —                  |
+| FID / INP                      | < 100ms  | —                  |
+| Lighthouse Score               | > 90     | —                  |
 
 ### 4.2 Mesures techniques
 

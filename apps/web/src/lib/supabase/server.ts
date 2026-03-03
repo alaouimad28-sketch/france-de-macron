@@ -65,21 +65,19 @@ export function createServiceClient() {
 
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
   if (!serviceKey) {
-    throw new Error("[Config] SUPABASE_SERVICE_ROLE_KEY manquant dans les variables d'environnement.")
+    throw new Error(
+      "[Config] SUPABASE_SERVICE_ROLE_KEY manquant dans les variables d'environnement.",
+    )
   }
 
-  return createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    serviceKey,
-    {
-      cookies: {
-        getAll: () => [],
-        setAll: () => {},
-      },
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
+  return createServerClient<Database>(process.env.NEXT_PUBLIC_SUPABASE_URL!, serviceKey, {
+    cookies: {
+      getAll: () => [],
+      setAll: () => {},
     },
-  )
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  })
 }

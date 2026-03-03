@@ -14,15 +14,13 @@ export default async function HomePage() {
       {/* Section hero FCI */}
       <section id="hero" aria-label="French Cooked Index">
         {/* TODO: <FCIHero score={fciData} /> */}
-        <p className="text-center text-muted-foreground py-20">
-          [FCI Hero — à implémenter]
-        </p>
+        <p className="text-muted-foreground py-20 text-center">[FCI Hero — à implémenter]</p>
       </section>
 
       {/* Section carburants */}
       <section id="carburants" aria-label="Prix des carburants">
         {/* TODO: <FuelSection data={fuelData} events={events} /> */}
-        <p className="text-center text-muted-foreground py-20">
+        <p className="text-muted-foreground py-20 text-center">
           [Module carburants J-30 — à implémenter]
         </p>
       </section>
@@ -30,17 +28,13 @@ export default async function HomePage() {
       {/* Section vote */}
       <section id="vote" aria-label="Vote cooked / uncooked">
         {/* TODO: <CookedVote scope="global" /> */}
-        <p className="text-center text-muted-foreground py-20">
-          [Module vote — à implémenter]
-        </p>
+        <p className="text-muted-foreground py-20 text-center">[Module vote — à implémenter]</p>
       </section>
 
       {/* Section newsletter */}
       <section id="newsletter" aria-label="Newsletter">
         {/* TODO: <NewsletterCapture /> */}
-        <p className="text-center text-muted-foreground py-20">
-          [CTA newsletter — à implémenter]
-        </p>
+        <p className="text-muted-foreground py-20 text-center">[CTA newsletter — à implémenter]</p>
       </section>
     </div>
   )

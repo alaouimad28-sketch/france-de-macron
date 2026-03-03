@@ -8,18 +8,18 @@
 
 **Objectif** : Lancer et valider le concept, capturer les premiers emails.
 
-| Fonctionnalité | Statut |
-|---|---|
-| Repo scaffold + docs | ✅ |
-| Schema Supabase + migrations | ✅ |
-| Pipeline carburants J-30 | 🔲 À implémenter |
-| FCI v1 (carburants uniquement) | 🔲 À implémenter |
-| Landing page (FCI hero + carburants) | 🔲 À implémenter |
-| Vote cooked/uncooked | 🔲 À implémenter |
-| CTA Newsletter | 🔲 À implémenter |
+| Fonctionnalité                         | Statut           |
+| -------------------------------------- | ---------------- |
+| Repo scaffold + docs                   | ✅               |
+| Schema Supabase + migrations           | ✅               |
+| Pipeline carburants J-30               | 🔲 À implémenter |
+| FCI v1 (carburants uniquement)         | 🔲 À implémenter |
+| Landing page (FCI hero + carburants)   | 🔲 À implémenter |
+| Vote cooked/uncooked                   | 🔲 À implémenter |
+| CTA Newsletter                         | 🔲 À implémenter |
 | Pages About / Methodology / Disclaimer | 🔲 À implémenter |
-| Déploiement Vercel | 🔲 À faire |
-| Vercel Cron fuel-daily | 🔲 À configurer |
+| Déploiement Vercel                     | 🔲 À faire       |
+| Vercel Cron fuel-daily                 | 🔲 À configurer  |
 
 ---
 
@@ -53,14 +53,14 @@
 
 ### Nouveaux indicateurs
 
-| Indicateur | Source | Fréquence |
-|---|---|---|
-| Inflation alimentaire | INSEE (IPC) | Mensuel |
+| Indicateur                     | Source         | Fréquence   |
+| ------------------------------ | -------------- | ----------- |
+| Inflation alimentaire          | INSEE (IPC)    | Mensuel     |
 | Loyers (Paris + autres villes) | CLAMEUR / OLAP | Trimestriel |
-| Salaires réels (vs inflation) | DARES | Trimestriel |
-| Chômage jeunes (15-24 ans) | Eurostat | Trimestriel |
-| Précarité étudiante | CREDOC / OVE | Annuel |
-| Dette publique / PIB | Eurostat | Trimestriel |
+| Salaires réels (vs inflation)  | DARES          | Trimestriel |
+| Chômage jeunes (15-24 ans)     | Eurostat       | Trimestriel |
+| Précarité étudiante            | CREDOC / OVE   | Annuel      |
+| Dette publique / PIB           | Eurostat       | Trimestriel |
 
 ### FCI v2
 
@@ -106,10 +106,10 @@
 
 ## Décisions techniques futures
 
-| Décision | Option A | Option B | Trigger |
-|---|---|---|---|
-| Analytics | PostHog | Plausible | v1.1 |
-| Charts avancés | Recharts (actuel) | ECharts | Si besoin de zoom/brush |
-| Email service | Résend | Brevo | v1.1 |
-| Notifications push | PWA + Web Push | Non | v2 |
-| Rate limiting avancé | Upstash Redis | Vercel KV | Si abus détectés |
+| Décision             | Option A          | Option B  | Trigger                 |
+| -------------------- | ----------------- | --------- | ----------------------- |
+| Analytics            | PostHog           | Plausible | v1.1                    |
+| Charts avancés       | Recharts (actuel) | ECharts   | Si besoin de zoom/brush |
+| Email service        | Résend            | Brevo     | v1.1                    |
+| Notifications push   | PWA + Web Push    | Non       | v2                      |
+| Rate limiting avancé | Upstash Redis     | Vercel KV | Si abus détectés        |

@@ -3,12 +3,12 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Méthodologie',
   description:
-    "Comment on calcule le French Cooked Index™ ? Méthodologie transparente, sources, limites et formules.",
+    'Comment on calcule le French Cooked Index™ ? Méthodologie transparente, sources, limites et formules.',
 }
 
 export default function MethodologyPage() {
   return (
-    <article className="prose prose-invert max-w-3xl mx-auto px-4 py-16">
+    <article className="prose prose-invert mx-auto max-w-3xl px-4 py-16">
       <h1>Méthodologie</h1>
 
       <p>
@@ -20,16 +20,16 @@ export default function MethodologyPage() {
 
       <h3>Principe général</h3>
       <p>
-        Le FCI est un score composite de 0 à 100 qui agrège plusieurs indicateurs économiques.
-        Plus le score est élevé, plus "on est cooked". La formule est transparente et documentée.
+        Le FCI est un score composite de 0 à 100 qui agrège plusieurs indicateurs économiques. Plus
+        le score est élevé, plus "on est cooked". La formule est transparente et documentée.
       </p>
 
       <h3>Composantes MVP (v1)</h3>
       <p>En v1, le FCI est calculé uniquement sur les données carburants :</p>
       <ul>
         <li>
-          <strong>Stress carburant (100% du poids en v1)</strong> : combinaison du niveau absolu
-          du prix moyen Gazole + SP95-E10 et de leur variation sur 30 jours, normalisés sur une
+          <strong>Stress carburant (100% du poids en v1)</strong> : combinaison du niveau absolu du
+          prix moyen Gazole + SP95-E10 et de leur variation sur 30 jours, normalisés sur une
           baseline 2010–2019.
         </li>
       </ul>

@@ -13,12 +13,14 @@ export function cn(...inputs: ClassValue[]) {
  * ex: formatFuelPrice(1.879) → "1,879 €/L"
  */
 export function formatFuelPrice(price: number): string {
-  return new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: 3,
-    maximumFractionDigits: 3,
-  }).format(price) + '/L'
+  return (
+    new Intl.NumberFormat('fr-FR', {
+      style: 'currency',
+      currency: 'EUR',
+      minimumFractionDigits: 3,
+      maximumFractionDigits: 3,
+    }).format(price) + '/L'
+  )
 }
 
 /**

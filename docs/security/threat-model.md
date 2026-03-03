@@ -26,15 +26,15 @@ France de Macron est un site public **sans authentification utilisateur** en MVP
 
 **Mitigations** :
 
-| Couche | Mesure |
-|---|---|
-| HTML | Champ `website` caché (honeypot) — visible aux bots, invisible aux humains |
-| JavaScript | Vérification côté client que le honeypot est vide (ne pas faire confiance seul) |
-| Serveur (Next.js) | Vérification honeypot côté serveur (seule vérification fiable) |
-| Serveur | Validation du format email (regex + MX check en v2) |
-| DB | Contrainte UNIQUE sur l'email |
-| DB | RLS : aucun INSERT public possible (service role only) |
-| App | Rate limit par IP : max 3 inscriptions / IP / heure (via Vercel Edge ou Upstash Redis v2) |
+| Couche            | Mesure                                                                                    |
+| ----------------- | ----------------------------------------------------------------------------------------- |
+| HTML              | Champ `website` caché (honeypot) — visible aux bots, invisible aux humains                |
+| JavaScript        | Vérification côté client que le honeypot est vide (ne pas faire confiance seul)           |
+| Serveur (Next.js) | Vérification honeypot côté serveur (seule vérification fiable)                            |
+| Serveur           | Validation du format email (regex + MX check en v2)                                       |
+| DB                | Contrainte UNIQUE sur l'email                                                             |
+| DB                | RLS : aucun INSERT public possible (service role only)                                    |
+| App               | Rate limit par IP : max 3 inscriptions / IP / heure (via Vercel Edge ou Upstash Redis v2) |
 
 **Pourquoi pas de CAPTCHA ?** UX : les CAPTCHA dégradent fortement la conversion sur mobile. Le honeypot + rate limit est suffisant pour le MVP. Un CAPTCHA peut être ajouté si des abus sont détectés.
 
@@ -46,13 +46,13 @@ France de Macron est un site public **sans authentification utilisateur** en MVP
 
 **Mitigations** :
 
-| Couche | Mesure |
-|---|---|
-| DB | Index unique : `(scope, day, fingerprint_hash)` → 1 vote/scope/jour/empreinte |
-| Serveur | Calcul de l'empreinte côté serveur (non spoofable) |
-| Serveur | Vérification que le fingerprint_hash correspond au User-Agent + IP hash |
-| App | Rate limit : max 10 votes / IP / heure |
-| Client | Stockage `localStorage` du vote pour désactiver le bouton (UX, pas sécurité) |
+| Couche  | Mesure                                                                        |
+| ------- | ----------------------------------------------------------------------------- |
+| DB      | Index unique : `(scope, day, fingerprint_hash)` → 1 vote/scope/jour/empreinte |
+| Serveur | Calcul de l'empreinte côté serveur (non spoofable)                            |
+| Serveur | Vérification que le fingerprint_hash correspond au User-Agent + IP hash       |
+| App     | Rate limit : max 10 votes / IP / heure                                        |
+| Client  | Stockage `localStorage` du vote pour désactiver le bouton (UX, pas sécurité)  |
 
 **Limites** : Un attaquant avec accès à de nombreuses IPs distinctes (VPN, botnet) peut contourner ces mesures. Le système de vote est affiché comme indicatif et non scientifique. C'est acceptable pour le MVP.
 
@@ -61,6 +61,7 @@ France de Macron est un site public **sans authentification utilisateur** en MVP
 **Menace** : Un attaquant injecte du SQL malicieux via les paramètres de l'API.
 
 **Mitigations** :
+
 - Utilisation exclusive du SDK Supabase (requêtes paramétrées, pas de SQL brut côté client)
 - Validation des inputs avec des schémas stricts (Zod en v1.1)
 - Pas d'interpolation de chaînes dans les requêtes
@@ -73,13 +74,13 @@ France de Macron est un site public **sans authentification utilisateur** en MVP
 
 **Mitigations** :
 
-| Règle | Détail |
-|---|---|
-| Variable d'env | Pas de préfixe `NEXT_PUBLIC_` → Next.js ne l'envoie jamais au client |
-| Code | Fonction `createServiceClient()` lève une erreur si `typeof window !== 'undefined'` |
-| Git | `.env.local` dans `.gitignore` (jamais commité) |
-| CI/CD | Secrets Vercel uniquement, pas dans le code |
-| Logs | La clé n'est jamais loggée (vérifier les Cloud Functions logs) |
+| Règle          | Détail                                                                              |
+| -------------- | ----------------------------------------------------------------------------------- |
+| Variable d'env | Pas de préfixe `NEXT_PUBLIC_` → Next.js ne l'envoie jamais au client                |
+| Code           | Fonction `createServiceClient()` lève une erreur si `typeof window !== 'undefined'` |
+| Git            | `.env.local` dans `.gitignore` (jamais commité)                                     |
+| CI/CD          | Secrets Vercel uniquement, pas dans le code                                         |
+| Logs           | La clé n'est jamais loggée (vérifier les Cloud Functions logs)                      |
 
 ### 2.5 CSRF (Cross-Site Request Forgery)
 
@@ -88,6 +89,7 @@ France de Macron est un site public **sans authentification utilisateur** en MVP
 **Contexte** : Pas d'auth → pas de sessions → risque CSRF très limité en MVP.
 
 **Mitigations** :
+
 - Les Route Handlers vérifient le `Content-Type: application/json`
 - En v2 (si auth) : tokens CSRF via Next.js Server Actions (protection native)
 
@@ -98,6 +100,7 @@ France de Macron est un site public **sans authentification utilisateur** en MVP
 **Contexte** : MVP — aucune donnée utilisateur affichée dans le HTML (pas de commentaires, pas de profils).
 
 **Mitigations** :
+
 - React échappe automatiquement les données JSX
 - Les données Supabase (events, labels) sont saisies manuellement (pas de saisie libre utilisateur)
 - En v2 : si contenu utilisateur affiché, utiliser DOMPurify
@@ -115,6 +118,7 @@ En production : renforcer en remplaçant `unsafe-inline` et `unsafe-eval` par de
 **Impact** : Surconsommation des ressources, potentiellement des quotas API carburant.
 
 **Mitigation** :
+
 ```typescript
 // Vérification du secret Vercel Cron
 const authHeader = request.headers.get('authorization')
@@ -130,6 +134,7 @@ if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
 **Menace** : L'API officielle (roulez-eco.fr) retourne des données corrompues ou malveillantes.
 
 **Mitigations** :
+
 - Validation des données parsées (prix ∈ [0.5, 5.0] €/L)
 - Comparaison avec J-1 : si variation > 50%, log une alerte
 - Source officielle et en licence ouverte — risque faible mais non nul
@@ -141,12 +146,12 @@ if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
 
 ### Inventaire des secrets
 
-| Secret | Usage | Exposition | Stockage |
-|---|---|---|---|
-| `SUPABASE_SERVICE_ROLE_KEY` | Écritures DB (server only) | Jamais client | Vercel Secrets |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Lectures DB (client safe) | Client OK (RLS en place) | .env.local + Vercel |
-| `CRON_SECRET` | Authentifier le cron | Jamais client | Vercel Secrets |
-| `NEXT_PUBLIC_SUPABASE_URL` | URL Supabase | Client OK | .env.local + Vercel |
+| Secret                          | Usage                      | Exposition               | Stockage            |
+| ------------------------------- | -------------------------- | ------------------------ | ------------------- |
+| `SUPABASE_SERVICE_ROLE_KEY`     | Écritures DB (server only) | Jamais client            | Vercel Secrets      |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Lectures DB (client safe)  | Client OK (RLS en place) | .env.local + Vercel |
+| `CRON_SECRET`                   | Authentifier le cron       | Jamais client            | Vercel Secrets      |
+| `NEXT_PUBLIC_SUPABASE_URL`      | URL Supabase               | Client OK                | .env.local + Vercel |
 
 ### Règles absolues
 
@@ -178,10 +183,11 @@ votes             | ✅ oui        | ❌ non        | Service role only
 ### Défense en profondeur
 
 La stratégie est volontairement redondante :
+
 1. **Couche réseau** : HTTPS forcé
 2. **Couche application** : validation des inputs dans les Route Handlers
 3. **Couche RLS** : politiques Supabase qui bloquent l'accès non autorisé
-4. **Couche clé** : service role key non exposée (jamais NEXT_PUBLIC_)
+4. **Couche clé** : service role key non exposée (jamais NEXT*PUBLIC*)
 
 Si une couche est contournée, les autres tiennent.
 

@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     template: '%s | France de Macron',
   },
   description:
-    "Dashboard satirique & data-driven. À quel point on est cooked ? Le French Cooked Index™ répond avec des vraies données.",
+    'Dashboard satirique & data-driven. À quel point on est cooked ? Le French Cooked Index™ répond avec des vraies données.',
   keywords: ['france', 'économie', 'carburant', 'inflation', 'gen z', 'cooked', 'données'],
   authors: [{ name: 'France de Macron' }],
   creator: 'France de Macron',
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     url: '/',
     siteName: 'France de Macron',
     title: 'France de Macron — French Cooked Index™',
-    description: "À quel point on est cooked ? Le dashboard économique satirique pour Gen Z.",
+    description: 'À quel point on est cooked ? Le dashboard économique satirique pour Gen Z.',
     images: [
       {
         url: '/og-image.png', // TODO: générer via @vercel/og
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'France de Macron — French Cooked Index™',
-    description: "À quel point on est cooked ? Le dashboard économique satirique pour Gen Z.",
+    description: 'À quel point on est cooked ? Le dashboard économique satirique pour Gen Z.',
     images: ['/og-image.png'],
   },
   robots: {
@@ -75,11 +75,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="fr"

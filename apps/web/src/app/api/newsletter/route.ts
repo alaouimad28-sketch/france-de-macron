@@ -20,7 +20,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json() as Record<string, unknown>
+    const body = (await request.json()) as Record<string, unknown>
 
     // Vérification honeypot (anti-bot)
     if (body['website'] !== '' && body['website'] !== undefined) {
@@ -34,10 +34,7 @@ export async function POST(request: NextRequest) {
     // const supabase = createServiceClient()
     // await supabase.from('newsletter_signups').insert({ email: parsed.data.email, ... })
 
-    return NextResponse.json(
-      { success: false, error: 'Not implemented yet' },
-      { status: 501 },
-    )
+    return NextResponse.json({ success: false, error: 'Not implemented yet' }, { status: 501 })
   } catch {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }

@@ -43,17 +43,17 @@ Les données J-1 sont en général disponibles dès 01:00 UTC le lendemain.
 ```typescript
 // Pseudo-code du calcul (voir docs/data/methodology.md pour la formule complète)
 
-const BASELINE_GAZOLE = 1.38   // Prix moyen Gazole 2010–2019 (€/L)
-const BASELINE_E10    = 1.45   // Prix moyen E10 2010–2019 (€/L)
+const BASELINE_GAZOLE = 1.38 // Prix moyen Gazole 2010–2019 (€/L)
+const BASELINE_E10 = 1.45 // Prix moyen E10 2010–2019 (€/L)
 
 // 1. Niveau absolu : écart par rapport à la baseline
-const gazoleLevelScore = normalize(avgGazole - BASELINE_GAZOLE, 0, 0.80, 0, 100)
-const e10LevelScore    = normalize(avgE10 - BASELINE_E10, 0, 0.80, 0, 100)
+const gazoleLevelScore = normalize(avgGazole - BASELINE_GAZOLE, 0, 0.8, 0, 100)
+const e10LevelScore = normalize(avgE10 - BASELINE_E10, 0, 0.8, 0, 100)
 
 // 2. Variation 30j : variation relative
 const gazolevVar30 = (avgGazole - avgGazole30jAgo) / avgGazole30jAgo
-const e10Var30     = (avgE10 - avgE10_30jAgo) / avgE10_30jAgo
-const variationScore = normalize(Math.max(gazolevVar30, e10Var30), -0.10, 0.20, 0, 100)
+const e10Var30 = (avgE10 - avgE10_30jAgo) / avgE10_30jAgo
+const variationScore = normalize(Math.max(gazolevVar30, e10Var30), -0.1, 0.2, 0, 100)
 
 // 3. Score carburant (pondération interne)
 const fuelScore = 0.6 * ((gazoleLevelScore + e10LevelScore) / 2) + 0.4 * variationScore
@@ -75,17 +75,18 @@ CRON_SECRET=             # pour sécuriser le endpoint Vercel Cron
 
 ## Gestion des erreurs et alertes
 
-| Scénario | Action |
-|---|---|
-| Données J-1 indisponibles à 02:30 | Retry à 06:00 via second cron |
-| Données J-1 toujours indisponibles | Conserver J-2, logger l'absence |
-| Supabase indisponible | Retry + alerte (webhook v2) |
+| Scénario                           | Action                                           |
+| ---------------------------------- | ------------------------------------------------ |
+| Données J-1 indisponibles à 02:30  | Retry à 06:00 via second cron                    |
+| Données J-1 toujours indisponibles | Conserver J-2, logger l'absence                  |
+| Supabase indisponible              | Retry + alerte (webhook v2)                      |
 | FCI incalculable (< 7j de données) | Score null, page affiche "Données insuffisantes" |
 
-## TODO (implémentation)
+## Implémentation
 
-- [ ] Réutiliser les fonctions de fuel-backfill-j30 (extraire en module partagé)
-- [ ] Implémenter le calcul FCI v1
-- [ ] Implémenter le retry avec backoff
+- [x] Réutilisation du module partagé `scripts/shared/` (downloadDayXml, parseDayXmlToAggregates, upsertFuelAggregates)
+- [x] Replay manuel avec `FUEL_DATE=YYYYMMDD`
+- [x] Retry avec backoff (dans le module partagé)
+- [ ] Implémenter le calcul FCI v1 (calcAndUpsertFCI)
 - [ ] Ajouter des métriques (durée, sample_count moyen)
 - [ ] Tests unitaires sur le calcul FCI

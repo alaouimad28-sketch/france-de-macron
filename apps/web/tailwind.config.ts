@@ -74,9 +74,9 @@ const config: Config = {
           500: '#6b7594',
           600: '#505b7a',
           700: '#3e4861',
-          800: '#2d3349',  // Fond carte
-          900: '#1a1e2e',  // Fond principal dark
-          950: '#0e1018',  // Fond très sombre
+          800: '#2d3349', // Fond carte
+          900: '#1a1e2e', // Fond principal dark
+          950: '#0e1018', // Fond très sombre
         },
         // Aliases sémantiques (utilisés dans les composants)
         background: 'hsl(var(--background))',
