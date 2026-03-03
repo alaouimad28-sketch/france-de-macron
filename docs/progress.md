@@ -22,16 +22,16 @@
 
 ### Infrastructure repo
 
-- [x] Monorepo pnpm (apps/web + scripts)
+- [x] Monorepo pnpm ≥ 10 (apps/web + scripts)
 - [x] TypeScript strict configuré (tsconfig.json)
-- [x] ESLint + Prettier configurés
+- [x] ESLint 9 (flat config) + Prettier configurés
 - [x] .gitignore (secrets, .next, node_modules)
 - [x] .env.example avec toutes les variables documentées
 - [x] Conventional Commits documentés dans README
 
 ### Next.js app scaffold
 
-- [x] App Router Next.js 15 initialisé (`apps/web/`)
+- [x] App Router Next.js 16 initialisé (`apps/web/`)
 - [x] Tailwind CSS configuré (design system "Cooked Authority" complet)
 - [x] shadcn/ui configuré (`components.json`)
 - [x] Globals CSS (CSS vars, dark mode, grain, utilitaires)
@@ -39,6 +39,7 @@
 - [x] Pages squelette : Home, About, Methodology, Disclaimer
 - [x] Route Handlers squelette : `/api/cron/fuel-daily`, `/api/newsletter`, `/api/votes`
 - [x] `vercel.json` avec cron 02:30 UTC
+- [x] ESLint 9 flat config (`eslint.config.mjs`), lint via `pnpm lint` (ESLint CLI)
 - [ ] Installer les fonts (Space Grotesk + Inter + JetBrains Mono via `next/font/google`)
 
 ### Supabase & DB
@@ -53,7 +54,7 @@
 - [x] Migration 0006 : RLS policies complètes (lecture publique / NO insert anon)
 - [x] `database.types.ts` — types TypeScript manuels (à régénérer après migrations)
 - [ ] Appliquer les migrations sur le projet Supabase (local + prod)
-- [ ] Régénérer `database.types.ts` depuis le vrai schéma : `supabase gen types typescript --local`
+- [ ] Régénérer `database.types.ts` depuis le vrai schéma : `pnpm run db:types`
 - [ ] Ajouter index de performance sur `votes(scope, vote)` pour les agrégats fréquents
 
 ### Lib & types
@@ -66,6 +67,7 @@
 ### Documentation
 
 - [x] `README.md` complet
+- [x] `docs/INDEX.md` — index de toute la documentation
 - [x] `docs/vision.md`
 - [x] `docs/product/PRD.md`
 - [x] `docs/product/roadmap.md`
@@ -295,7 +297,7 @@
   - [ ] Configurer toutes les variables d'env dans Vercel Secrets
   - [ ] Activer le cron Vercel (`vercel.json`)
 - [ ] Déployer Supabase en production
-  - [ ] Appliquer les migrations : `supabase db push --linked`
+  - [ ] Appliquer les migrations : `pnpm exec supabase db push --linked` (ou `pnpm run db:push` en local)
   - [ ] Vérifier RLS activé sur toutes les tables (dashboard Supabase)
   - [ ] Configurer les domaines autorisés dans Supabase Auth (CORS)
 - [ ] Lancer le backfill initial en production : `pnpm fuel:backfill`
@@ -371,7 +373,8 @@
 ### Mars 2025 — Session initiale
 
 - Scaffold complet livré (Phase 0 entièrement ✅)
-- Stack confirmée : Next.js 15 + TypeScript strict + pnpm + Supabase + Recharts
+- Stack confirmée : Next.js 16 + TypeScript strict + pnpm ≥ 10 + Supabase + Recharts
+- ESLint 9 flat config (eslint.config.mjs), Supabase CLI v2 en devDependencies
 - Design system "Cooked Authority" défini dans `tailwind.config.ts`
 - Décision : dark-only en MVP (pas de toggle mode clair)
 - Décision : Vercel Cron (pas GitHub Actions) pour le job quotidien

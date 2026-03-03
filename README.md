@@ -16,6 +16,7 @@ Landing page Gen Z, mobile-first, qui quantifie l'état économique de la France
 - [Pipeline de données](#pipeline-de-données)
 - [Scripts](#scripts)
 - [Structure du projet](#structure-du-projet)
+- [Documentation](#documentation)
 - [Contribuer](#contribuer)
 
 ---
@@ -30,14 +31,14 @@ France de Macron est un outil d'information satirique et factuel, pas un manifes
 
 | Couche | Choix |
 |---|---|
-| Framework | Next.js 15 (App Router) + TypeScript strict |
+| Framework | Next.js 16 (App Router) + TypeScript strict |
 | Styles | Tailwind CSS + shadcn/ui |
 | Data viz | Recharts (extensible → ECharts v2) |
 | Backend / DB | Supabase (Postgres + RLS) |
 | Auth | Aucune (MVP sans compte utilisateur) |
 | Hosting | Vercel (cible production) |
-| Gestionnaire de paquets | pnpm (workspace monorepo) |
-| Linting / Format | ESLint + Prettier |
+| Gestionnaire de paquets | pnpm ≥ 10 (workspace monorepo) |
+| Linting / Format | ESLint 9 (flat config) + Prettier |
 | Commits | Conventional Commits |
 
 ---
@@ -47,8 +48,8 @@ France de Macron est un outil d'information satirique et factuel, pas un manifes
 ### Prérequis
 
 - Node.js ≥ 20
-- pnpm ≥ 9
-- Supabase CLI (`npm i -g supabase`)
+- pnpm ≥ 10
+- Supabase CLI (fourni via le projet : `pnpm exec supabase` ou `pnpm dlx supabase` si le binaire local ne fonctionne pas)
 - Un projet Supabase (local ou cloud)
 
 ### Installation
@@ -66,12 +67,12 @@ cp .env.example apps/web/.env.local
 # → Remplir les valeurs (voir section ci-dessous)
 
 # 4. Initialiser Supabase en local (optionnel)
-supabase start
+pnpm exec supabase start
 
 # 5. Appliquer les migrations
-supabase db push
+pnpm run db:push
 # ou en local :
-supabase migration up
+pnpm exec supabase migration up
 
 # 6. Lancer le serveur de développement
 pnpm dev
@@ -109,10 +110,10 @@ Les migrations SQL se trouvent dans `supabase/migrations/`. Elles sont **idempot
 
 ```bash
 # Appliquer toutes les migrations
-supabase db push
+pnpm run db:push
 
 # Générer les types TypeScript depuis le schéma
-supabase gen types typescript --local > apps/web/src/lib/supabase/database.types.ts
+pnpm run db:types
 ```
 
 ### Tables principales
@@ -169,6 +170,16 @@ Voir [scripts/README.md](scripts/README.md).
 
 ---
 
+## Documentation
+
+Toute la documentation détaillée est dans le dossier `docs/`. Un **index** liste chaque document et son rôle :
+
+- **[docs/INDEX.md](docs/INDEX.md)** — Index de la documentation (où tout se trouve)
+
+Voir aussi : [docs/vision.md](docs/vision.md), [docs/data/pipeline.md](docs/data/pipeline.md), [docs/progress.md](docs/progress.md).
+
+---
+
 ## Structure du projet
 
 ```
@@ -186,7 +197,10 @@ france-de-macron/
 │   └── migrations/             # Migrations SQL versionnées
 ├── scripts/                    # Jobs d'ingestion de données
 ├── docs/                       # Documentation complète
+│   ├── INDEX.md                 # Index de la doc (point d'entrée)
 │   ├── vision.md
+│   ├── kickoff.md
+│   ├── progress.md
 │   ├── product/
 │   ├── design/
 │   ├── data/

@@ -237,13 +237,15 @@ Chaque job log :
 ### Développement local
 
 ```bash
-# Option 1 : lancer directement
-pnpm fuel:backfill
-pnpm fuel:daily
+# Option 1 : lancer directement (depuis la racine du repo)
+pnpm run fuel:backfill
+pnpm run fuel:daily
 
 # Option 2 : simuler le cron via curl
 curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:3040/api/cron/fuel-daily
 ```
+
+Migrations : `pnpm run db:push` (racine). Supabase CLI : `pnpm exec supabase` (ou `pnpm dlx supabase` si le binaire local ne fonctionne pas).
 
 ### Production (Vercel)
 

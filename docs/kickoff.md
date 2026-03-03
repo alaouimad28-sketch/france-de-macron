@@ -12,29 +12,30 @@ Tu es un senior full-stack engineer TypeScript travaillant sur "France de Macron
 Avant de faire quoi que ce soit, lis ces fichiers dans cet ordre :
 
 1. README.md                        — setup, stack, commandes
-2. docs/progress.md                 — état actuel du projet (todo / done)
-3. docs/vision.md                   — ce qu'on construit et pourquoi
-4. docs/product/PRD.md              — scope MVP verrouillé, specs fonctionnelles
-5. docs/data/sources.md             — source officielle carburants, structure XML, contraintes de parsing
-6. docs/data/pipeline.md            — architecture du pipeline, algorithmes, idempotence
-7. docs/data/methodology.md         — formule FCI v1 complète
-8. docs/design/design-system.md    — palette "Cooked Authority", typo, composants, micro-animations
-9. docs/security/threat-model.md   — règles de sécurité absolues (RLS, service role, honeypot)
+2. docs/INDEX.md                    — index de toute la documentation
+3. docs/progress.md                 — état actuel du projet (todo / done)
+4. docs/vision.md                   — ce qu'on construit et pourquoi
+5. docs/product/PRD.md              — scope MVP verrouillé, specs fonctionnelles
+6. docs/data/sources.md             — source officielle carburants, structure XML, contraintes de parsing
+7. docs/data/pipeline.md            — architecture du pipeline, algorithmes, idempotence
+8. docs/data/methodology.md         — formule FCI v1 complète
+9. docs/design/design-system.md     — palette "Cooked Authority", typo, composants, micro-animations
+10. docs/security/threat-model.md  — règles de sécurité absolues (RLS, service role, honeypot)
 
 Ensuite lis ces fichiers de code :
 
-10. apps/web/src/types/index.ts              — types métier (FuelCode, FCIDaily, VoteCounts…)
-11. apps/web/src/lib/supabase/database.types.ts  — types générés Supabase
-12. apps/web/src/lib/supabase/server.ts      — createReadClient() vs createServiceClient()
-13. apps/web/src/lib/utils.ts               — helpers (formatFuelPrice, getFCILabel, hashString)
-14. apps/web/src/app/layout.tsx             — metadata OG, structure HTML
-15. apps/web/tailwind.config.ts             — design tokens complets
+11. apps/web/src/types/index.ts                 — types métier (FuelCode, FCIDaily, VoteCounts…)
+12. apps/web/src/lib/supabase/database.types.ts — types générés Supabase
+13. apps/web/src/lib/supabase/server.ts         — createReadClient() vs createServiceClient()
+14. apps/web/src/lib/utils.ts                  — helpers (formatFuelPrice, getFCILabel, hashString)
+15. apps/web/src/app/layout.tsx                — metadata OG, structure HTML
+16. apps/web/tailwind.config.ts                — design tokens complets
 
 Et les migrations pour comprendre le schéma DB :
 
-16. supabase/migrations/20240101000001_init_fuel_daily_agg.sql
-17. supabase/migrations/20240101000004_init_votes.sql
-18. supabase/migrations/20240101000006_rls_policies.sql
+17. supabase/migrations/20240101000001_init_fuel_daily_agg.sql
+18. supabase/migrations/20240101000004_init_votes.sql
+19. supabase/migrations/20240101000006_rls_policies.sql
 
 Vérifie ensuite docs/progress.md pour voir ce qui est déjà fait et prends la prochaine tâche "À faire" en haut de la liste.
 
@@ -48,7 +49,8 @@ RÈGLES ABSOLUES (ne jamais violer) :
 - Mobile-first : tester à 390px avant 1440px
 
 CONTEXTE TECHNIQUE :
-- Stack : Next.js 15 App Router + TypeScript strict + pnpm + Supabase + shadcn/ui + Recharts
+- Stack : Next.js 16 App Router + TypeScript strict + pnpm ≥ 10 + Supabase + shadcn/ui + Recharts
+- Lint : ESLint 9 (flat config dans apps/web/eslint.config.mjs), pas de "next lint" (supprimé en Next 16)
 - Gestionnaire de paquets : pnpm (jamais npm ou yarn)
 - CSS : Tailwind uniquement (jamais de style inline sauf pour des valeurs dynamiques CSS custom properties)
 - Composants : Server Components par défaut, 'use client' uniquement si interaction nécessaire
@@ -87,10 +89,10 @@ cp .env.example apps/web/.env.local
 # → Remplir NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY
 
 # 3. Lancer Supabase en local
-supabase start
+pnpm exec supabase start
 
 # 4. Appliquer les migrations
-supabase db push
+pnpm run db:push
 
 # 5. Lancer le dev
 pnpm dev

@@ -28,10 +28,16 @@ export async function createReadClient() {
         getAll() {
           return cookieStore.getAll()
         },
-        setAll(cookiesToSet) {
+        setAll(
+          cookiesToSet: Array<{
+            name: string
+            value: string
+            options?: Parameters<Awaited<ReturnType<typeof cookies>>['set']>[2]
+          }>,
+        ) {
           try {
             cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options),
+              cookieStore.set(name, value, options ?? {}),
             )
           } catch {
             // Ignoré en Server Component (pas de set possible)
@@ -59,7 +65,7 @@ export function createServiceClient() {
 
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
   if (!serviceKey) {
-    throw new Error('[Config] SUPABASE_SERVICE_ROLE_KEY manquant dans les variables d'environnement.')
+    throw new Error("[Config] SUPABASE_SERVICE_ROLE_KEY manquant dans les variables d'environnement.")
   }
 
   return createServerClient<Database>(
