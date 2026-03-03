@@ -114,8 +114,10 @@ Réutilise le module partagé `scripts/shared/` (download, parse, upsert). Comma
 2. Déterminer date cible = hier (UTC)
 3. Exécuter le même algorithme que le backfill pour 1 seul jour
 4. Calculer FCI(J-1)
-5. Retourner { ok: true, date, fci, duration }
+5. Retourner { ok, date, fuelAggregatesUpserted, fci, durationMs, timestamp }
 ```
+
+La route `apps/web/src/app/api/cron/fuel-daily/route.ts` est implémentée : elle importe et appelle le module partagé `scripts/shared` (download, parse, upsert, calcAndUpsertFCI) avec un client Supabase service role. En cas de données indisponibles pour la date, elle retourne 200 avec un message explicite.
 
 **Configuration Vercel** (`apps/web/vercel.json`) :
 

@@ -85,6 +85,7 @@ CRON_SECRET=             # pour sécuriser le endpoint Vercel Cron
 ## Implémentation
 
 - [x] Réutilisation du module partagé `scripts/shared/` (downloadDayXml, parseDayXmlToAggregates, upsertFuelAggregates)
+- [x] Route HTTP `/api/cron/fuel-daily` implémentée (même logique que le script CLI, via import `scripts/shared`)
 - [x] Replay manuel avec `FUEL_DATE=YYYYMMDD`
 - [x] Retry avec backoff (dans le module partagé)
 - [x] Implémenter le calcul FCI v1 (calcAndUpsertFCI) — lecture 30j depuis `fuel_daily_agg`, `calcFCIv1` (shared), upsert `fci_daily`

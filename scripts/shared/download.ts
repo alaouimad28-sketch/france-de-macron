@@ -47,7 +47,9 @@ export async function downloadDayXml(date: Date): Promise<string> {
 
       const zip = new AdmZip(buffer)
       const entries = zip.getEntries()
-      const xmlEntry = entries.find((e) => e.entryName.toLowerCase().endsWith('.xml')) ?? entries[0]
+      const xmlEntry =
+        entries.find((e: { entryName: string }) => e.entryName.toLowerCase().endsWith('.xml')) ??
+        entries[0]
       if (!xmlEntry?.getData()) throw new Error(`ZIP sans fichier XML: ${url}`)
       const xmlBuffer = xmlEntry.getData() as Buffer
       return xmlBuffer.toString('latin1')

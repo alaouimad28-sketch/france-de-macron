@@ -19,7 +19,7 @@
 | CTA Newsletter                         | 🔲 À implémenter |
 | Pages About / Methodology / Disclaimer | 🔲 À implémenter |
 | Déploiement Vercel                     | 🔲 À faire       |
-| Vercel Cron fuel-daily                 | 🔲 À configurer  |
+| Vercel Cron fuel-daily                 | ✅ Route implémentée ; CRON_SECRET à configurer |
 
 ---
 

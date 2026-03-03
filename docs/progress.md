@@ -149,7 +149,7 @@
 ### Endpoint cron (Vercel)
 
 - [x] Route `/api/cron/fuel-daily` créée avec vérification `CRON_SECRET`
-- [ ] **Implémenter la logique réelle** dans la route (appel au job fuel-daily)
+- [x] **Implémenter la logique réelle** dans la route (appel au job fuel-daily : download → parse → upsert → FCI via `scripts/shared`, client Supabase service role)
 - [ ] Configurer `CRON_SECRET` dans Vercel Secrets
 - [ ] Tester le cron manuellement via `curl -H "Authorization: Bearer $CRON_SECRET" ...`
 
@@ -407,6 +407,10 @@
 - Test **fuel:backfill** (J30) en local : OK (30 jours, 180 agrégats, ~53 s).
 - Test **replay fuel-daily** : `FUEL_DATE=20250302 pnpm run fuel:daily` (et autre date) exécuté. Comportement vérifié : date cible correcte, flux single-day (download → parse → upsert), gestion correcte de `DayDataUnavailableError` (status `partial`, pas de crash). Si la source renvoie des données, les agrégats sont bien upsertés (même chemin que backfill).
 - **calcAndUpsertFCI** implémenté dans `scripts/fuel-daily/index.ts` : lecture des 30 derniers jours depuis `fuel_daily_agg` (gazole + e10), appel à `calcFCIv1` (shared), upsert dans `fci_daily` (score, components, weights). Typage via `Database` importé depuis `apps/web/.../database.types`. Pour peupler `fci_daily` après un backfill : lancer `pnpm run fuel:daily` avec une date pour laquelle l’API renvoie des données (ou exécuter le job quotidien quand les données J-1 sont dispo).
+
+### Mars 2025 — Cron fuel-daily
+
+- **Route `/api/cron/fuel-daily`** : logique réelle implémentée. La route importe `scripts/shared` (download, parse, upsert, calcAndUpsertFCI), utilise `createClient<Database>(url, serviceKey)` côté serveur (service role uniquement), calcule la date cible = hier UTC, retourne `{ ok, date, fuelAggregatesUpserted, fci, durationMs }`. En cas de `DayDataUnavailableError`, retour 200 avec message « Données indisponibles ». Dépendances ajoutées dans `apps/web` : adm-zip, sax ; `@types/adm-zip` dans apps/web et scripts. Typage du paramètre dans `scripts/shared/download.ts` pour le callback `find()`.
 
 ---
 

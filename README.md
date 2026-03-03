@@ -95,6 +95,9 @@ SUPABASE_SERVICE_ROLE_KEY=eyJ...   # JAMAIS exposé côté client
 # App
 NEXT_PUBLIC_APP_URL=http://localhost:3040
 NODE_ENV=development
+
+# Cron (optionnel en local ; requis en prod dans Vercel Secrets)
+CRON_SECRET=   # pour sécuriser /api/cron/fuel-daily — ex. openssl rand -hex 32
 ```
 
 > ⚠️ **`SUPABASE_SERVICE_ROLE_KEY` ne doit jamais être préfixé `NEXT_PUBLIC_`.**
@@ -216,7 +219,7 @@ pnpm --filter scripts fuel:backfill
 
 ### Cron quotidien
 
-Géré par Vercel Cron (voir `apps/web/vercel.json`). Déclenche le job `fuel-daily` chaque jour à 02:30 UTC.
+Géré par Vercel Cron (voir `apps/web/vercel.json`). Déclenche le job `fuel-daily` chaque jour à 02:30 UTC. L’endpoint `/api/cron/fuel-daily` est implémenté (download → parse → upsert → FCI) ; test manuel : `curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:3040/api/cron/fuel-daily`.
 
 Voir [docs/data/pipeline.md](docs/data/pipeline.md) pour le détail.
 
