@@ -226,14 +226,15 @@ Voir [docs/data/pipeline.md](docs/data/pipeline.md) pour le détail.
 
 ```
 scripts/
-├── shared/              # Module partagé (download, parse, upsert)
+├── shared/              # Module partagé (download, parse, upsert, FCI)
 ├── fuel-backfill-j30/   # Backfill 30 derniers jours
 ├── fuel-backfill-annee/ # Backfill par archives annuelles (2007 → aujourd'hui)
 ├── fuel-backfill-last/  # Rafraîchir hier (et optionnellement aujourd'hui)
-└── fuel-daily/         # Job quotidien J-1 (ou FUEL_DATE=YYYYMMDD pour replay)
+├── fuel-daily/          # Job quotidien J-1 (ou FUEL_DATE=YYYYMMDD pour replay)
+└── fci-backfill/        # Backfill FCI : score pour tous les jours depuis 2019 (série temporelle)
 ```
 
-Voir [scripts/README.md](scripts/README.md). Commandes : `pnpm run fuel:backfill` (J-30), `pnpm run fuel:backfill:last` (dernier jour), `pnpm run fuel:backfill:annees` (archives), `pnpm run fuel:daily` (quotidien ou replay).
+Voir [scripts/README.md](scripts/README.md). Commandes : `pnpm run fuel:backfill` (J-30), `pnpm run fuel:backfill:last` (dernier jour), `pnpm run fuel:backfill:annees` (archives), `pnpm run fuel:daily` (quotidien ou replay), `pnpm run fci:backfill` (historique FCI depuis 2019).
 
 ---
 

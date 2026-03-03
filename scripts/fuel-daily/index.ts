@@ -14,9 +14,11 @@
  */
 
 import { createClient } from '@supabase/supabase-js'
+import type { Database } from '../../apps/web/src/lib/supabase/database.types'
 import * as path from 'path'
 import { config } from 'dotenv'
 import {
+  calcAndUpsertFCI,
   DayDataUnavailableError,
   downloadDayXml,
   parseDayXmlToAggregates,
@@ -59,14 +61,6 @@ function parseManualDate(yyyymmdd: string): Date {
   return new Date(Date.UTC(year, month, day))
 }
 
-/**
- * Calcule et upsert le score FCI pour une date donnée.
- * TODO: implémenter le calcul v1 — voir docs/data/methodology.md
- */
-async function calcAndUpsertFCI(_day: Date): Promise<number | null> {
-  return null
-}
-
 async function main(): Promise<void> {
   const startMs = Date.now()
 
@@ -95,7 +89,7 @@ async function main(): Promise<void> {
     console.warn('[fuel-daily] Résultat :', result)
     process.exit(1)
   }
-  const supabase = createClient(url, key)
+  const supabase = createClient<Database>(url, key)
 
   try {
     const xml = await downloadDayXml(targetDate)
@@ -104,7 +98,7 @@ async function main(): Promise<void> {
     result.fuelAggregatesUpserted = n
     console.log('[fuel-daily]', result.targetDate, '—', rows.length, 'agrégats,', n, 'upsertés')
 
-    const fci = await calcAndUpsertFCI(targetDate)
+    const fci = await calcAndUpsertFCI(supabase, targetDate)
     result.fciScore = fci ?? null
     if (fci != null) console.log('[fuel-daily] FCI :', fci)
   } catch (err) {

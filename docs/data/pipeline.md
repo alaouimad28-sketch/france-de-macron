@@ -125,6 +125,26 @@ Réutilise le module partagé `scripts/shared/` (download, parse, upsert). Comma
 }
 ```
 
+### Job 4 : fci-backfill (historique FCI)
+
+**Déclenchement** : manuel, une fois que `fuel_daily_agg` est peuplé (après backfill carburants)
+**Fichier** : `scripts/fci-backfill/index.ts`
+
+Calcule le **FCI v1 pour chaque jour** sur une plage (défaut : depuis 2019-01-01 jusqu’au dernier jour en base) et upsert dans `fci_daily`. Permet d’obtenir la **série temporelle du FCI** pour graphiques et analyse (évolution, pics 2022, etc.).
+
+```
+1. Lire START_DATE (défaut 2019-01-01) et END_DATE (défaut = max(day) en base)
+2. Pour chaque jour de (START_DATE + 29j) à END_DATE :
+   - Récupérer les 30 derniers jours gazole + e10 depuis fuel_daily_agg
+   - calcFCIv1() → score
+   - Upsert fci_daily (day, score, methodology_version, components, weights)
+3. Logger le nombre de jours calculés / skippés
+```
+
+Commande : `pnpm run fci:backfill`. Variables optionnelles : `START_DATE`, `END_DATE` (format YYYY-MM-DD). Idempotent (upsert par jour).
+
+Voir [scripts/fci-backfill/README.md](../../scripts/fci-backfill/README.md).
+
 ---
 
 ## Calcul des agrégats

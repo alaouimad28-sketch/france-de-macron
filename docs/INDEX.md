@@ -38,6 +38,7 @@
 | [scripts/fuel-daily/README.md](../scripts/fuel-daily/README.md)                 | Détail du job quotidien fuel-daily                                                 |
 | [scripts/fuel-backfill-j30/README.md](../scripts/fuel-backfill-j30/README.md)   | Détail du backfill J-30                                                            |
 | [scripts/fuel-backfill-last/README.md](../scripts/fuel-backfill-last/README.md) | Rafraîchir dernier(s) jour(s) (J-1, optionnel J-0)                                 |
+| [scripts/fci-backfill/README.md](../scripts/fci-backfill/README.md)             | Backfill FCI : calcul du score pour tous les jours depuis 2019 (série temporelle)  |
 
 ---
 
@@ -122,6 +123,7 @@ docs/
 | `pnpm run fuel:backfill:annees` | Backfill par archives annuelles (2007 → aujourd’hui)                                        |
 | `pnpm run fuel:backfill:last`   | Rafraîchir uniquement hier (et optionnellement aujourd’hui avec `BACKFILL_INCLUDE_TODAY=1`) |
 | `pnpm run fuel:daily`           | Job quotidien J-1 (ou replay avec `FUEL_DATE=YYYYMMDD`, cron `/api/cron/fuel-daily`)        |
+| `pnpm run fci:backfill`         | Backfill FCI : calcul du score pour tous les jours depuis 2019 (série temporelle)           |
 | `pnpm run validate`             | Vérifier avant commit (typecheck web + scripts, lint, format)                               |
 
 **Supabase local** : après `pnpm run db:start`, Studio = http://127.0.0.1:54323, API = http://127.0.0.1:54321, **MCP** = http://127.0.0.1:54321/mcp (pour Cursor / requêtes IA sur la base). Voir [README](../README.md#référence-supabase-local-après-supabase-start) et [TESTER-LE-SITE.md](TESTER-LE-SITE.md).

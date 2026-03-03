@@ -128,20 +128,23 @@
 - [x] **Extraire le code commun** en `scripts/shared/` (download, parse, upsert, constants, types)
 - [x] Implémenter le job complet (utilise shared : downloadDayXml, parseDayXmlToAggregates, upsertFuelAggregates)
 - [x] Ajouter `FUEL_DATE` env var pour le replay manuel (format YYYYMMDD)
-- [ ] Tester le replay d'une date spécifique
-- [ ] Brancher calcAndUpsertFCI quand FCI v1 sera implémenté
+- [x] Tester le replay d'une date spécifique
+- [x] Brancher calcAndUpsertFCI quand FCI v1 sera implémenté
 
 ### Calcul FCI v1
 
-- [ ] **Implémenter `calcFCIv1(gazole30j, e10_30j)`** (voir `docs/data/methodology.md`)
+- [x] **Implémenter `calcFCIv1(gazole30j, e10_30j)`** (voir `docs/data/methodology.md`)
   - Score niveau absolu : normalize(prix - baseline, 0, 0.80, 0, 100)
   - Score variation 30j : normalize(var30, -0.10, 0.20, 0, 100)
   - Composition : 0.6 × niveau + 0.4 × variation
-- [ ] **Implémenter `calcAndUpsertFCI(day)`**
+  - Module `scripts/shared/fci.ts` : `FCI_BASELINE`, `normalize()`, `calcFCIv1()` exportés
+- [x] **Implémenter `calcAndUpsertFCI(day)`**
   - Lire les 30 derniers jours depuis `fuel_daily_agg`
   - Calculer le score
   - Upsert dans `fci_daily` avec `components` et `weights` JSONB
+  - Intégré dans `scripts/fuel-daily/index.ts` (appel après upsert carburants)
 - [ ] Valider les scores calculés vs intuition (pic 2022 ≈ 80+, COVID-2020 ≈ 20)
+- [x] **Backfill FCI historique** — script `fci-backfill` : calcule le FCI v1 pour tous les jours depuis 2019 (ou `START_DATE`) afin d’avoir la série temporelle pour graphiques. Commande `pnpm run fci:backfill`, env `START_DATE` / `END_DATE`. Voir `scripts/fci-backfill/README.md`.
 
 ### Endpoint cron (Vercel)
 
@@ -402,6 +405,8 @@
 - **Supabase local** : ajout de `db:push:local` (`supabase db push --local`) pour appliquer les migrations sans `supabase link` ; doc mise à jour (README, TESTER-LE-SITE, INDEX, pipeline, progress).
 - **docs/data/sources.md** : URLs vérifiées, pas de clé API, fenêtre ~30j pour `/jour/AAAAMMJJ`, section multi-années (1.2.1), stockage (1.2.2), volumes 2007 vs 2000 (1.2.3).
 - Test **fuel:backfill** (J30) en local : OK (30 jours, 180 agrégats, ~53 s).
+- Test **replay fuel-daily** : `FUEL_DATE=20250302 pnpm run fuel:daily` (et autre date) exécuté. Comportement vérifié : date cible correcte, flux single-day (download → parse → upsert), gestion correcte de `DayDataUnavailableError` (status `partial`, pas de crash). Si la source renvoie des données, les agrégats sont bien upsertés (même chemin que backfill).
+- **calcAndUpsertFCI** implémenté dans `scripts/fuel-daily/index.ts` : lecture des 30 derniers jours depuis `fuel_daily_agg` (gazole + e10), appel à `calcFCIv1` (shared), upsert dans `fci_daily` (score, components, weights). Typage via `Database` importé depuis `apps/web/.../database.types`. Pour peupler `fci_daily` après un backfill : lancer `pnpm run fuel:daily` avec une date pour laquelle l’API renvoie des données (ou exécuter le job quotidien quand les données J-1 sont dispo).
 
 ---
 

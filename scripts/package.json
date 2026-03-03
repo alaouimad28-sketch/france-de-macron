@@ -6,7 +6,8 @@
     "fuel:backfill": "tsx fuel-backfill-j30/index.ts",
     "fuel:backfill:annees": "tsx fuel-backfill-annee/index.ts",
     "fuel:backfill:last": "tsx fuel-backfill-last/index.ts",
-    "fuel:daily": "tsx fuel-daily/index.ts"
+    "fuel:daily": "tsx fuel-daily/index.ts",
+    "fci:backfill": "tsx fci-backfill/index.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",

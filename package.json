@@ -21,7 +21,8 @@
     "fuel:backfill": "pnpm --filter scripts fuel:backfill",
     "fuel:backfill:annees": "pnpm --filter scripts fuel:backfill:annees",
     "fuel:backfill:last": "pnpm --filter scripts fuel:backfill:last",
-    "fuel:daily": "pnpm --filter scripts fuel:daily"
+    "fuel:daily": "pnpm --filter scripts fuel:daily",
+    "fci:backfill": "pnpm --filter scripts fci:backfill"
   },
   "devDependencies": {
     "prettier": "^3.3.3",

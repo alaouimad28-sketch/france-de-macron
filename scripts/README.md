@@ -8,11 +8,12 @@ Ce dossier contient les jobs d'ingestion de données pour France de Macron.
 
 ```
 scripts/
-├── shared/              # Module partagé : download, parse, upsert (utilisé par j30, last, daily)
+├── shared/              # Module partagé : download, parse, upsert, FCI (utilisé par j30, last, daily, fci-backfill)
 ├── fuel-backfill-j30/   # Backfill initial : 30 derniers jours de données carburant
 ├── fuel-backfill-annee/ # Backfill par archives annuelles (2007 → aujourd'hui)
 ├── fuel-backfill-last/  # Rafraîchir uniquement hier (et optionnellement aujourd'hui)
-└── fuel-daily/          # Job quotidien : ingestion J-1 (ou replay avec FUEL_DATE)
+├── fuel-daily/          # Job quotidien : ingestion J-1 (ou replay avec FUEL_DATE)
+└── fci-backfill/        # Backfill FCI : calcul du score pour tous les jours depuis 2019 (série temporelle)
 ```
 
 ## Jobs disponibles
@@ -66,6 +67,18 @@ FUEL_DATE=20241115 pnpm fuel:daily
 ```
 
 Voir [fuel-daily/README.md](fuel-daily/README.md) pour le détail.
+
+### `fci:backfill` — Historique FCI (série temporelle)
+
+Une fois `fuel_daily_agg` peuplé, calcule le **FCI v1 pour chaque jour** depuis 2019 (ou `START_DATE`) jusqu’au dernier jour en base. Remplit `fci_daily` pour afficher l’évolution du score dans le temps (graphiques, pics 2022, etc.).
+
+```bash
+pnpm run fci:backfill
+START_DATE=2020-01-01 pnpm run fci:backfill
+START_DATE=2019-01-01 END_DATE=2024-12-31 pnpm run fci:backfill
+```
+
+Voir [fci-backfill/README.md](fci-backfill/README.md) pour le détail.
 
 ## Variables d'environnement requises
 

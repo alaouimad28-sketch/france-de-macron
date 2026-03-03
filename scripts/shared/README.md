@@ -8,6 +8,8 @@ Code commun aux jobs d’ingestion quotidienne (données roulez-eco.fr → `fuel
 - **parse** : `parseDayXmlToAggregates(xml, day)` — parse le XML en streaming (sax), agrège par carburant (ruptures exclues, prix ∈ [0.5, 5.0] €/L), retourne `FuelDayAggregate[]`.
 - **upsert** : `upsertFuelAggregates(supabase, rows)` — upsert en base dans `fuel_daily_agg` (ON CONFLICT DO UPDATE), par lots de 500.
 - **constants** : `FUEL_CODES`, `MIN_PRICE`, `MAX_PRICE`, `round3`, `FETCH_TIMEOUT_MS`, `RETRY_DELAYS_MS`.
+- **fci** : `FCI_BASELINE`, `normalize()`, `calcFCIv1(gazole30j, e10_30j)` — calcul French Cooked Index™ v1.
+- **calc-and-upsert-fci** : `calcAndUpsertFCI(supabase, day)` — lit les 30j gazole/e10, calcule le score, upsert dans `fci_daily` (utilisé par fuel-daily et fci-backfill).
 - **types** : `FuelDayAggregate`, `DayDataUnavailableError`.
 
 ## Utilisation
