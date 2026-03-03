@@ -92,7 +92,7 @@ Ajouter sur la landing page :
 
 Design requis :
 
-- Fond sombre (`surface-950`)
+- Fond clair / blanc (thème light MVP)
 - Logo + titre en gros
 - Score FCI du jour (si dynamique) ou valeur fixe "74"
 - Tagline : "À quel point on est cooked ?"

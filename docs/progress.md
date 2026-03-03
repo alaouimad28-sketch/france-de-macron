@@ -34,7 +34,7 @@
 - [x] App Router Next.js 16 initialisé (`apps/web/`)
 - [x] Tailwind CSS configuré (design system "Cooked Authority" complet)
 - [x] shadcn/ui configuré (`components.json`)
-- [x] Globals CSS (CSS vars, dark mode, grain, utilitaires)
+- [x] Globals CSS (CSS vars, thème clair, grain, utilitaires)
 - [x] Layout root (`layout.tsx`) — metadata OG + viewport
 - [x] Pages squelette : Home, About, Methodology, Disclaimer
 - [x] Route Handlers squelette : `/api/cron/fuel-daily`, `/api/newsletter`, `/api/votes`
@@ -151,105 +151,116 @@
 - [x] Route `/api/cron/fuel-daily` créée avec vérification `CRON_SECRET`
 - [x] **Implémenter la logique réelle** dans la route (appel au job fuel-daily : download → parse → upsert → FCI via `scripts/shared`, client Supabase service role)
 - [ ] Configurer `CRON_SECRET` dans Vercel Secrets
-- [ ] Tester le cron manuellement via `curl -H "Authorization: Bearer $CRON_SECRET" ...`
+- [x] Tester le cron manuellement via `curl -H "Authorization: Bearer $CRON_SECRET" ...` (validé : 200, date 2026-03-02, 6 agrégats, FCI 41, ~2,7 s)
 
 ---
 
 ## PHASE 2 — Composants UI
 
-> Prérequis : Phase 1 complète (données en base). Peuvent être développés en parallèle avec des données mock.
+> **Prérequis** : Phase 1 complète (données en base). Peuvent être développés en parallèle avec des données mock.
+>
+> **Règle pour l'agent** : Cocher chaque case dès que la tâche est terminée. **Mettre à jour la documentation au fur et à mesure** : après chaque composant ou sous-section, mettre à jour `docs/progress.md` (cocher les cases) ; si tu ajoutes des fichiers ou modules, mettre à jour `docs/INDEX.md` (section "Fichiers de code clés") et `README.md` si nouvelles commandes. Voir la sous-section "Documentation (à jour au fur et à mesure)" en bas de la Phase 2.
 
 ### Setup shadcn/ui
 
-- [ ] Installer les composants de base nécessaires :
-  ```bash
-  pnpm dlx shadcn@latest add button badge card separator skeleton toast
-  ```
-- [ ] Créer `src/components/ui/` avec les composants shadcn installés
-- [ ] Installer les fonts via `next/font/google` dans `layout.tsx`
+- [x] Depuis `apps/web`, lancer : `pnpm dlx shadcn@latest add button badge card separator skeleton toast`
+- [x] Vérifier que `src/components/ui/` contient les composants shadcn (ou le chemin dans `components.json`)
+- [x] Vérifier que les fonts (Space Grotesk, Inter, JetBrains Mono) sont dans `layout.tsx` (déjà en place Phase 0 — cocher si confirmé)
+- [x] **Doc** : cocher les cases ci-dessus dans progress.md après le setup
 
 ### Composant FCIGauge (hero)
 
-- [ ] **`src/components/fci/FCIGauge.tsx`** (Client Component)
-  - Ring gauge SVG (arc 270°, sens horaire)
-  - Animation `stroke-dashoffset` au montage (1.2s, spring)
-  - Couleur selon score : vert/jaune/orange/rouge (seuils 25/50/75)
-  - Pulse rouge si score > 75
-  - Score central + label microcopy (via `getFCILabel()`)
-  - Variation J-1 avec flèche ↑↓
-  - Skeleton de chargement (`animate-shimmer`)
-  - `aria-label` pour l'accessibilité
-  - Props : `score`, `previousScore?`, `updatedAt`, `isLoading?`
+- [x] Créer `src/components/fci/` et `FCIGauge.tsx` (Client Component, `’use client’`)
+- [x] Props : `score: number`, `previousScore?: number`, `updatedAt: string`, `isLoading?: boolean`
+- [x] Jauge semicirculaire SVG : arc 180°, hybride SVG (arc + aiguille) + HTML (score, variation)
+- [x] Couleurs selon score (design-system) : 0–24 `relief-500`, 25–49 `warning-500`, 50–74 `alert-400`, 75–100 `alert-600`
+- [x] Animation `stroke-dashoffset` au montage : 1.2s, easing spring (cubic-bezier)
+- [x] Effet pulse (CSS) si score > 75 (rouge)
+- [x] Score au centre + label via `getFCILabel(score)` (`@/lib/utils`)
+- [x] Variation « depuis hier » avec flèche ↑/↓ et valeur absolue (sous l’arc, en HTML)
+- [x] Skeleton quand `isLoading` (shimmer)
+- [x] `aria-label` descriptif
+- [x] **Doc** : cocher les cases dans progress.md
 
 ### Section Hero (home)
 
-- [ ] **`src/components/fci/FCIHero.tsx`** (Server Component outer, Client inner)
-  - Fetch `fci_daily` (dernière entrée) dans le Server Component
-  - Passer les données à `FCIGauge`
-  - Tagline ironique selon le score
-  - Date "Mis à jour le JJ MMM"
+- [x] Créer `src/components/fci/FCIHero.tsx` (Server Component wrapper)
+- [x] Fetch `fci_daily` : dernière entrée + J-1 (createReadClient, `.order(‘day’, { ascending: false }).limit(2)`)
+- [x] Passer score, previousScore, updatedAt à `FCIGauge`
+- [x] Tagline ironique selon score (aligné avec `getFCILabel`)
+- [x] Date "Mis à jour le JJ MMM" (format français)
+- [x] **Doc** : cocher les cases dans progress.md
 
 ### Composant FuelChart
 
-- [ ] **`src/components/fuel/FuelChart.tsx`** (Client Component — Recharts)
-  - `LineChart` multi-carburant (gazole, e10, sp98 minimum)
-  - Axe X : dates format "dd MMM"
-  - Axe Y : prix €/L (3 décimales)
-  - Tooltip custom (prix par carburant + variation J/J)
-  - Points de spike mis en évidence (circle rouge si Δ > 3% J/J)
-  - Annotations événements (ligne verticale + label au hover)
-  - Animation d'entrée progressive
-  - Responsive (ResponsiveContainer)
-  - Props : `data: FuelChartDataPoint[]`, `events: ChartEvent[]`, `activePeriod`
+- [x] Créer `src/components/fuel/` et `FuelChart.tsx` (Client Component, Recharts)
+- [x] Props : `data: FuelChartDataPoint[]`, `events?: ChartEvent[]`, `activePeriod?` (types `@/types`)
+- [x] `LineChart` : gazole, e10, sp98 (couleurs design-system : bleu acier, vert émeraude, or)
+- [x] Axe X : dates "dd MMM" ; axe Y : prix €/L, 3 décimales
+- [x] Tooltip custom : date + prix par carburant + variation J/J
+- [x] Points spike : cercle rouge si Δ J/J > 3%
+- [x] Annotations événements : ligne verticale + label au hover
+- [x] Animation d’entrée ; ResponsiveContainer
+- [x] **Doc** : cocher les cases dans progress.md
 
 ### Composant PeriodChip
 
-- [ ] **`src/components/fuel/PeriodChip.tsx`** (Client Component)
-  - Variants : default | active | disabled
-  - Labels : "7j" / "30j" / "90j" / "1 an" / "5 ans"
-  - Badge "Bientôt" sur 90j+ en MVP
-  - Feedback tactile (scale 0.95 au press)
+- [x] Créer `src/components/fuel/PeriodChip.tsx` (Client Component)
+- [x] Variants : default | active | disabled (Tailwind design-system)
+- [x] Labels : "7j" / "30j" / "90j" / "1 an" / "5 ans"
+- [x] Badge "Bientôt" sur 90j, 1 an, 5 ans (MVP données 30j)
+- [x] Feedback tactile : scale 0.95 au press
+- [x] **Doc** : cocher les cases dans progress.md
 
 ### Section Carburants
 
-- [ ] **`src/components/fuel/FuelSection.tsx`** (Server Component outer)
-  - Fetch `fuel_daily_agg` (30 derniers jours) + `events` (scope: fuel)
-  - Prix actuels sous forme de badges (avec variation vs J-7)
-  - Label microcopy selon tendance ("Ça pique depuis 6 mois")
-  - Passer données au `FuelChart`
+- [x] Créer `src/components/fuel/FuelSection.tsx` (Server Component)
+- [x] Fetch `fuel_daily_agg` (30j, gazole, e10, sp98) + `events` (scope fuel)
+- [x] Badges prix actuels + variation vs J-7, `formatFuelPrice()`, couleurs carburant
+- [x] Label microcopy tendance ("Ça pique depuis 6 mois" etc.)
+- [x] Passer data + events à `FuelChart` ; intégrer `PeriodChip` (actif = 30j)
+- [x] **Doc** : cocher les cases dans progress.md
 
 ### Composant CookedVote
 
-- [ ] **`src/components/vote/CookedVote.tsx`** (Client Component)
-  - Deux boutons : 🔥 Cooked / 🌱 Pas du tout
-  - Fetch initial du comptage (`GET /api/votes?scope=global`)
-  - Submit vers `POST /api/votes`
-  - États : idle → voted (stockage localStorage) → barre de ratio
-  - Animation "pop" du compteur après vote
-  - Gestion erreur (toast)
-  - Props : `scope: VoteScope`
+- [x] Créer `src/components/vote/` et `CookedVote.tsx` (Client Component)
+- [x] Props : `scope: VoteScope` (ex. `’global’`)
+- [x] Deux boutons : 🔥 High Cortisol / 🌱 Low Cortisol (accessibles)
+- [x] Fetch comptage : `GET /api/votes?scope=global` ; afficher barre ratio + compteurs
+- [x] Submit : `POST /api/votes` (scope, vote, fingerprint_hash)
+- [x] Après vote : localStorage + désactiver / "Déjà voté"
+- [x] Animation "pop" du compteur après vote réussi
+- [x] Erreur : toast (shadcn)
+- [x] **Doc** : cocher les cases dans progress.md
 
 ### Composant NewsletterForm
 
-- [ ] **`src/components/newsletter/NewsletterForm.tsx`** (Client Component)
-  - Champ email visible
-  - Champ `website` caché (honeypot — CSS display trick, pas display:none)
-  - États : idle | loading | success | error
-  - Submit vers `POST /api/newsletter`
-  - Message de confirmation
-  - Props : `source?: string` (pour tracking)
+- [x] Créer `src/components/newsletter/` et `NewsletterForm.tsx` (Client Component)
+- [x] Champ email visible (required, label accessible)
+- [x] Honeypot `website` : caché via CSS (position/opacity), pas display:none
+- [x] États : idle | loading | success | error ; désactiver submit en loading
+- [x] Submit `POST /api/newsletter` (email, locale, source?, honeypot)
+- [x] Message succès / erreur (toast ou inline)
+- [x] Props : `source?: string` (tracking)
+- [x] **Doc** : cocher les cases dans progress.md
 
 ### Layout & Navigation
 
-- [ ] **`src/components/layout/Header.tsx`**
-  - Logo + nom du site
-  - Nav : Accueil / À propos / Méthodo
-  - Sticky, transparent → opaque au scroll
-- [ ] **`src/components/layout/Footer.tsx`**
-  - Liens : À propos / Méthodologie / Disclaimer / Sources
-  - Copyright + disclaimer court
-  - Lien GitHub (si repo public)
-- [ ] Intégrer Header + Footer dans `layout.tsx`
+- [x] Créer `src/components/layout/Header.tsx` : logo + "France de Macron"
+- [x] Nav : Accueil (/), À propos (/about), Méthodo (/methodology)
+- [x] Header fond blanc ; masqué au scroll down, réapparaît (slide down) au scroll up
+- [x] Créer `src/components/layout/Footer.tsx` : liens À propos, Méthodologie, Disclaimer, Sources
+- [x] Footer : fond surface-100 (thème clair), texte surface-600/800 ; copyright + disclaimer court
+- [x] Intégrer Header + Footer dans `layout.tsx` (autour de `<main>`)
+- [x] **Doc** : cocher les cases dans progress.md
+
+### Documentation (à jour au fur et à mesure)
+
+- [x] Après **chaque composant/sous-section** : cocher dans `docs/progress.md` les cases faites
+- [x] Si **nouveaux fichiers** (fci/, fuel/, vote/, newsletter/, layout/) : mettre à jour `docs/INDEX.md` § "Fichiers de code clés"
+- [x] Si **nouvelles commandes** : mettre à jour README.md et docs/INDEX.md
+- [x] **Fin de Phase 2** : vérifier alignement `docs/design/design-system.md` avec l’implémentation
+- [x] **Fin de Phase 2** : note dans "Notes de session" (ex. "Phase 2 livrée : FCIGauge, FCIHero, FuelChart, PeriodChip, FuelSection, CookedVote, NewsletterForm, Header, Footer, layout")
 
 ---
 
@@ -257,12 +268,12 @@
 
 > Prérequis : Phase 1 + Phase 2 (composants prêts).
 
-- [ ] **`src/app/page.tsx`** — Fetch réel des données Supabase
+- [x] **`src/app/page.tsx`** — Fetch réel des données Supabase (via Server Components FCIHero + FuelSection)
   - `fci_daily` (dernière entrée + J-1 pour variation)
   - `fuel_daily_agg` (30 derniers jours, gazole + e10 + sp98)
   - `events` (scope: fuel, plage visible)
-  - `votes` comptage global
-- [ ] Assembler les sections : FCIHero + FuelSection + CookedVote + NewsletterForm
+  - `votes` comptage global (côté client, CookedVote)
+- [x] Assembler les sections : FCIHero + FuelSection + CookedVote + NewsletterForm
 - [ ] Smooth scroll entre sections (liens d'ancre)
 - [ ] Animations `fade-in-up` au scroll (IntersectionObserver)
 - [ ] Tester rendu SSR (pas de hydration mismatch)
@@ -276,22 +287,22 @@
 
 - [x] Route créée (`/api/newsletter`) avec placeholder
 - [ ] Ajouter validation Zod du body (`email`, `locale`, `source`, `honeypot`)
-- [ ] Vérifier honeypot vide côté serveur
-- [ ] Valider format email (regex)
+- [x] Vérifier honeypot vide côté serveur
+- [x] Valider format email (regex)
 - [ ] Rate limit par IP (via `request.headers.get('x-forwarded-for')` + compteur Supabase ou Upstash)
-- [ ] Insérer via `createServiceClient()`
-- [ ] Gérer le conflit `unique(email)` → retourner 200 sans message d'erreur (pas d'enum harvesting)
-- [ ] Retourner `{ success: true }` ou `{ error: string }`
+- [x] Insérer via `createClient<Database>` (service role — même effet que createServiceClient)
+- [x] Gérer le conflit `unique(email)` → retourner 200 sans message d'erreur (pas d'enum harvesting)
+- [x] Retourner `{ success: true }` ou `{ error: string }`
 
 ### Route Handler : votes
 
 - [x] Route créée (`/api/votes`) avec placeholder GET + POST
-- [ ] **GET** : agréger `votes` par scope → `{ cooked, uncooked, total, ratio_cooked }`
-- [ ] **POST** : valider body (scope, vote, fingerprint_hash)
-- [ ] Générer `ip_hash` côté serveur (`hashString(request.ip)`)
-- [ ] Insérer via `createServiceClient()` avec gestion du conflit unique (409 si déjà voté)
+- [x] **GET** : agréger `votes` par scope → `{ cooked, uncooked, total, ratio_cooked }`
+- [x] **POST** : valider body (scope, vote, fingerprint_hash)
+- [x] Générer `ip_hash` côté serveur (`hashString(x-forwarded-for / x-real-ip)`)
+- [x] Insérer via `createClient<Database>` (service role) avec gestion du conflit unique (409 si déjà voté)
 - [ ] Rate limit : max 10 votes / IP / heure
-- [ ] Retourner les nouveaux comptages après vote
+- [x] Retourner les nouveaux comptages après vote
 
 ---
 
@@ -393,7 +404,7 @@
 - Stack confirmée : Next.js 16 + TypeScript strict + pnpm ≥ 10 + Supabase + Recharts
 - ESLint 9 flat config (eslint.config.mjs), Supabase CLI v2 en devDependencies
 - Design system "Cooked Authority" défini dans `tailwind.config.ts`
-- Décision : dark-only en MVP (pas de toggle mode clair)
+- Décision : thème clair (fond blanc) en MVP (pas de toggle mode sombre)
 - Décision : Vercel Cron (pas GitHub Actions) pour le job quotidien
 - Décision : Recharts en MVP, migration ECharts possible en v2 si besoin zoom/brush
 - Migration `fuel_daily_agg` : constraint `chk_fuel_code` → à étendre si nouveau carburant ajouté
@@ -408,9 +419,30 @@
 - Test **replay fuel-daily** : `FUEL_DATE=20250302 pnpm run fuel:daily` (et autre date) exécuté. Comportement vérifié : date cible correcte, flux single-day (download → parse → upsert), gestion correcte de `DayDataUnavailableError` (status `partial`, pas de crash). Si la source renvoie des données, les agrégats sont bien upsertés (même chemin que backfill).
 - **calcAndUpsertFCI** implémenté dans `scripts/fuel-daily/index.ts` : lecture des 30 derniers jours depuis `fuel_daily_agg` (gazole + e10), appel à `calcFCIv1` (shared), upsert dans `fci_daily` (score, components, weights). Typage via `Database` importé depuis `apps/web/.../database.types`. Pour peupler `fci_daily` après un backfill : lancer `pnpm run fuel:daily` avec une date pour laquelle l’API renvoie des données (ou exécuter le job quotidien quand les données J-1 sont dispo).
 
+### Mars 2026 — Phase 2 : Composants UI
+
+- **Phase 2 entièrement livrée** : FCIGauge, FCIHero, FuelChart (Recharts), PeriodChip, FuelSection, CookedVote, NewsletterForm, Header, Footer + intégration layout.tsx.
+- **shadcn/ui** : button, badge, card, separator, skeleton, toast installés dans `src/components/ui/`.
+- **FCIGauge** : arc 180°, hybride SVG (arc bleu→rouge, aiguille, ticks) + HTML (score, « / 100 », « X pts depuis hier ») ; couleur bleu si score &lt; 25, rouge sinon ; animation 1.2s, pulse si score ≥ 75.
+- **FuelChart** : Recharts LineChart 3 lignes (gazole/e10/sp98), ReferenceDot pour spikes Δ>3%, ReferenceLine pour events, tooltip custom, period state interne (7j/30j).
+- **CookedVote** : fingerprint via `hashString(ua+tz+screen)`, localStorage `fdm:voted:<scope>` pour éviter double vote, POST /api/votes → 409 = déjà voté, animation pop counter.
+- **NewsletterForm** : honeypot `website` caché CSS (position absolute), tabIndex={-1} comme prop JSX (pas dans style).
+- **APIs votes + newsletter** : logique complète implémentée (validation, ip_hash, insert service role, gestion conflicts uniques). Pattern `createClient<Database>` utilisé directement (pas createServiceClient) pour contourner bug typing `@supabase/ssr@0.5.1`.
+- **Décision TypeScript** : `createServerClient` de `@supabase/ssr@0.5.1` résout les types insert en `never[]` avec `database.types.ts` manuel (manque `PostgrestVersion`). Contournement : `createClient<Database>` direct dans Route Handlers, assertions de type dans Server Components. À corriger proprement avec `pnpm run db:types` après régénération.
+- **page.tsx** : assemblée avec FCIHero + FuelSection + CookedVote + NewsletterForm + séparateurs.
+- TypeScript strict passe ✅, ESLint passe (1 warning pre-existant shadcn use-toast.ts) ✅.
+
+### Mars 2026 — Doc thème clair
+
+- **Documentation** : le site est en thème clair (fond blanc), pas en dark mode. Mise à jour de kickoff.md, progress.md, PRD.md, design-system.md, social-sharing.md pour refléter « thème clair (fond blanc) en MVP ». Suppression de la classe `dark` sur `<html>` dans layout.tsx et `themeColor` passé à `#ffffff`.
+
+### Mars 2026 — Doc UI (gauge, header, footer, couleurs)
+
+- **Docs** : design-system.md (spectre FCI bleu/rouge binaire, dégradé page, § FCIGauge hybride SVG+HTML, « depuis hier »), PRD.md (FCI hero arc 180°, couleurs 0–24 bleu / 25–100 rouge), progress.md (FCIGauge 180°, variation « depuis hier », header masqué au scroll down, footer thème clair), INDEX.md (FCIGauge, Header, Footer).
+
 ### Mars 2025 — Cron fuel-daily
 
-- **Route `/api/cron/fuel-daily`** : logique réelle implémentée. La route importe `scripts/shared` (download, parse, upsert, calcAndUpsertFCI), utilise `createClient<Database>(url, serviceKey)` côté serveur (service role uniquement), calcule la date cible = hier UTC, retourne `{ ok, date, fuelAggregatesUpserted, fci, durationMs }`. En cas de `DayDataUnavailableError`, retour 200 avec message « Données indisponibles ». Dépendances ajoutées dans `apps/web` : adm-zip, sax ; `@types/adm-zip` dans apps/web et scripts. Typage du paramètre dans `scripts/shared/download.ts` pour le callback `find()`.
+- **Route `/api/cron/fuel-daily`** : logique réelle implémentée. La route importe `scripts/shared` (download, parse, upsert, calcAndUpsertFCI), utilise `createClient<Database>(url, serviceKey)` côté serveur (service role uniquement), calcule la date cible = hier UTC, retourne `{ ok, date, fuelAggregatesUpserted, fci, durationMs }`. En cas de `DayDataUnavailableError`, retour 200 avec message « Données indisponibles ». Dépendances ajoutées dans `apps/web` : adm-zip, sax ; `@types/adm-zip` dans apps/web et scripts. Typage du paramètre dans `scripts/shared/download.ts` pour le callback `find()`. Test manuel curl validé (200, 6 agrégats, FCI 41, ~2,7 s).
 
 ---
 

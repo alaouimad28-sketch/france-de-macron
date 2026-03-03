@@ -61,7 +61,7 @@ Elle montre "à quel point on est cooked" via le **French Cooked Index™ (FCI)*
 - Export PNG / CSV
 - Comparaisons avec d'autres pays
 - Auth utilisateur
-- Mode clair
+- Mode sombre
 
 ---
 
@@ -100,7 +100,7 @@ Elle montre "à quel point on est cooked" via le **French Cooked Index™ (FCI)*
 ### Principes UX
 
 - **Mobile-first** : conçu pour 390px, responsive jusqu'à 1440px
-- **Dark mode only** (MVP) : palette sombre, grain subtil, accents néon
+- **Thème clair** (MVP) : fond blanc, palette Cooked Authority, dégradés bleu→rouge (FCI)
 - **Screenshot-friendly** : chaque section a des dimensions propres pour le partage
 - **Performance** : LCP < 2.5s, CLS < 0.1, FID < 100ms (objectifs Core Web Vitals)
 - **Smooth scrolling** : liens d'ancre animés, pas de saut brutal
@@ -114,18 +114,15 @@ Elle montre "à quel point on est cooked" via le **French Cooked Index™ (FCI)*
 
 **Affichage** :
 
-- Ring gauge SVG animée (arc de 270°, sens horaire)
-- Score central bold (ex: "74")
-- Label sous le score (ex: "/ 100 — On est cooked")
-- Variation J-1 avec flèche (ex: "▲ +2 pts depuis hier")
-- Dernière mise à jour (ex: "Mis à jour le 15 nov.")
+- Jauge semicirculaire (arc 180°) : SVG pour l’arc + aiguille, HTML pour le score et la variation (sans chevauchement)
+- Score bold + « / 100 » sous l’arc
+- Variation avec flèche (ex. « ▲ +2 pts depuis hier »)
+- Dernière mise à jour (ex. « Mis à jour le 15 nov. »)
 
 **Couleurs selon le score** :
 
-- 0–24 : vert (`relief-500`)
-- 25–49 : jaune-ambre (`warning-500`)
-- 50–74 : orange-rouge (`alert-400`)
-- 75–100 : rouge vif (`alert-600`) + animation pulse
+- 0–24 : bleu (`republic-500`) — « On respire »
+- 25–100 : rouge (`alert-500`) — « Ça chauffe », « Ça pique », « On est cooked » ; pulse si score ≥ 75
 
 **Source** : table `fci_daily`, dernière entrée disponible.
 
@@ -197,7 +194,7 @@ Elle montre "à quel point on est cooked" via le **French Cooked Index™ (FCI)*
 
 ## 8. Non-goals explicites (pour éviter le scope creep)
 
-- Pas de mode clair en MVP
+- Pas de mode sombre en MVP
 - Pas de notifications push
 - Pas de compte utilisateur / profil
 - Pas de commentaires / forum

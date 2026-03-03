@@ -56,6 +56,18 @@ export function getFCILabel(score: number): {
   return { label: 'On est cooked', severity: 'cooked' }
 }
 
+/** Bleu (republic) et rouge (alert) pour le spectre FCI uniquement */
+const FCI_BLUE = '#2355EE'
+const FCI_RED = '#F43F5E'
+
+/**
+ * Couleur FCI : bleu uniquement en "On respire" (score < 25), rouge au-dessus.
+ * Évite le violet de l'interpolation ; titre, label et jauge restent bleu ou rouge.
+ */
+export function getFCIScoreColor(score: number): string {
+  return score < 25 ? FCI_BLUE : FCI_RED
+}
+
 /**
  * Hash simple pour l'empreinte navigateur (anti-spam MVP)
  * N'utilise pas de données identifiantes directement — juste une empreinte pseudo-anonyme

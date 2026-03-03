@@ -29,7 +29,7 @@ export interface FuelChartDataPoint {
 }
 
 /** Filtre de période sélectionnable */
-export type FuelPeriodFilter = '7j' | '30j' | '90j' | '1an' | '5ans'
+export type FuelPeriodFilter = '7j' | '30j' | '90j' | '1an' | '5ans' | 'max'
 
 // =============================================================================
 // Événements / annotations

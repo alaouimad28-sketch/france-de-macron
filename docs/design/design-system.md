@@ -31,7 +31,7 @@
 
 ### 2.1 Couleurs primaires "Cooked Authority"
 
-Inspirées du drapeau français — désaturées, légèrement distordues, pour un look de dashboard sombre.
+Inspirées du drapeau français — désaturées, légèrement distordues, pour un look de dashboard (thème clair en MVP).
 
 ```
 Bleu Républicain (republic)
@@ -51,13 +51,14 @@ Vert Soulagement (relief)
 Ambre Avertissement (warning)
   #F59E0B  warning-500   → FCI modéré, variations normales
 
-Surface (surface)
-  #0E1018  surface-950   → Fond principal (body)
-  #1A1E2E  surface-900   → Fond sections alternées
-  #2D3349  surface-800   → Fond cartes (card)
+Surface (surface) — thème clair MVP
+  #0E1018  surface-950   → (réservé si mode sombre ultérieur)
+  #1A1E2E  surface-900   → Texte titres
+  #2D3349  surface-800   → (sections alternées en dark)
   #3E4861  surface-700   → Borders subtils
   #6B7594  surface-500   → Texte secondaire / muted
-  #CED3E3  surface-300   → Texte principal
+  #CED3E3  surface-300   → (texte principal en dark)
+  Fond body MVP : blanc ; cartes : surface-100 / blanc
 ```
 
 ### 2.2 Couleurs sémantiques carburant
@@ -72,11 +73,12 @@ Surface (surface)
 
 ### 2.3 Règles d'utilisation
 
-- Fond : `surface-950` uniquement (dark mode only MVP)
-- Cartes : `surface-800` + border `surface-700`
-- Texte principal : `surface-300` (jamais blanc pur)
+- Fond : blanc / `surface-50` (thème clair en MVP)
+- Cartes : `surface-100` / blanc + border `surface-200`
+- Texte principal : `surface-900` (titres), `surface-600` (corps)
 - Accent rouge : réservé aux alertes et aux pics de données
 - Bleu : réservé aux actions et aux éléments interactifs
+- **Spectre FCI (jauge hero)** : bleu et rouge uniquement — dégradé de l’arc bleu → rouge ; couleur d’accent (titre, label, aiguille) = bleu si score &lt; 25, rouge si score ≥ 25. Dégradé page (wrapper) = bleu → blanc → rouge ; header blanc (masqué au scroll down, réapparaît au scroll up) ; footer surface-100
 
 ---
 
@@ -147,18 +149,21 @@ full     : boutons CTA principaux
 
 ### 5.1 FCIGauge
 
-Ring gauge SVG animée pour afficher le score FCI.
+Jauge semicirculaire (arc 180°) pour le score FCI. Hybride SVG + HTML : l’arc et l’aiguille sont en SVG ; le score, « / 100 » et la variation sont en HTML en dessous pour éviter tout chevauchement.
 
 ```
 Props :
   score: number (0-100)
   previousScore?: number
+  updatedAt: string
   isLoading?: boolean
 
 Comportement :
-  - Animation fill de 0 → score en 1.2s (cubic-bezier spring)
-  - Couleur arc selon score : vert/jaune/orange/rouge
-  - Pulse rouge si score > 75
+  - Arc 180° bleu → rouge (dégradé), track gris, ticks majeurs (0, 25, 50, 75, 100)
+  - Aiguille + pivot colorés selon le score (bleu si &lt; 25, rouge sinon)
+  - Score et « / 100 » affichés sous l’arc (HTML)
+  - Variation « ▲ +X pts depuis hier » sous le score (bleu/rouge selon sens)
+  - Animation stroke-dasharray 1.2s au montage ; pulse rouge si score ≥ 75
   - Skeleton pendant le chargement
 ```
 

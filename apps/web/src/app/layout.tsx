@@ -1,5 +1,8 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter, JetBrains_Mono, Space_Grotesk } from 'next/font/google'
+import { Header } from '@/components/layout/Header'
+import { Footer } from '@/components/layout/Footer'
+import { Toaster } from '@/components/ui/toaster'
 import './globals.css'
 
 const fontDisplay = Space_Grotesk({
@@ -26,7 +29,7 @@ const fontMono = JetBrains_Mono({
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#0e1018',
+  themeColor: '#ffffff',
 }
 
 export const metadata: Metadata = {
@@ -79,11 +82,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="fr"
-      className={`dark ${fontDisplay.variable} ${fontBody.variable} ${fontMono.variable}`}
+      className={`${fontDisplay.variable} ${fontBody.variable} ${fontMono.variable}`}
     >
       <body>
-        {/* TODO: ajouter Header + Footer globaux */}
-        <main>{children}</main>
+        <Header />
+        <main className="pt-[60px]">{children}</main>
+        <Footer />
+        <Toaster />
       </body>
     </html>
   )

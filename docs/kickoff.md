@@ -37,7 +37,7 @@ Et les migrations pour comprendre le schéma DB :
 18. supabase/migrations/20240101000004_init_votes.sql
 19. supabase/migrations/20240101000006_rls_policies.sql
 
-Vérifie ensuite docs/progress.md pour voir ce qui est déjà fait et prends la prochaine tâche "À faire" en haut de la liste.
+Vérifie docs/progress.md pour l'état actuel. **Phase 1 (pipeline de données) est terminée** — cron fuel-daily implémenté et testé. **Objectif : livrer toute la Phase 2 (composants UI).** Suivre l’ordre des tâches dans "PHASE 2 — Composants UI" ; cocher chaque case dès qu’elle est faite. **Mettre à jour la doc au fur et à mesure** : cocher progress.md après chaque composant ; mettre à jour docs/INDEX.md (Fichiers de code clés) si tu ajoutes des fichiers ; en fin de Phase 2, note dans "Notes de session".
 
 RÈGLES ABSOLUES (ne jamais violer) :
 - SUPABASE_SERVICE_ROLE_KEY : jamais préfixé NEXT_PUBLIC_, jamais dans le code client
@@ -56,7 +56,7 @@ CONTEXTE TECHNIQUE :
 - CSS : Tailwind uniquement (jamais de style inline sauf pour des valeurs dynamiques CSS custom properties)
 - Composants : Server Components par défaut, 'use client' uniquement si interaction nécessaire
 - Font : Space Grotesk (display) + Inter (body) + JetBrains Mono (données)
-- Dark mode only en MVP — pas de mode clair
+- Thème clair (fond blanc) en MVP — pas de mode sombre
 - Langue du code et des commentaires : anglais / Langue de l'UI : français
 
 Dis-moi ce que tu vas faire avant de commencer, puis lance-toi.
@@ -101,9 +101,27 @@ Quand Supabase local tourne (`pnpm run db:start`), le projet expose un serveur M
 
 Le serveur apparaît dans Cursor sous un nom du type `project-0-france-de-macron-supabase-local`. À privilégier pour inspecter le schéma ou valider des requêtes sans ouvrir Studio.
 
+### Phase 2 — Par où commencer (composants UI)
+
+Phase 1 est faite (données en base, cron OK). **Objectif : livrer toute la Phase 2** (setup shadcn, FCIGauge, FCIHero, FuelChart, PeriodChip, FuelSection, CookedVote, NewsletterForm, Header, Footer, layout). La section "PHASE 2 — Composants UI" dans `docs/progress.md` est détaillée en **tâches granulaires avec cases à cocher** : traiter les tâches dans l’ordre et cocher au fur et à mesure.
+
+1. **Lire en priorité** (si pas déjà lu) :
+   - `docs/design/design-system.md` — palette Cooked Authority, typo, specs composants
+   - `docs/product/PRD.md` § 6 (spécifications fonctionnelles FCI hero, carburants, vote, newsletter)
+
+2. **Ordre de réalisation** : Suivre strictement `docs/progress.md` section "PHASE 2 — Composants UI" : Setup shadcn → FCIGauge → FCIHero → FuelChart → PeriodChip → FuelSection → CookedVote → NewsletterForm → Layout (Header, Footer, intégration).
+
+3. **Documentation à jour au fur et à mesure (obligatoire)** :
+   - **Après chaque composant ou sous-section** : cocher dans `docs/progress.md` toutes les cases correspondantes.
+   - **Dès que tu ajoutes des fichiers** (ex. `components/fci/`, `components/fuel/`) : mettre à jour `docs/INDEX.md` section "Fichiers de code clés" pour lister les nouveaux chemins.
+   - **Si nouvelles commandes ou scripts** : mettre à jour `README.md` et `docs/INDEX.md` (commandes utiles).
+   - **En fin de Phase 2** : vérifier `docs/design/design-system.md` vs implémentation ; ajouter une note dans "Notes de session" de progress.md (ex. "Phase 2 livrée : …").
+
+4. **Référence** : `docs/design/design-system.md` § 5 (inventaire MVP), `apps/web/tailwind.config.ts` (couleurs surface, alert, relief, warning, republic).
+
 ### Liens de référence utiles
 
-- shadcn/ui : `pnpm dlx shadcn@latest add <component>`
+- shadcn/ui : `pnpm dlx shadcn@latest add <component>` (exécuter depuis `apps/web`)
 - Recharts docs : recharts.org
 - Supabase SSR Next.js : supabase.com/docs/guides/auth/server-side/nextjs
 - next/font : nextjs.org/docs/app/building-your-application/optimizing/fonts
@@ -116,5 +134,5 @@ Le serveur apparaît dans Cursor sous un nom du type `project-0-france-de-macron
 Pour les sessions de suivi où le contexte est déjà établi :
 
 ```
-Lis docs/progress.md, prends la prochaine tâche non-cochée, lis les fichiers concernés, et implémente-la. Respecte les règles absolues de sécurité (pas de service role côté client, pas d'API externe côté navigateur).
+Lis docs/progress.md. Phase 1 terminée ; objectif = livrer toute la Phase 2 (composants UI). Suivre l’ordre des sous-sections dans "PHASE 2 — Composants UI" ; cocher chaque case dès que la tâche est faite. Après chaque composant/sous-section : mettre à jour progress.md (cases) ; si nouveaux fichiers, mettre à jour docs/INDEX.md § "Fichiers de code clés". En fin de Phase 2 : note dans "Notes de session". Respecte les règles absolues (pas de service role côté client, pas d’API externe côté navigateur, mobile-first 390px).
 ```
