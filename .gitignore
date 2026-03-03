@@ -9,6 +9,7 @@ apps/web/out/
 # Supabase
 supabase/.branches/
 supabase/.temp/
+.supabase/
 
 # Environment variables
 .env
