@@ -51,15 +51,21 @@ function CustomTooltip({ active, payload, label }: TooltipProps<number, string>)
   }).format(new Date(label as string))
 
   return (
-    <div className="min-w-[160px] rounded-lg border border-surface-200 bg-white p-3 shadow-lg text-sm">
-      <p className="mb-2 font-mono text-xs text-surface-600">{date}</p>
+    <div className="border-surface-200 min-w-[160px] rounded-lg border bg-white p-3 text-sm shadow-lg">
+      <p className="text-surface-600 mb-2 font-mono text-xs">{date}</p>
       {payload.map((entry) => {
         const cfg = FUEL_CONFIG[entry.dataKey as string]
         if (!cfg || entry.value === undefined || entry.value === null) return null
         return (
-          <div key={entry.dataKey as string} className="flex items-center justify-between gap-3 py-0.5">
+          <div
+            key={entry.dataKey as string}
+            className="flex items-center justify-between gap-3 py-0.5"
+          >
             <div className="flex items-center gap-1.5">
-              <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: cfg.color }} />
+              <span
+                className="inline-block h-2 w-2 rounded-full"
+                style={{ backgroundColor: cfg.color }}
+              />
               <span className="text-surface-600">{cfg.label}</span>
             </div>
             <span className="font-mono font-semibold" style={{ color: cfg.color }}>
@@ -109,31 +115,28 @@ export function FuelChart({ data: initialData, events = [] }: FuelChartProps) {
   const [extendedData, setExtendedData] = useState<FuelChartDataPoint[] | null>(null)
   const [isLoadingExtended, setIsLoadingExtended] = useState(false)
 
-  const handlePeriodChange = useCallback(
-    async (newPeriod: FuelPeriodFilter) => {
-      setPeriod(newPeriod)
+  const handlePeriodChange = useCallback(async (newPeriod: FuelPeriodFilter) => {
+    setPeriod(newPeriod)
 
-      if (SHORT_PERIODS.includes(newPeriod)) {
-        setExtendedData(null)
-        return
-      }
+    if (SHORT_PERIODS.includes(newPeriod)) {
+      setExtendedData(null)
+      return
+    }
 
-      // Périodes longues : fetch depuis /api/fuel
-      setIsLoadingExtended(true)
-      try {
-        const res = await fetch(`/api/fuel?period=${newPeriod}`)
-        if (!res.ok) throw new Error('Failed')
-        const newData = (await res.json()) as FuelChartDataPoint[]
-        setExtendedData(newData)
-      } catch {
-        // Fallback silencieux sur les données initiales
-        setExtendedData(null)
-      } finally {
-        setIsLoadingExtended(false)
-      }
-    },
-    [],
-  )
+    // Périodes longues : fetch depuis /api/fuel
+    setIsLoadingExtended(true)
+    try {
+      const res = await fetch(`/api/fuel?period=${newPeriod}`)
+      if (!res.ok) throw new Error('Failed')
+      const newData = (await res.json()) as FuelChartDataPoint[]
+      setExtendedData(newData)
+    } catch {
+      // Fallback silencieux sur les données initiales
+      setExtendedData(null)
+    } finally {
+      setIsLoadingExtended(false)
+    }
+  }, [])
 
   const activeData = extendedData ?? initialData
 
@@ -154,9 +157,10 @@ export function FuelChart({ data: initialData, events = [] }: FuelChartProps) {
   }, [filteredData])
 
   const spikes = useMemo(
-    () => (period === '7j' || period === '30j' || period === '90j'
-      ? computeSpikes(filteredData, availableFuels)
-      : []),
+    () =>
+      period === '7j' || period === '30j' || period === '90j'
+        ? computeSpikes(filteredData, availableFuels)
+        : [],
     [filteredData, availableFuels, period],
   )
 
@@ -170,7 +174,7 @@ export function FuelChart({ data: initialData, events = [] }: FuelChartProps) {
   if (filteredData.length === 0 && !isLoadingExtended) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <p className="text-sm text-surface-600">Aucune donnée disponible.</p>
+        <p className="text-surface-600 text-sm">Aucune donnée disponible.</p>
       </div>
     )
   }
@@ -186,9 +190,25 @@ export function FuelChart({ data: initialData, events = [] }: FuelChartProps) {
       <div className="relative h-64 w-full md:h-80" aria-label="Graphique des prix carburants">
         {isLoadingExtended && (
           <div className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-white/70 backdrop-blur-sm">
-            <svg className="h-6 w-6 animate-spin text-republic-500" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            <svg
+              className="text-republic-500 h-6 w-6 animate-spin"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+              />
             </svg>
           </div>
         )}
@@ -269,19 +289,22 @@ export function FuelChart({ data: initialData, events = [] }: FuelChartProps) {
       </div>
 
       {/* Légende */}
-      <div className="flex flex-wrap gap-4 text-xs text-surface-600">
+      <div className="text-surface-600 flex flex-wrap gap-4 text-xs">
         {availableFuels.map((fuelCode) => {
           const cfg = FUEL_CONFIG[fuelCode]!
           return (
             <div key={fuelCode} className="flex items-center gap-1.5">
-              <span className="inline-block h-2 w-4 rounded-sm" style={{ backgroundColor: cfg.color }} />
+              <span
+                className="inline-block h-2 w-4 rounded-sm"
+                style={{ backgroundColor: cfg.color }}
+              />
               <span>{cfg.label}</span>
             </div>
           )
         })}
         {spikes.length > 0 && (
           <div className="flex items-center gap-1.5">
-            <span className="inline-block h-2 w-2 rounded-full bg-alert-500" />
+            <span className="bg-alert-500 inline-block h-2 w-2 rounded-full" />
             <span>Spike &gt; 3%</span>
           </div>
         )}

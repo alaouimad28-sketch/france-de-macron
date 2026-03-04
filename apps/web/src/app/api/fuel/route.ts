@@ -22,13 +22,20 @@ const PAGE_SIZE = 1000
 
 function getPeriodDays(period: FuelPeriodFilter): number {
   switch (period) {
-    case '7j':   return 7
-    case '30j':  return 30
-    case '90j':  return 90
-    case '1an':  return 365
-    case '5ans': return 1825
-    case 'max':  return 7300
-    default:     return 90
+    case '7j':
+      return 7
+    case '30j':
+      return 30
+    case '90j':
+      return 90
+    case '1an':
+      return 365
+    case '5ans':
+      return 1825
+    case 'max':
+      return 7300
+    default:
+      return 90
   }
 }
 

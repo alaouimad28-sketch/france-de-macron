@@ -8,17 +8,17 @@
 
 **Objectif** : Lancer et valider le concept, capturer les premiers emails.
 
-| Fonctionnalité                         | Statut           |
-| -------------------------------------- | ---------------- |
-| Repo scaffold + docs                   | ✅               |
-| Schema Supabase + migrations           | ✅               |
-| Pipeline carburants J-30               | 🔲 À implémenter |
-| FCI v1 (carburants uniquement)         | 🔲 À implémenter |
-| Landing page (FCI hero + carburants)   | 🔲 À implémenter |
-| Vote cooked/uncooked                   | 🔲 À implémenter |
-| CTA Newsletter                         | 🔲 À implémenter |
-| Pages About / Methodology / Disclaimer | 🔲 À implémenter |
-| Déploiement Vercel                     | 🔲 À faire       |
+| Fonctionnalité                         | Statut                                          |
+| -------------------------------------- | ----------------------------------------------- |
+| Repo scaffold + docs                   | ✅                                              |
+| Schema Supabase + migrations           | ✅                                              |
+| Pipeline carburants J-30               | 🔲 À implémenter                                |
+| FCI v1 (carburants uniquement)         | 🔲 À implémenter                                |
+| Landing page (FCI hero + carburants)   | 🔲 À implémenter                                |
+| Vote cooked/uncooked                   | 🔲 À implémenter                                |
+| CTA Newsletter                         | 🔲 À implémenter                                |
+| Pages About / Methodology / Disclaimer | 🔲 À implémenter                                |
+| Déploiement Vercel                     | 🔲 À faire                                      |
 | Vercel Cron fuel-daily                 | ✅ Route implémentée ; CRON_SECRET à configurer |
 
 ---
