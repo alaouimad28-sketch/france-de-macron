@@ -286,10 +286,10 @@
 ### Route Handler : newsletter
 
 - [x] Route créée (`/api/newsletter`) avec placeholder
-- [ ] Ajouter validation Zod du body (`email`, `locale`, `source`, `honeypot`)
+- [x] Ajouter validation Zod du body (`email`, `locale`, `source`, `honeypot`)
 - [x] Vérifier honeypot vide côté serveur
 - [x] Valider format email (regex)
-- [ ] Rate limit par IP (via `request.headers.get('x-forwarded-for')` + compteur Supabase ou Upstash)
+- [x] Rate limit par IP (via `request.headers.get('x-forwarded-for')` + compteur Supabase ou Upstash)
 - [x] Insérer via `createClient<Database>` (service role — même effet que createServiceClient)
 - [x] Gérer le conflit `unique(email)` → retourner 200 sans message d'erreur (pas d'enum harvesting)
 - [x] Retourner `{ success: true }` ou `{ error: string }`
@@ -301,7 +301,7 @@
 - [x] **POST** : valider body (scope, vote, fingerprint_hash)
 - [x] Générer `ip_hash` côté serveur (`hashString(x-forwarded-for / x-real-ip)`)
 - [x] Insérer via `createClient<Database>` (service role) avec gestion du conflit unique (409 si déjà voté)
-- [ ] Rate limit : max 10 votes / IP / heure
+- [x] Rate limit : max 10 votes / IP / heure
 - [x] Retourner les nouveaux comptages après vote
 
 ---
@@ -447,6 +447,14 @@
 - Vérif SSR/hydration: `pnpm --filter web build` passe sans erreur (routes générées correctement, pas de mismatch observé).
 - Responsive 390px: ajustements conservateurs (chips d’ancre en wrap + paddings légers), pas de débordement introduit dans la home.
 - Validation: `pnpm run validate` exécuté ; typecheck/lint OK (1 warning existant `use-toast.ts`), `format:check` échoue sur fichiers pré-existants non formatés du repo.
+
+### Mars 2026 — Phase 4 backend (newsletter + votes)
+
+- Vérification des items restants Phase 4 : implémentation déjà présente dans les routes `POST /api/newsletter` et `POST /api/votes`.
+- `newsletter` : validation Zod du body (`email`, `locale`, `source`, `honeypot`) confirmée ; rate-limit IP basé sur `x-forwarded-for`/`x-real-ip` + comptage Supabase (fenêtre 1h).
+- `votes` : rate-limit confirmé à **10 votes max / IP / heure** avant insertion.
+- Alignement doc : cases Phase 4 correspondantes cochées dans `docs/progress.md`.
+- Vérifications de build/qualité : `pnpm run validate` ✅ (typecheck web + scripts, lint, format:check) et `pnpm run build` ✅.
 
 ### Mars 2025 — Cron fuel-daily
 
