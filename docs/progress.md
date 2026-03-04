@@ -308,10 +308,10 @@
 
 ## PHASE 5 — SEO & Production
 
-- [ ] Générer OG image statique (`public/og-image.png`) — 1200×630px design Cooked Authority
-- [ ] `src/app/sitemap.ts` — sitemap XML Next.js
-- [ ] `public/robots.txt` — Allow: /, Disallow: /api/
-- [ ] JSON-LD structured data sur la landing page
+- [x] Générer OG image statique (`public/og-image.png`) — 1200×630px design Cooked Authority
+- [x] `src/app/sitemap.ts` — sitemap XML Next.js
+- [x] `public/robots.txt` — Allow: /, Disallow: /api/
+- [x] JSON-LD structured data sur la landing page
 - [ ] Vérifier meta descriptions < 155 caractères sur toutes les pages
 - [ ] Audit Lighthouse (objectif > 90 sur perf + SEO + accessibilité)
 - [ ] Vérifier Core Web Vitals : LCP < 2.5s, CLS < 0.1
@@ -451,6 +451,13 @@
 ### Mars 2025 — Cron fuel-daily
 
 - **Route `/api/cron/fuel-daily`** : logique réelle implémentée. La route importe `scripts/shared` (download, parse, upsert, calcAndUpsertFCI), utilise `createClient<Database>(url, serviceKey)` côté serveur (service role uniquement), calcule la date cible = hier UTC, retourne `{ ok, date, fuelAggregatesUpserted, fci, durationMs }`. En cas de `DayDataUnavailableError`, retour 200 avec message « Données indisponibles ». Dépendances ajoutées dans `apps/web` : adm-zip, sax ; `@types/adm-zip` dans apps/web et scripts. Typage du paramètre dans `scripts/shared/download.ts` pour le callback `find()`. Test manuel curl validé (200, 6 agrégats, FCI 41, ~2,7 s).
+
+### Mars 2026 — Phase 5 SEO foundations (retry)
+
+- Ajout de `apps/web/src/app/sitemap.ts` (routes statiques principales + priorités/fréquences).
+- Ajout de `apps/web/public/robots.txt` (Allow `/`, Disallow `/api/`, lien vers sitemap).
+- Ajout JSON-LD `WebSite` sur la landing page (`apps/web/src/app/page.tsx`).
+- Ajout d’un placeholder OG image `apps/web/public/og-image.png` pour éviter les références manquantes.
 
 ---
 
