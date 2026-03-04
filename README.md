@@ -240,7 +240,7 @@ scripts/
 └── qa/                      # Automatisation QA
 ```
 
-Voir [scripts/README.md](scripts/README.md). Commandes : `pnpm run fuel:backfill` (J-30), `pnpm run fuel:backfill:last` (dernier jour), `pnpm run fuel:backfill:annees` (archives), `pnpm run fuel:daily` (quotidien ou replay), `pnpm run fci:backfill` (historique FCI depuis 2019), `pnpm run insee:ipc:food:backfill` (ingestion IPC alimentaire), `pnpm run deploy:verify` (préflight + artefacts + cron).
+Voir [scripts/README.md](scripts/README.md). Commandes : `pnpm run fuel:backfill` (J-30), `pnpm run fuel:backfill:last` (dernier jour), `pnpm run fuel:backfill:annees` (archives), `pnpm run fuel:daily` (quotidien ou replay), `pnpm run fci:backfill` (historique FCI depuis 2019), `pnpm run insee:ipc:food:backfill` (ingestion IPC alimentaire), `pnpm run eurostat:youth:backfill` (chômage jeunes FR + UE-27), `pnpm run deploy:verify` (préflight + artefacts + cron).
 
 ---
 

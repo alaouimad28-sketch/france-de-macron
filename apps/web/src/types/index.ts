@@ -120,3 +120,11 @@ export interface ActionResult<T = void> {
   data?: T
   error?: string
 }
+
+export interface YouthUnemploymentMonthly {
+  month: string
+  geo: string
+  geo_label: string
+  unemployment_rate: number
+  unit: string
+}

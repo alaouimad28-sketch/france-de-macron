@@ -92,6 +92,12 @@
 2. **P1 ensuite** : TRVE électricité + pilote loyers (5 villes).
 3. **P2 exploratoire** : proxy pression éducation (module séparé, expérimental).
 
+### Statut exécution (Mars 2026)
+
+- ✅ INSEE IPC alimentaire : ingestion + section UI livrées.
+- ✅ Eurostat chômage jeunes : ingestion FR + UE-27 (`une_rt_m`) + section UI variation 3 mois livrées.
+- ⏳ Explainability FCI : restant en P0.
+
 ## Définition de done (global)
 
 - Ingestion idempotente documentée et observée en runbook

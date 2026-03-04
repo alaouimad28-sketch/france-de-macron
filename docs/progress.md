@@ -361,7 +361,7 @@
 
 - [x] **Intégrer INSEE IPC alimentaire (mensuel)**
   - **Acceptance criteria** : table `ipc_food_monthly` créée, script d’ingestion idempotent opérationnel, section UI dédiée visible en home/modules, doc source/méthode mise à jour.
-- [ ] **Intégrer Eurostat chômage jeunes (15–24)**
+- [x] **Intégrer Eurostat chômage jeunes (15–24)**
   - **Acceptance criteria** : table `youth_unemployment_monthly` alimentée pour FR + médiane UE, endpoint de lecture stable, affichage variation 3 mois + annotation.
 - [ ] **Livrer la décomposition FCI (Explainability)**
   - **Acceptance criteria** : endpoint `/api/fci/decomposition` disponible, UI contribution par composante en production, version de méthodo tracée (`fci_method_version`).
@@ -587,3 +587,10 @@
 - La home affiche désormais un module “Panier alimentaire” (dernier indice, variation YoY quand disponible, bornes min/max sur fenêtre 24 mois).
 - Navigation d’ancre enrichie avec `#alimentation` pour accès direct au module.
 - `apps/web/src/lib/supabase/database.types.ts` mis à jour avec la table `ipc_food_monthly` pour requêtes typées côté web.
+
+### Mars 2026 — Autonomous Additions P0 (Eurostat chômage jeunes)
+
+- Migration additive `20240101000009_init_youth_unemployment_monthly.sql` ajoutée (`public.youth_unemployment_monthly`, RLS lecture publique, index, contrainte d’idempotence).
+- Nouveau job `scripts/eurostat-youth-unemployment-backfill/` + commande `pnpm run eurostat:youth:backfill` (fetch API Eurostat, normalize mensuel, upsert FR + UE-27, `DRY_RUN=1`).
+- API de lecture stable ajoutée : `GET /api/youth-unemployment` (`geo=FR|EU27_2020`, `limit` borné).
+- Nouveau module home `YouthUnemploymentSection` (France vs UE-27, écart courant, variation 3 mois avec annotation auto si > +1 pt).

@@ -12,6 +12,7 @@ import { FuelSection } from '@/components/fuel/FuelSection'
 import { ScrollReveal } from '@/components/layout/ScrollReveal'
 import { NewsletterForm } from '@/components/newsletter/NewsletterForm'
 import { CookedVote } from '@/components/vote/CookedVote'
+import { YouthUnemploymentSection } from '@/components/youth/YouthUnemploymentSection'
 
 const PAGE_GRADIENT =
   'linear-gradient(to right, rgba(35,85,238,0.35) 0%, rgba(255,255,255,0.95) 38%, rgba(255,255,255,0.95) 62%, rgba(244,63,94,0.35) 100%)'
@@ -55,6 +56,7 @@ export default function HomePage() {
           { href: '#hero', label: 'Indice FCI' },
           { href: '#carburants', label: 'Carburants' },
           { href: '#alimentation', label: 'Alimentation' },
+          { href: '#jeunesse', label: 'Jeunesse' },
           { href: '#vote', label: 'Vote' },
           { href: '#newsletter', label: 'Newsletter' },
         ].map((item) => (
@@ -78,6 +80,12 @@ export default function HomePage() {
 
       <ScrollReveal>
         <FoodInflationSection />
+      </ScrollReveal>
+
+      <SectionDivider />
+
+      <ScrollReveal>
+        <YouthUnemploymentSection />
       </ScrollReveal>
 
       <SectionDivider />
