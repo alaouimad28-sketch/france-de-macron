@@ -15,6 +15,7 @@
 | [docs/progress.md](progress.md)                     | État actuel du projet (todo / done) — source de vérité pour les tâches            |
 | [docs/addons-research.md](addons-research.md)       | Recherche post-Phase-7 : ajouts P0/P1/P2, sources et notes d’implémentation       |
 | [docs/deployment-runbook.md](deployment-runbook.md) | Runbook lancement prod (ordre exact des commandes et checks)                      |
+| [docs/addons-research.md](addons-research.md)       | Research log autonome (P0/P1) pour modules additionnels                           |
 
 ---
 
@@ -30,19 +31,20 @@
 
 ## Données et pipeline
 
-| Document                                                                        | Description                                                                        |
-| ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| [docs/data/pipeline.md](data/pipeline.md)                                       | Architecture du pipeline, jobs fuel-backfill / fuel-daily, calcul FCI, idempotence |
-| [docs/data/methodology.md](data/methodology.md)                                 | Méthodologie French Cooked Index™ (FCI) — formule v1, labels, limites              |
-| [docs/data/sources.md](data/sources.md)                                         | Sources de données (carburants roulez-eco.fr, structure XML, contraintes)          |
-| [scripts/README.md](../scripts/README.md)                                       | Scripts d’ingestion — fuel-backfill-j30, fuel-backfill-last, fuel-daily            |
-| [scripts/shared/README.md](../scripts/shared/README.md)                         | Module partagé (download, parse, upsert) pour jobs quotidiens                      |
-| [scripts/fuel-daily/README.md](../scripts/fuel-daily/README.md)                 | Détail du job quotidien fuel-daily                                                 |
-| [scripts/fuel-backfill-j30/README.md](../scripts/fuel-backfill-j30/README.md)   | Détail du backfill J-30                                                            |
-| [scripts/fuel-backfill-last/README.md](../scripts/fuel-backfill-last/README.md) | Rafraîchir dernier(s) jour(s) (J-1, optionnel J-0)                                 |
-| [scripts/fci-backfill/README.md](../scripts/fci-backfill/README.md)             | Backfill FCI : calcul du score pour tous les jours depuis 2019 (série temporelle)  |
-| [scripts/deploy/README.md](../scripts/deploy/README.md)                         | Préflight production, vérification artefacts et endpoint cron sécurisé             |
-| [scripts/qa/README.md](../scripts/qa/README.md)                                 | Automatisation QA Phase 7 (smoke, reduced motion, headers sécurité)                |
+| Document                                                                                  | Description                                                                        |
+| ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| [docs/data/pipeline.md](data/pipeline.md)                                                 | Architecture du pipeline, jobs fuel-backfill / fuel-daily, calcul FCI, idempotence |
+| [docs/data/methodology.md](data/methodology.md)                                           | Méthodologie French Cooked Index™ (FCI) — formule v1, labels, limites              |
+| [docs/data/sources.md](data/sources.md)                                                   | Sources de données (carburants roulez-eco.fr, structure XML, contraintes)          |
+| [scripts/README.md](../scripts/README.md)                                                 | Scripts d’ingestion — fuel-backfill-j30, fuel-backfill-last, fuel-daily            |
+| [scripts/shared/README.md](../scripts/shared/README.md)                                   | Module partagé (download, parse, upsert) pour jobs quotidiens                      |
+| [scripts/fuel-daily/README.md](../scripts/fuel-daily/README.md)                           | Détail du job quotidien fuel-daily                                                 |
+| [scripts/fuel-backfill-j30/README.md](../scripts/fuel-backfill-j30/README.md)             | Détail du backfill J-30                                                            |
+| [scripts/fuel-backfill-last/README.md](../scripts/fuel-backfill-last/README.md)           | Rafraîchir dernier(s) jour(s) (J-1, optionnel J-0)                                 |
+| [scripts/fci-backfill/README.md](../scripts/fci-backfill/README.md)                       | Backfill FCI : calcul du score pour tous les jours depuis 2019 (série temporelle)  |
+| [scripts/insee-ipc-food-backfill/README.md](../scripts/insee-ipc-food-backfill/README.md) | Scaffold ingestion IPC alimentaire INSEE (P0)                                      |
+| [scripts/deploy/README.md](../scripts/deploy/README.md)                                   | Préflight production, vérification artefacts et endpoint cron sécurisé             |
+| [scripts/qa/README.md](../scripts/qa/README.md)                                           | Automatisation QA Phase 7 (smoke, reduced motion, headers sécurité)                |
 
 ---
 
@@ -125,6 +127,8 @@ docs/
 | `apps/web/src/hooks/use-toast.ts`                       | shadcn toast hook (exactOptionalPropertyTypes fix)                    |
 | `apps/web/tailwind.config.ts`                           | Design tokens                                                         |
 | `apps/web/eslint.config.mjs`                            | Config ESLint 9 (flat config)                                         |
+| `scripts/insee-ipc-food-backfill/index.ts`              | Scaffold ingestion INSEE IPC alimentaire (fetch/normalize/store)      |
+| `scripts/insee-ipc-food-backfill/README.md`             | Détails d'exécution et TODOs du module IPC alimentaire                |
 | `scripts/deploy/preflight.ts`                           | Vérifie présence env vars critiques + cohérence configuration         |
 | `scripts/deploy/verify-cron-endpoint.ts`                | Vérifie 401/200 + payload du cron endpoint sécurisé                   |
 | `scripts/deploy/verify-production.ts`                   | Vérifie artefacts production (`robots.txt`, `sitemap.ts`)             |
@@ -155,6 +159,7 @@ docs/
 | `pnpm run fuel:backfill:last`       | Rafraîchir uniquement hier (et optionnellement aujourd’hui avec `BACKFILL_INCLUDE_TODAY=1`) |
 | `pnpm run fuel:daily`               | Job quotidien J-1 (ou replay avec `FUEL_DATE=YYYYMMDD`, cron `/api/cron/fuel-daily`)        |
 | `pnpm run fci:backfill`             | Backfill FCI : calcul du score pour tous les jours depuis 2019 (série temporelle)           |
+| `pnpm run insee:ipc:food:backfill`  | Scaffold ingestion INSEE IPC alimentaire (fetch/normalize/store, TODO parser BDM)           |
 | `pnpm run deploy:preflight`         | Vérifier les env vars critiques et la cohérence de config (sans révéler de secrets)         |
 | `pnpm run deploy:verify-production` | Vérifier les artefacts production requis (`robots.txt`, `sitemap.ts`)                       |
 | `pnpm run deploy:verify-cron`       | Vérifier l’endpoint cron sécurisé (401 sans token, 200 avec token)                          |
@@ -164,7 +169,6 @@ docs/
 | `pnpm run qa:security-headers`      | Vérifier les headers de sécurité en local sur l’app buildée                                 |
 | `pnpm run qa:meta-descriptions`     | Vérifier les meta descriptions SEO (présence + longueur <= 155)                             |
 | `pnpm run qa:phase7`                | Exécuter toute l’automatisation QA Phase 7                                                  |
-| `pnpm run security:check-headers`   | Vérifier les headers de sécurité d’une URL (`HEADERS_CHECK_URL`)                            |
 | `pnpm run validate`                 | Vérifier avant commit (typecheck web + scripts, lint, format)                               |
 
 **Supabase local** : après `pnpm run db:start`, Studio = http://127.0.0.1:54323, API = http://127.0.0.1:54321, **MCP** = http://127.0.0.1:54321/mcp (pour Cursor / requêtes IA sur la base). Voir [README](../README.md#référence-supabase-local-après-supabase-start) et [TESTER-LE-SITE.md](TESTER-LE-SITE.md).

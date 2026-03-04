@@ -234,12 +234,13 @@ scripts/
 ├── fuel-backfill-annee/ # Backfill par archives annuelles (2007 → aujourd'hui)
 ├── fuel-backfill-last/  # Rafraîchir hier (et optionnellement aujourd'hui)
 ├── fuel-daily/          # Job quotidien J-1 (ou FUEL_DATE=YYYYMMDD pour replay)
-├── fci-backfill/        # Backfill FCI : score pour tous les jours depuis 2019 (série temporelle)
-├── deploy/              # Vérifications prod (preflight, artefacts, cron endpoint)
-└── security/            # Checks sécurité
+├── fci-backfill/            # Backfill FCI : score pour tous les jours depuis 2019 (série temporelle)
+├── insee-ipc-food-backfill/ # Scaffold P0 IPC alimentaire INSEE (fetch/normalize/store)
+├── deploy/                  # Vérifications prod (preflight, artefacts, cron endpoint)
+└── qa/                      # Automatisation QA
 ```
 
-Voir [scripts/README.md](scripts/README.md). Commandes : `pnpm run fuel:backfill` (J-30), `pnpm run fuel:backfill:last` (dernier jour), `pnpm run fuel:backfill:annees` (archives), `pnpm run fuel:daily` (quotidien ou replay), `pnpm run fci:backfill` (historique FCI depuis 2019), `pnpm run deploy:verify` (préflight + artefacts + cron).
+Voir [scripts/README.md](scripts/README.md). Commandes : `pnpm run fuel:backfill` (J-30), `pnpm run fuel:backfill:last` (dernier jour), `pnpm run fuel:backfill:annees` (archives), `pnpm run fuel:daily` (quotidien ou replay), `pnpm run fci:backfill` (historique FCI depuis 2019), `pnpm run insee:ipc:food:backfill` (scaffold IPC alimentaire), `pnpm run deploy:verify` (préflight + artefacts + cron).
 
 ---
 

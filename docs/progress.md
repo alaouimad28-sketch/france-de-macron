@@ -312,7 +312,7 @@
 - [x] `src/app/sitemap.ts` — sitemap XML Next.js
 - [x] `public/robots.txt` — Allow: /, Disallow: /api/
 - [x] JSON-LD structured data sur la landing page
-- [ ] Vérifier meta descriptions < 155 caractères sur toutes les pages
+- [x] Vérifier meta descriptions < 155 caractères sur toutes les pages
 - [ ] Audit Lighthouse (objectif > 90 sur perf + SEO + accessibilité)
 - [ ] Vérifier Core Web Vitals : LCP < 2.5s, CLS < 0.1
 
@@ -410,6 +410,7 @@
 ### v2.0 — Multi-indicateurs
 
 - [ ] Module inflation alimentaire (INSEE IPC)
+  - [x] P0 scaffold ingestion livré (doc source détaillée + script fetch/normalize/store + migration additive `ipc_food_monthly`)
 - [ ] Module loyers
 - [ ] FCI v2 (multi-composantes + pondérations révisées)
 - [ ] Décomposition interactive du score FCI
@@ -511,6 +512,13 @@
 - Ajout de `apps/web/public/robots.txt` (Allow `/`, Disallow `/api/`, lien vers sitemap).
 - Ajout JSON-LD `WebSite` sur la landing page (`apps/web/src/app/page.tsx`).
 - Ajout d’un placeholder OG image `apps/web/public/og-image.png` pour éviter les références manquantes.
+
+### Mars 2026 — Autonomous Additions P0 (IPC alimentaire INSEE)
+
+- Ajout d’un **scaffold non-bloquant** pour l’ingestion IPC alimentaire : `scripts/insee-ipc-food-backfill/` (fetch/normalize/store avec TODO explicites sur auth/shape BDM).
+- Ajout d’une migration additive `20240101000008_init_ipc_food_monthly.sql` (table `ipc_food_monthly`, contrainte d’idempotence `(month, source_series_id)`, RLS lecture publique).
+- Documentation source enrichie dans `docs/data/sources.md` (série cible, plan d’ingestion, incertitudes ouvertes).
+- Nouveau log de recherche `docs/addons-research.md` pour tracer hypothèses + prochaines actions immédiates.
 
 ### Mars 2026 — Phase 7 sécurité headers (CSP)
 
