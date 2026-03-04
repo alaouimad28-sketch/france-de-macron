@@ -22,7 +22,17 @@
     "fuel:backfill:annees": "pnpm --filter scripts fuel:backfill:annees",
     "fuel:backfill:last": "pnpm --filter scripts fuel:backfill:last",
     "fuel:daily": "pnpm --filter scripts fuel:daily",
-    "fci:backfill": "pnpm --filter scripts fci:backfill"
+    "fci:backfill": "pnpm --filter scripts fci:backfill",
+    "deploy:check-vercel": "pnpm --filter scripts deploy:check-vercel",
+    "deploy:preflight": "pnpm --filter scripts deploy:preflight",
+    "deploy:verify-production": "pnpm --filter scripts deploy:verify-production",
+    "deploy:verify-cron": "pnpm --filter scripts deploy:verify-cron",
+    "deploy:verify": "pnpm --filter scripts deploy:verify",
+    "security:check-headers": "pnpm --filter scripts security:check-headers",
+    "qa:smoke": "pnpm --filter scripts qa:smoke",
+    "qa:reduced-motion": "pnpm --filter scripts qa:reduced-motion",
+    "qa:security-headers": "pnpm --filter scripts qa:security-headers",
+    "qa:phase7": "pnpm run qa:reduced-motion && pnpm run qa:smoke && pnpm run qa:security-headers"
   },
   "devDependencies": {
     "prettier": "^3.3.3",

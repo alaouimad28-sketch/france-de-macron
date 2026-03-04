@@ -338,11 +338,14 @@
 ## PHASE 7 — QA & Lancement
 
 - [ ] Tester le flux complet : pipeline → données → affichage graphique
+  - [x] Automatiser des smoke checks CI (routes `/`, `/about`, `/methodology` + APIs `/api/votes` GET et `/api/newsletter` validation)
 - [ ] Tester inscription newsletter (vrai email)
 - [ ] Tester vote cooked/uncooked + contrainte 1 vote/jour
 - [ ] Tester sur mobile réel (iOS Safari + Android Chrome)
-- [ ] Tester avec `prefers-reduced-motion: reduce` (animations désactivées)
+- [x] Tester avec `prefers-reduced-motion: reduce` (animations désactivées)
+  - [x] Ajouter un check automatisé reduced-motion (`pnpm run qa:reduced-motion`)
 - [ ] Vérifier CSP headers (securityheaders.com)
+  - [x] Ajouter un check automatisé des headers sécurité (`pnpm run qa:security-headers`)
 - [ ] Vérifier qu'aucun secret n'est dans les logs Vercel
 - [ ] Checklist sécurité complète (`docs/security/threat-model.md#checklist`)
 - [ ] Soft launch (partage en privé)
@@ -474,6 +477,22 @@
 - Ajout de `apps/web/public/robots.txt` (Allow `/`, Disallow `/api/`, lien vers sitemap).
 - Ajout JSON-LD `WebSite` sur la landing page (`apps/web/src/app/page.tsx`).
 - Ajout d’un placeholder OG image `apps/web/public/og-image.png` pour éviter les références manquantes.
+
+### Mars 2026 — Phase 7 sécurité headers (CSP)
+
+- Renforcement des headers de sécurité globaux dans `apps/web/next.config.ts` : ajout `object-src 'none'`, `base-uri 'self'`, `form-action 'self'`, `X-DNS-Prefetch-Control`, `Strict-Transport-Security`.
+- CSP ajustée par environnement : `unsafe-eval` conservé uniquement en dev, retiré en production.
+- Ajout du script `pnpm run security:check-headers` (`scripts/security/check-headers.ts`) pour vérifier automatiquement les headers critiques sur une URL cible (`HEADERS_CHECK_URL`).
+- Validation ciblée exécutée en local : `HEADERS_CHECK_URL=http://127.0.0.1:3040/about pnpm run security:check-headers` ✅.
+
+### Mars 2026 — Phase 6 hardening (preflight + cron verify)
+
+- Ajout de `scripts/deploy/preflight.ts` + commande `pnpm run deploy:preflight` (présence des env vars critiques, anti-fuite `NEXT_PUBLIC_*`, validation URLs/timeouts, secret cron minimal).
+- Ajout de `scripts/deploy/verify-cron-endpoint.ts` + commande `pnpm run deploy:verify-cron` avec critères stricts : 401 sans token, 200 avec token, payload JSON minimal (`ok`, `date`).
+- Ajout de `scripts/deploy/verify-production.ts` + commande `pnpm run deploy:verify-production` (artefacts requis: `robots.txt`, `sitemap.ts`).
+- Ajout de `scripts/deploy/check-vercel-setup.ts` + commande `pnpm run deploy:check-vercel` (cron path/schedule dans `apps/web/vercel.json`).
+- `pnpm run deploy:verify` enchaîne désormais preflight + artefacts + vérification cron (exit code non-zero si échec).
+- Runbook `docs/deployment-runbook.md` renforcé avec critères PASS/FAIL explicites et intégration de la séquence de vérification.
 
 ---
 
