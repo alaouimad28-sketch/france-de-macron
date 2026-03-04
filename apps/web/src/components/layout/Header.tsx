@@ -45,7 +45,7 @@ export function Header() {
   return (
     <header
       className={[
-        'fixed top-0 z-50 w-full border-b border-surface-200 bg-white shadow-sm transition-transform duration-300 ease-out',
+        'border-surface-200 fixed top-0 z-50 w-full border-b bg-white shadow-sm transition-transform duration-300 ease-out',
         visible ? 'translate-y-0' : '-translate-y-full',
       ].join(' ')}
     >
@@ -56,8 +56,10 @@ export function Header() {
           className="group flex items-center gap-2 transition-opacity hover:opacity-80"
           aria-label="France de Macron — Accueil"
         >
-          <span className="text-lg" aria-hidden="true">🇫🇷</span>
-          <span className="font-display text-sm font-bold tracking-tight text-surface-800 sm:text-base">
+          <span className="text-lg" aria-hidden="true">
+            🇫🇷
+          </span>
+          <span className="font-display text-surface-800 text-sm font-bold tracking-tight sm:text-base">
             France de Macron
           </span>
         </Link>
@@ -74,7 +76,7 @@ export function Header() {
                     aria-current={isActive ? 'page' : undefined}
                     className={[
                       'rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors duration-150 sm:text-sm',
-                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-republic-500',
+                      'focus-visible:ring-republic-500 focus-visible:outline-none focus-visible:ring-2',
                       isActive
                         ? 'bg-republic-50 text-republic-600'
                         : 'text-surface-600 hover:bg-surface-100 hover:text-surface-900',

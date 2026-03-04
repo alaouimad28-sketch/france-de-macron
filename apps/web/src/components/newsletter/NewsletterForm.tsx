@@ -50,27 +50,41 @@ export function NewsletterForm({ source = 'homepage' }: NewsletterFormProps) {
         setEmail('')
       } else if (res.status === 400) {
         setState('error')
-        toast({ title: 'Email invalide', description: 'Vérifie le format de ton adresse email.', variant: 'destructive' })
+        toast({
+          title: 'Email invalide',
+          description: 'Vérifie le format de ton adresse email.',
+          variant: 'destructive',
+        })
       } else {
         setState('error')
-        toast({ title: 'Oups', description: "Impossible de t'inscrire pour le moment. Réessaie dans quelques instants.", variant: 'destructive' })
+        toast({
+          title: 'Oups',
+          description: "Impossible de t'inscrire pour le moment. Réessaie dans quelques instants.",
+          variant: 'destructive',
+        })
       }
     } catch {
       setState('error')
-      toast({ title: 'Erreur réseau', description: 'Impossible de contacter le serveur. Vérifie ta connexion.', variant: 'destructive' })
+      toast({
+        title: 'Erreur réseau',
+        description: 'Impossible de contacter le serveur. Vérifie ta connexion.',
+        variant: 'destructive',
+      })
     }
   }
 
   if (state === 'success') {
     return (
       <div
-        className="flex flex-col items-center gap-3 rounded-2xl border border-relief-500/30 bg-relief-500/10 px-6 py-8 text-center animate-[fade-in_0.4s_ease-out_forwards]"
+        className="border-relief-500/30 bg-relief-500/10 flex animate-[fade-in_0.4s_ease-out_forwards] flex-col items-center gap-3 rounded-2xl border px-6 py-8 text-center"
         role="status"
         aria-live="polite"
       >
-        <span className="text-3xl" aria-hidden="true">✅</span>
-        <p className="font-display text-lg font-bold text-relief-400">Tu es dans la liste !</p>
-        <p className="text-sm text-surface-600">
+        <span className="text-3xl" aria-hidden="true">
+          ✅
+        </span>
+        <p className="font-display text-relief-400 text-lg font-bold">Tu es dans la liste !</p>
+        <p className="text-surface-600 text-sm">
           Tu recevras un email dès que le FCI bouge. Spoiler : il bouge souvent.
         </p>
       </div>
@@ -78,7 +92,7 @@ export function NewsletterForm({ source = 'homepage' }: NewsletterFormProps) {
   }
 
   return (
-    <form onSubmit={(e) => void handleSubmit(e)} noValidate className="w-full max-w-md mx-auto">
+    <form onSubmit={(e) => void handleSubmit(e)} noValidate className="mx-auto w-full max-w-md">
       {/* Honeypot — caché via CSS, jamais via display:none */}
       <div
         tabIndex={-1}
@@ -119,11 +133,11 @@ export function NewsletterForm({ source = 'homepage' }: NewsletterFormProps) {
             autoComplete="email"
             disabled={state === 'loading'}
             className={[
-              'w-full rounded-full border border-surface-200 bg-white px-5 py-3 text-sm text-surface-900 placeholder-surface-500',
-              'transition-colors duration-200 outline-none',
-              'focus:border-republic-500 focus:ring-2 focus:ring-republic-500/30',
+              'border-surface-200 text-surface-900 placeholder-surface-500 w-full rounded-full border bg-white px-5 py-3 text-sm',
+              'outline-none transition-colors duration-200',
+              'focus:border-republic-500 focus:ring-republic-500/30 focus:ring-2',
               state === 'error' ? 'border-alert-500' : 'border-surface-200',
-              state === 'loading' ? 'opacity-70 cursor-not-allowed' : '',
+              state === 'loading' ? 'cursor-not-allowed opacity-70' : '',
             ].join(' ')}
           />
         </div>
@@ -135,7 +149,7 @@ export function NewsletterForm({ source = 'homepage' }: NewsletterFormProps) {
           aria-busy={state === 'loading'}
           className={[
             'rounded-full px-6 py-3 text-sm font-semibold transition-all duration-200',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-republic-500',
+            'focus-visible:ring-republic-500 focus-visible:outline-none focus-visible:ring-2',
             'bg-republic-500 text-white',
             state === 'loading' || !email
               ? 'cursor-not-allowed opacity-60'
@@ -144,21 +158,37 @@ export function NewsletterForm({ source = 'homepage' }: NewsletterFormProps) {
         >
           {state === 'loading' ? (
             <span className="flex items-center gap-2">
-              <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              <svg
+                className="h-4 w-4 animate-spin"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                />
               </svg>
               Envoi…
             </span>
           ) : (
-            'Je m\'inscris'
+            "Je m'inscris"
           )}
         </button>
       </div>
 
-      <p className="mt-3 text-center text-xs text-surface-600">
+      <p className="text-surface-600 mt-3 text-center text-xs">
         Pas de spam. Pas de partage. Juste le FCI.{' '}
-        <a href="/disclaimer" className="underline hover:text-surface-800 transition-colors">
+        <a href="/disclaimer" className="hover:text-surface-800 underline transition-colors">
           En savoir plus.
         </a>
       </p>

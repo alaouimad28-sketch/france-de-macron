@@ -66,10 +66,10 @@ function PeriodChip({ value, label, isActive, onSelect }: SingleChipProps) {
       }}
       className={[
         'inline-flex items-center rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-150',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-republic-500',
+        'focus-visible:ring-republic-500 focus-visible:outline-none focus-visible:ring-2',
         isActive
           ? 'bg-republic-500 text-white shadow-sm'
-          : 'bg-white text-surface-600 border border-surface-200 hover:border-surface-300 hover:bg-surface-50',
+          : 'text-surface-600 border-surface-200 hover:border-surface-300 hover:bg-surface-50 border bg-white',
       ].join(' ')}
     >
       {label}
