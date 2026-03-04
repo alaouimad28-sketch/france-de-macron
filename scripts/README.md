@@ -14,7 +14,8 @@ scripts/
 ├── fuel-backfill-last/  # Rafraîchir uniquement hier (et optionnellement aujourd'hui)
 ├── fuel-daily/          # Job quotidien : ingestion J-1 (ou replay avec FUEL_DATE)
 ├── fci-backfill/        # Backfill FCI : calcul du score pour tous les jours depuis 2019 (série temporelle)
-├── deploy/              # Vérifications prod (preflight, cron endpoint, artefacts)
+├── deploy/              # Vérifications production (preflight, cron endpoint, artefacts)
+├── qa/                  # Automatisation QA Phase 7
 └── security/            # Checks sécurité (headers, etc.)
 ```
 
@@ -88,12 +89,27 @@ Checks vérifiables pour la mise en prod (sans afficher les secrets).
 
 ```bash
 pnpm run deploy:preflight
+pnpm run deploy:check-vercel
 pnpm run deploy:verify-production
 pnpm run deploy:verify-cron
 pnpm run deploy:verify
 ```
 
 Voir [deploy/README.md](deploy/README.md) pour le détail.
+
+### `qa:*` — Automatisation QA (Phase 7)
+
+Checks CI-friendly pour routes clés, APIs, reduced motion et headers sécurité.
+
+```bash
+pnpm run qa:reduced-motion
+pnpm run qa:smoke
+pnpm run qa:security-headers
+pnpm run qa:meta-descriptions
+pnpm run qa:phase7
+```
+
+Voir [qa/README.md](qa/README.md) pour le détail.
 
 ## Variables d'environnement requises
 
