@@ -159,14 +159,14 @@ Supabase → Front : SSR Next.js (at request time, données fraîches)
 | Licence       | Licence Ouverte / Open Licence v2.0                            |
 | Disponibilité | Gratuit, clé API requise (inscription INSEE, token Bearer API) |
 
-#### 2.1.1 Série cible MVP (scaffold P0)
+#### 2.1.1 Série cible MVP (P0 implémenté)
 
 - Série BDM pressentie : **`001767226`** (IPC alimentation, France entière).
 - Stockage prévu : table `public.ipc_food_monthly` (migration additive `20240101000008`).
 - Clé d'idempotence prévue : `(month, source_series_id)`.
 - Granularité MVP : **mensuelle**, sans désaisonnalisation (valeurs brutes publiées).
 
-#### 2.1.2 Plan technique d'ingestion (scaffold)
+#### 2.1.2 Plan technique d'ingestion (implémenté)
 
 1. **Fetch** (script `scripts/insee-ipc-food-backfill/index.ts`)
    - Appel de l'endpoint BDM avec `Authorization: Bearer $INSEE_API_TOKEN`.
@@ -178,9 +178,8 @@ Supabase → Front : SSR Next.js (at request time, données fraîches)
    - Upsert vers `public.ipc_food_monthly`.
    - Persistance du `raw_payload` pour traçabilité / debug parser.
 
-#### 2.1.3 Incertitudes ouvertes (TODO)
+#### 2.1.3 Incertitudes ouvertes
 
-- Confirmer la structure exacte du payload BDM sur la série retenue (path des observations).
 - Confirmer la stratégie de rotation du token INSEE pour exécution cron.
 - Vérifier si une série plus spécifique « alimentation hors tabac » doit remplacer `001767226`.
 
