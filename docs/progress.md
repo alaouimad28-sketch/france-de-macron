@@ -286,10 +286,10 @@
 ### Route Handler : newsletter
 
 - [x] Route créée (`/api/newsletter`) avec placeholder
-- [ ] Ajouter validation Zod du body (`email`, `locale`, `source`, `honeypot`)
+- [x] Ajouter validation Zod du body (`email`, `locale`, `source`, `honeypot`)
 - [x] Vérifier honeypot vide côté serveur
 - [x] Valider format email (regex)
-- [ ] Rate limit par IP (via `request.headers.get('x-forwarded-for')` + compteur Supabase ou Upstash)
+- [x] Rate limit par IP (via `request.headers.get('x-forwarded-for')` + compteur Supabase ou Upstash)
 - [x] Insérer via `createClient<Database>` (service role — même effet que createServiceClient)
 - [x] Gérer le conflit `unique(email)` → retourner 200 sans message d'erreur (pas d'enum harvesting)
 - [x] Retourner `{ success: true }` ou `{ error: string }`
@@ -301,7 +301,7 @@
 - [x] **POST** : valider body (scope, vote, fingerprint_hash)
 - [x] Générer `ip_hash` côté serveur (`hashString(x-forwarded-for / x-real-ip)`)
 - [x] Insérer via `createClient<Database>` (service role) avec gestion du conflit unique (409 si déjà voté)
-- [ ] Rate limit : max 10 votes / IP / heure
+- [x] Rate limit : max 10 votes / IP / heure
 - [x] Retourner les nouveaux comptages après vote
 
 ---
@@ -447,6 +447,14 @@
 - Vérif SSR/hydration: `pnpm --filter web build` passe sans erreur (routes générées correctement, pas de mismatch observé).
 - Responsive 390px: ajustements conservateurs (chips d’ancre en wrap + paddings légers), pas de débordement introduit dans la home.
 - Validation: `pnpm run validate` exécuté ; typecheck/lint OK (1 warning existant `use-toast.ts`), `format:check` échoue sur fichiers pré-existants non formatés du repo.
+
+### Mars 2026 — Préparation Phase 6/7 (déploiement + QA)
+
+- Audit de readiness effectué sur les volets : variables d’environnement, `CRON_SECRET`, checklist Vercel/Supabase, QA release.
+- Section **Phase 6** restructurée en checklist actionnable (préflight, env matrix, hardening cron, séquence data, monitoring).
+- Section **Phase 7** restructurée en checklist QA (fonctionnel, API, sécurité, perf/accessibilité, go-to-market).
+- Nouveau runbook `docs/deployment-runbook.md` ajouté avec ordre d’exécution launch day + commandes exactes.
+- `pnpm run validate` exécuté : ✅ typecheck web + scripts, ✅ lint, ✅ format:check.
 
 ### Mars 2025 — Cron fuel-daily
 
