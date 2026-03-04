@@ -299,6 +299,9 @@ pnpm run validate
 pnpm run build
 pnpm run qa:phase7
 
+# Audit SEO/perf reproductible + Core Web Vitals (proxy labo)
+pnpm run qa:lighthouse-cwv
+
 # Validation intuition FCI (synthetic + live si env Supabase dispo)
 pnpm run qa:fci-intuition
 ```
