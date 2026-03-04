@@ -206,12 +206,38 @@ Supabase → Front : SSR Next.js (at request time, données fraîches)
 2. **Normalize** : mapping `time=YYYY-MM` vers `month=YYYY-MM-01` + extraction `unemployment_rate`.
 3. **Store** : upsert idempotent via clé `(month, geo, age, sex, seasonal_adjustment, unit)`.
 
-### 2.3 Loyers — CLAMEUR / OLAP
+### 2.3 Tarifs électricité TRVE — CRE / data.gouv (P1 démarré)
+
+| Champ      | Valeur                                                                                                                          |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Source     | CRE — Historique des tarifs réglementés de vente d'électricité résidentiels                                                     |
+| URL        | `https://www.data.gouv.fr/datasets/historique-des-tarifs-reglementes-de-vente-delectricite-pour-les-consommateurs-residentiels` |
+| Ressources | `Option_Base.csv`, `Option_HPHC.csv`                                                                                            |
+| Format     | CSV (séparateur `;`, décimales `,`)                                                                                             |
+| Fréquence  | Mise à jour ponctuelle lors des révisions tarifaires                                                                            |
+| Licence    | À confirmer (dataset data.gouv actuellement « notspecified »)                                                                   |
+
+#### 2.3.1 Pipeline ingestion (implémenté)
+
+- Migration additive : `supabase/migrations/20240101000010_init_electricity_tariff_history.sql`
+- Script : `scripts/electricity-trve-backfill/index.ts`
+- Commande : `pnpm run electricity:trve:backfill`
+- Normalisation : conversion des valeurs TTC vers `ct€/kWh` (`value_ct_kwh`) + conservation de la valeur `€/kWh`
+- Idempotence : upsert clé `(effective_date, option_code, subscribed_power_kva, tariff_component, method_version)`
+
+#### 2.3.2 Modèle retenu (MVP P1)
+
+- Option Base : composante `BASE`
+- Option HPHC : composantes `HP` et `HC`
+- Champs de traçabilité : `source_url`, `source_dataset`, `source_meta`
+- Versionnement méthodologique : `method_version` (défaut `trve_v1`)
+
+### 2.4 Loyers — CLAMEUR / OLAP
 
 - Disponibilité partielle (certaines villes uniquement)
 - À évaluer en v2
 
-### 2.4 Données Eurostat multi-pays (v2 comparaison)
+### 2.5 Données Eurostat multi-pays (v2 comparaison)
 
 | Dataset         | Description             |
 | --------------- | ----------------------- |

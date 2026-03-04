@@ -16,6 +16,7 @@ scripts/
 ├── fci-backfill/            # Backfill FCI : calcul du score pour tous les jours depuis 2019 (série temporelle)
 ├── insee-ipc-food-backfill/ # Ingestion IPC alimentaire INSEE (fetch/normalize/store)
 ├── eurostat-youth-unemployment-backfill/ # Ingestion chômage jeunes Eurostat (FR vs UE-27)
+├── electricity-trve-backfill/ # Ingestion historique TRVE électricité (CRE/data.gouv)
 ├── deploy/                  # Vérifications production (preflight, cron endpoint, artefacts)
 ├── qa/                      # Automatisation QA Phase 7
 └── seo/                     # Audits Lighthouse + Core Web Vitals (proxy labo)
@@ -105,6 +106,17 @@ DRY_RUN=1 pnpm run eurostat:youth:backfill
 ```
 
 Voir [eurostat-youth-unemployment-backfill/README.md](eurostat-youth-unemployment-backfill/README.md) pour le détail.
+
+### `electricity:trve:backfill` — Tarifs électricité TRVE (P1)
+
+Ingestion idempotente de l’historique TRVE résidentiel CRE/data.gouv (Option Base + HPHC), normalisé en ct€/kWh.
+
+```bash
+pnpm run electricity:trve:backfill
+DRY_RUN=1 pnpm run electricity:trve:backfill
+```
+
+Voir [electricity-trve-backfill/README.md](electricity-trve-backfill/README.md) pour le détail.
 
 ### `deploy:*` — Vérifications production (Phase 6)
 
