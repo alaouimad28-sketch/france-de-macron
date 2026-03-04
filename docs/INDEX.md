@@ -8,11 +8,12 @@
 
 ## Démarrage rapide
 
-| Document                           | Description                                                                       |
-| ---------------------------------- | --------------------------------------------------------------------------------- |
-| [README.md](../README.md) (racine) | Setup, stack, commandes, variables d’env, structure du projet                     |
-| [docs/kickoff.md](kickoff.md)      | Brief agent / prompt de démarrage pour l’IA — ordre de lecture et règles absolues |
-| [docs/progress.md](progress.md)    | État actuel du projet (todo / done) — source de vérité pour les tâches            |
+| Document                                            | Description                                                                       |
+| --------------------------------------------------- | --------------------------------------------------------------------------------- |
+| [README.md](../README.md) (racine)                  | Setup, stack, commandes, variables d’env, structure du projet                     |
+| [docs/kickoff.md](kickoff.md)                       | Brief agent / prompt de démarrage pour l’IA — ordre de lecture et règles absolues |
+| [docs/progress.md](progress.md)                     | État actuel du projet (todo / done) — source de vérité pour les tâches            |
+| [docs/deployment-runbook.md](deployment-runbook.md) | Runbook lancement prod (ordre exact des commandes et checks)                      |
 
 ---
 

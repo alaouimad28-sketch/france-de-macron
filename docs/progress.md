@@ -456,6 +456,14 @@
 - Alignement doc : cases Phase 4 correspondantes cochées dans `docs/progress.md`.
 - Vérifications de build/qualité : `pnpm run validate` ✅ (typecheck web + scripts, lint, format:check) et `pnpm run build` ✅.
 
+### Mars 2026 — Préparation Phase 6/7 (déploiement + QA)
+
+- Audit de readiness effectué sur les volets : variables d’environnement, `CRON_SECRET`, checklist Vercel/Supabase, QA release.
+- Section **Phase 6** restructurée en checklist actionnable (préflight, env matrix, hardening cron, séquence data, monitoring).
+- Section **Phase 7** restructurée en checklist QA (fonctionnel, API, sécurité, perf/accessibilité, go-to-market).
+- Nouveau runbook `docs/deployment-runbook.md` ajouté avec ordre d’exécution launch day + commandes exactes.
+- `pnpm run validate` exécuté : ✅ typecheck web + scripts, ✅ lint, ✅ format:check.
+
 ### Mars 2025 — Cron fuel-daily
 
 - **Route `/api/cron/fuel-daily`** : logique réelle implémentée. La route importe `scripts/shared` (download, parse, upsert, calcAndUpsertFCI), utilise `createClient<Database>(url, serviceKey)` côté serveur (service role uniquement), calcule la date cible = hier UTC, retourne `{ ok, date, fuelAggregatesUpserted, fci, durationMs }`. En cas de `DayDataUnavailableError`, retour 200 avec message « Données indisponibles ». Dépendances ajoutées dans `apps/web` : adm-zip, sax ; `@types/adm-zip` dans apps/web et scripts. Typage du paramètre dans `scripts/shared/download.ts` pour le callback `find()`. Test manuel curl validé (200, 6 agrégats, FCI 41, ~2,7 s).
