@@ -13,6 +13,7 @@
 | [README.md](../README.md) (racine)                  | Setup, stack, commandes, variables d’env, structure du projet                     |
 | [docs/kickoff.md](kickoff.md)                       | Brief agent / prompt de démarrage pour l’IA — ordre de lecture et règles absolues |
 | [docs/progress.md](progress.md)                     | État actuel du projet (todo / done) — source de vérité pour les tâches            |
+| [docs/addons-research.md](addons-research.md)       | Recherche post-Phase-7 : ajouts P0/P1/P2, sources et notes d’implémentation       |
 | [docs/deployment-runbook.md](deployment-runbook.md) | Runbook lancement prod (ordre exact des commandes et checks)                      |
 
 ---
@@ -76,6 +77,7 @@ docs/
 ├── INDEX.md              ← Vous êtes ici
 ├── kickoff.md            Brief agent / ordre de lecture
 ├── progress.md           État du projet (todo / done)
+├── addons-research.md    Ajouts post-Phase-7 (priorités + implémentation)
 ├── vision.md             Vision, pitch, ton
 ├── product/
 │   ├── PRD.md            Périmètre MVP

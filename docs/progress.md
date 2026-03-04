@@ -353,6 +353,40 @@
 
 ---
 
+## Autonomous Additions Pipeline
+
+> Objectif : enchaîner des ajouts à fort impact juste après la Phase 7, avec priorité claire et critères d’acceptation vérifiables.
+
+### P0 — À lancer immédiatement (impact produit + crédibilité)
+
+- [ ] **Intégrer INSEE IPC alimentaire (mensuel)**
+  - **Acceptance criteria** : table `food_inflation_monthly` créée, script d’ingestion idempotent opérationnel, section UI dédiée visible en home/modules, doc source/méthode mise à jour.
+- [ ] **Intégrer Eurostat chômage jeunes (15–24)**
+  - **Acceptance criteria** : table `youth_unemployment_monthly` alimentée pour FR + médiane UE, endpoint de lecture stable, affichage variation 3 mois + annotation.
+- [ ] **Livrer la décomposition FCI (Explainability)**
+  - **Acceptance criteria** : endpoint `/api/fci/decomposition` disponible, UI contribution par composante en production, version de méthodo tracée (`fci_method_version`).
+
+### P1 — Sprint suivant (élargissement couverture)
+
+- [ ] **Ajouter composante tarifs électricité (TRVE CRE/data.gouv)**
+  - **Acceptance criteria** : historique tarifaire ingéré et versionné, événements de changement tarifaire visibles sur timeline, tests de cohérence unité (ct€/kWh).
+- [ ] **Piloter module loyers sur 5 villes**
+  - **Acceptance criteria** : dataset normalisé pour Paris/Lyon/Marseille/Lille/Toulouse, pipeline documenté (source/licence), composant UI comparatif livré.
+
+### P2 — Exploration encadrée (différenciation)
+
+- [ ] **Prototype “pression orientation” (enseignement sup.)**
+  - **Acceptance criteria** : proxy méthodologique défini + documenté, dataset annuel ingéré sur au moins 1 millésime, carte/visualisation exploratoire publiée sous feature flag.
+- [ ] **Scoring FCI v2 expérimental (pondérations multi-indicateurs)**
+  - **Acceptance criteria** : formule v2 documentée, calcul batch reproductible, comparaison v1 vs v2 disponible dans un rapport d’analyse.
+
+### Garde-fous transverses (obligatoires pour chaque ajout)
+
+- [ ] Source et licence référencées dans `docs/data/sources.md`
+- [ ] Job d’ingestion rejouable + idempotent + journalisé
+- [ ] Tests QA intégrés dans `pnpm run qa:phase7` ou suite dédiée
+- [ ] KPI d’impact défini (usage, rétention, compréhension) avant mise en prod
+
 ## BACKLOG POST-MVP (v1.1+)
 
 > Ne pas implémenter avant le lancement. Documenter ici pour ne pas perdre les idées.
