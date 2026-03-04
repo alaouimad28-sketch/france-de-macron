@@ -359,8 +359,8 @@
 
 ### P0 — À lancer immédiatement (impact produit + crédibilité)
 
-- [ ] **Intégrer INSEE IPC alimentaire (mensuel)**
-  - **Acceptance criteria** : table `food_inflation_monthly` créée, script d’ingestion idempotent opérationnel, section UI dédiée visible en home/modules, doc source/méthode mise à jour.
+- [x] **Intégrer INSEE IPC alimentaire (mensuel)**
+  - **Acceptance criteria** : table `ipc_food_monthly` créée, script d’ingestion idempotent opérationnel, section UI dédiée visible en home/modules, doc source/méthode mise à jour.
 - [ ] **Intégrer Eurostat chômage jeunes (15–24)**
   - **Acceptance criteria** : table `youth_unemployment_monthly` alimentée pour FR + médiane UE, endpoint de lecture stable, affichage variation 3 mois + annotation.
 - [ ] **Livrer la décomposition FCI (Explainability)**
@@ -580,3 +580,10 @@
   - **Toujours manuels / externes** : tests mobile réel iOS/Android, inscription newsletter avec vrai email, CSP via securityheaders.com, secrets dans logs Vercel, soft/public launch.
 - Ajout du check `qa:meta-descriptions` (pages `/`, `/about`, `/methodology`, `/disclaimer`) avec assertion `<meta name="description">` présent et longueur ≤ 155.
 - `qa:phase7` inclut désormais ce contrôle SEO en plus des checks reduced motion/smoke/security headers.
+
+### Mars 2026 — Autonomous Additions P0 (IPC alimentaire INSEE, usage web)
+
+- Intégration d’un **usage path serveur → UI** pour `ipc_food_monthly` via un nouveau Server Component `FoodInflationSection`.
+- La home affiche désormais un module “Panier alimentaire” (dernier indice, variation YoY quand disponible, bornes min/max sur fenêtre 24 mois).
+- Navigation d’ancre enrichie avec `#alimentation` pour accès direct au module.
+- `apps/web/src/lib/supabase/database.types.ts` mis à jour avec la table `ipc_food_monthly` pour requêtes typées côté web.

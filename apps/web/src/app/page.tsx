@@ -7,6 +7,7 @@
  */
 
 import { FCIHero } from '@/components/fci/FCIHero'
+import { FoodInflationSection } from '@/components/food/FoodInflationSection'
 import { FuelSection } from '@/components/fuel/FuelSection'
 import { ScrollReveal } from '@/components/layout/ScrollReveal'
 import { NewsletterForm } from '@/components/newsletter/NewsletterForm'
@@ -53,6 +54,7 @@ export default function HomePage() {
         {[
           { href: '#hero', label: 'Indice FCI' },
           { href: '#carburants', label: 'Carburants' },
+          { href: '#alimentation', label: 'Alimentation' },
           { href: '#vote', label: 'Vote' },
           { href: '#newsletter', label: 'Newsletter' },
         ].map((item) => (
@@ -70,6 +72,12 @@ export default function HomePage() {
 
       <ScrollReveal>
         <FuelSection />
+      </ScrollReveal>
+
+      <SectionDivider />
+
+      <ScrollReveal>
+        <FoodInflationSection />
       </ScrollReveal>
 
       <SectionDivider />
