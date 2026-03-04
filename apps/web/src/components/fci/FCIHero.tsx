@@ -36,6 +36,9 @@ export async function FCIHero() {
         aria-labelledby="fci-heading"
         className="relative flex min-h-[60vh] flex-col items-center justify-center overflow-hidden px-4 py-20"
       >
+        <h1 id="fci-heading" className="sr-only">
+          French Cooked Index
+        </h1>
         <p className="text-surface-600 text-center text-sm">
           Données indisponibles pour le moment.
         </p>

@@ -82,6 +82,9 @@ export async function FuelSection() {
         aria-labelledby="carburants-heading"
         className="px-4 py-12 text-center md:py-16"
       >
+        <h2 id="carburants-heading" className="sr-only">
+          Prix des carburants
+        </h2>
         <p className="text-surface-600 text-sm">Données carburants indisponibles pour le moment.</p>
       </section>
     )
