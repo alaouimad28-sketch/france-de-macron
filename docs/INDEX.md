@@ -58,6 +58,14 @@
 
 ---
 
+## Contribution & qualité
+
+| Document                                                                  | Description                                                                            |
+| ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| [docs/contributing-review-checklist.md](contributing-review-checklist.md) | Processus Git + checklist auteur/reviewer + critères de merge sur branche orchestrator |
+
+---
+
 ## SEO et partage
 
 | Document                                            | Description                                                      |
@@ -116,6 +124,7 @@ docs/
 | `apps/web/src/hooks/use-toast.ts`                       | shadcn toast hook (exactOptionalPropertyTypes fix)            |
 | `apps/web/tailwind.config.ts`                           | Design tokens                                                 |
 | `apps/web/eslint.config.mjs`                            | Config ESLint 9 (flat config)                                 |
+| `.github/workflows/ci-quality-gate.yml`                 | Gate CI PR/push (install, validate, build)                    |
 | `supabase/migrations/*.sql`                             | Schéma DB et RLS                                              |
 
 ---
