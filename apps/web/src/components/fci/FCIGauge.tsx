@@ -75,7 +75,14 @@ export function FCIGauge({ score, previousScore, isLoading }: FCIGaugeProps) {
       {/* ── Arc SVG ─────────────────────────────── */}
       <svg viewBox="0 0 200 108" className="flex w-full flex-wrap overflow-visible bg-white">
         <defs>
-          <linearGradient id="gaugeGrad" gradientUnits="userSpaceOnUse" x1={CX - R} y1="0" x2={CX + R} y2="0">
+          <linearGradient
+            id="gaugeGrad"
+            gradientUnits="userSpaceOnUse"
+            x1={CX - R}
+            y1="0"
+            x2={CX + R}
+            y2="0"
+          >
             <stop offset="0%" stopColor={GAUGE_BLUE} />
             <stop offset="100%" stopColor={GAUGE_RED} />
           </linearGradient>
@@ -109,15 +116,15 @@ export function FCIGauge({ score, previousScore, isLoading }: FCIGaugeProps) {
         {MAJOR_TICKS.map((s) => {
           const [ox, oy] = arcPoint(s, R + 7)
           const [ix, iy] = arcPoint(s, R - 6)
-          return (
-            <line key={s} x1={ox} y1={oy} x2={ix} y2={iy} stroke="#9ca3af" strokeWidth={1.5} />
-          )
+          return <line key={s} x1={ox} y1={oy} x2={ix} y2={iy} stroke="#9ca3af" strokeWidth={1.5} />
         })}
 
         {/* Aiguille */}
         <line
-          x1={CX} y1={CY}
-          x2={nx} y2={ny}
+          x1={CX}
+          y1={CY}
+          x2={nx}
+          y2={ny}
           stroke={scoreColor}
           strokeWidth={2.5}
           strokeLinecap="round"
@@ -127,40 +134,43 @@ export function FCIGauge({ score, previousScore, isLoading }: FCIGaugeProps) {
 
         {/* Labels 0 / 100 */}
         <text
-          x={CX - R - 4} y={CY + 14}
-          textAnchor="end" fontSize="9"
-          fill={GAUGE_BLUE} fontFamily="var(--font-mono)" fontWeight="700"
-        >0</text>
+          x={CX - R - 4}
+          y={CY + 14}
+          textAnchor="end"
+          fontSize="9"
+          fill={GAUGE_BLUE}
+          fontFamily="var(--font-mono)"
+          fontWeight="700"
+        >
+          0
+        </text>
         <text
-          x={CX + R + 4} y={CY + 14}
-          textAnchor="start" fontSize="9"
-          fill={GAUGE_RED} fontFamily="var(--font-mono)" fontWeight="700"
-        >100</text>
+          x={CX + R + 4}
+          y={CY + 14}
+          textAnchor="start"
+          fontSize="9"
+          fill={GAUGE_RED}
+          fontFamily="var(--font-mono)"
+          fontWeight="700"
+        >
+          100
+        </text>
       </svg>
 
       {/* ── Score + variation (HTML) ─────────────── */}
       <div className="mt-1 flex flex-col items-center gap-0.5">
         {/* Chiffre */}
         <div className="leading-none">
-          <span
-            className="font-display text-6xl font-black"
-            style={{ color: scoreColor }}
-          >
+          <span className="font-display text-6xl font-black" style={{ color: scoreColor }}>
             {score}
           </span>
-          <span className="ml-1.5 font-mono text-sm font-medium text-surface-500">
-            / 100
-          </span>
+          <span className="text-surface-500 ml-1.5 font-mono text-sm font-medium">/ 100</span>
         </div>
 
         {/* Variation */}
         {variation !== null && (
-          <p
-            className="font-mono text-sm font-semibold"
-            style={{ color: variationColor }}
-          >
-            {variation > 0 ? '▲' : variation < 0 ? '▼' : '→'}{' '}
-            {variation > 0 ? '+' : ''}
+          <p className="font-mono text-sm font-semibold" style={{ color: variationColor }}>
+            {variation > 0 ? '▲' : variation < 0 ? '▼' : '→'} {variation > 0 ? '+' : ''}
             {variation.toFixed(1)} pts depuis hier
           </p>
         )}

@@ -90,7 +90,11 @@ export function CookedVote({ scope = 'global' }: CookedVoteProps) {
         }
 
         if (!res.ok) {
-          toast({ title: 'Erreur', description: 'Impossible de voter pour le moment.', variant: 'destructive' })
+          toast({
+            title: 'Erreur',
+            description: 'Impossible de voter pour le moment.',
+            variant: 'destructive',
+          })
           return
         }
 
@@ -102,7 +106,11 @@ export function CookedVote({ scope = 'global' }: CookedVoteProps) {
         const today = getTodayUTC()
         localStorage.setItem(getLocalStorageKey(scope), JSON.stringify({ vote, day: today }))
       } catch {
-        toast({ title: 'Erreur réseau', description: 'Impossible de voter pour le moment.', variant: 'destructive' })
+        toast({
+          title: 'Erreur réseau',
+          description: 'Impossible de voter pour le moment.',
+          variant: 'destructive',
+        })
       } finally {
         setVotingFor(null)
       }
@@ -140,13 +148,10 @@ export function CookedVote({ scope = 'global' }: CookedVoteProps) {
 
       {/* Résultats */}
       {!isLoading && counts !== null && (
-        <div
-          key={popKey}
-          className="mt-6 space-y-3 animate-[fade-in_0.4s_ease-out_forwards]"
-        >
+        <div key={popKey} className="mt-6 animate-[fade-in_0.4s_ease-out_forwards] space-y-3">
           {/* Barre de ratio */}
           <div
-            className="h-2.5 w-full max-w-sm mx-auto overflow-hidden rounded-full bg-surface-200"
+            className="bg-surface-200 mx-auto h-2.5 w-full max-w-sm overflow-hidden rounded-full"
             role="progressbar"
             aria-valuenow={ratioCookedPct}
             aria-valuemin={0}
@@ -154,22 +159,25 @@ export function CookedVote({ scope = 'global' }: CookedVoteProps) {
             aria-label={`${ratioCookedPct}% cooked`}
           >
             <div
-              className="h-full rounded-full bg-alert-500 transition-all duration-500"
+              className="bg-alert-500 h-full rounded-full transition-all duration-500"
               style={{ width: `${ratioCookedPct}%` }}
             />
           </div>
 
           {/* Compteurs */}
-          <p className="text-sm text-surface-600">
-            <span className="font-mono font-semibold text-alert-500">{ratioCookedPct}%</span>
-            {' '}cooked ·{' '}
-            <span className="font-mono font-semibold text-republic-500">{100 - ratioCookedPct}%</span>
-            {' '}uncooked ·{' '}
-            <span className="font-mono text-surface-600">{total.toLocaleString('fr-FR')}</span> votes
+          <p className="text-surface-600 text-sm">
+            <span className="text-alert-500 font-mono font-semibold">{ratioCookedPct}%</span> cooked
+            ·{' '}
+            <span className="text-republic-500 font-mono font-semibold">
+              {100 - ratioCookedPct}%
+            </span>{' '}
+            uncooked ·{' '}
+            <span className="text-surface-600 font-mono">{total.toLocaleString('fr-FR')}</span>{' '}
+            votes
           </p>
 
           {myVote && (
-            <p className="text-xs text-surface-600">
+            <p className="text-surface-600 text-xs">
               Vote enregistré — merci pour ta participation
             </p>
           )}
@@ -196,7 +204,15 @@ interface VoteButtonProps {
   onClick: () => void
 }
 
-function VoteButton({ emoji, label, vote, isSelected, isLoading, isDisabled, onClick }: VoteButtonProps) {
+function VoteButton({
+  emoji,
+  label,
+  vote,
+  isSelected,
+  isLoading,
+  isDisabled,
+  onClick,
+}: VoteButtonProps) {
   const isCooked = vote === 'cooked'
 
   return (
@@ -208,14 +224,14 @@ function VoteButton({ emoji, label, vote, isSelected, isLoading, isDisabled, onC
       aria-label={`Voter ${label}`}
       className={[
         'relative flex w-full max-w-[200px] flex-col items-center gap-2 rounded-2xl border px-6 py-4 transition-all duration-200',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-republic-500',
+        'focus-visible:ring-republic-500 focus-visible:outline-none focus-visible:ring-2',
         isDisabled && !isSelected
-          ? 'cursor-not-allowed border-surface-200 bg-surface-100 opacity-50'
+          ? 'border-surface-200 bg-surface-100 cursor-not-allowed opacity-50'
           : isSelected
             ? isCooked
               ? 'border-alert-400 bg-alert-50 shadow-[0_0_20px_rgba(244,63,94,0.15)]'
               : 'border-republic-400 bg-republic-50 shadow-[0_0_20px_rgba(35,85,238,0.15)]'
-            : 'border-surface-200 bg-white hover:border-surface-300 hover:shadow-sm active:scale-95',
+            : 'border-surface-200 hover:border-surface-300 bg-white hover:shadow-sm active:scale-95',
       ].join(' ')}
     >
       <span className="text-3xl" aria-hidden="true">
@@ -223,11 +239,7 @@ function VoteButton({ emoji, label, vote, isSelected, isLoading, isDisabled, onC
       </span>
       <span
         className={`font-display text-sm font-bold ${
-          isSelected
-            ? isCooked
-              ? 'text-alert-500'
-              : 'text-republic-500'
-            : 'text-surface-800'
+          isSelected ? (isCooked ? 'text-alert-500' : 'text-republic-500') : 'text-surface-800'
         }`}
       >
         {label}
@@ -235,12 +247,19 @@ function VoteButton({ emoji, label, vote, isSelected, isLoading, isDisabled, onC
       {isLoading && (
         <span className="absolute inset-0 flex items-center justify-center rounded-2xl bg-white/80">
           <svg
-            className="h-5 w-5 animate-spin text-surface-600"
+            className="text-surface-600 h-5 w-5 animate-spin"
             viewBox="0 0 24 24"
             fill="none"
             aria-hidden="true"
           >
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            />
             <path
               className="opacity-75"
               fill="currentColor"

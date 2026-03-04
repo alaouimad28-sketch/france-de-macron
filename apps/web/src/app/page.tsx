@@ -34,19 +34,15 @@ export default function HomePage() {
       </div>
 
       {/* Vote cooked / uncooked */}
-      <section
-        id="vote"
-        aria-label="Vote cooked / uncooked"
-        className="px-4 py-[15px]"
-      >
+      <section id="vote" aria-label="Vote cooked / uncooked" className="px-4 py-[15px]">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="mb-2 font-mono text-xs tracking-widest text-surface-600 uppercase">
+          <p className="text-surface-600 mb-2 font-mono text-xs uppercase tracking-widest">
             Ton avis
           </p>
-          <h2 className="mb-3 font-display text-3xl font-bold text-surface-900">
+          <h2 className="font-display text-surface-900 mb-3 text-3xl font-bold">
             Toi, tu te sens comment ?
           </h2>
-          <p className="mb-8 text-sm text-surface-600">
+          <p className="text-surface-600 mb-8 text-sm">
             Pas de compte. Pas de cookies. Juste un vote anonyme.
           </p>
           <CookedVote scope="global" />
@@ -59,21 +55,17 @@ export default function HomePage() {
       </div>
 
       {/* Newsletter */}
-      <section
-        id="newsletter"
-        aria-label="Inscription newsletter"
-        className="px-4 py-[15px]"
-      >
+      <section id="newsletter" aria-label="Inscription newsletter" className="px-4 py-[15px]">
         <div className="mx-auto max-w-xl text-center">
-          <p className="mb-2 font-mono text-xs tracking-widest text-surface-600 uppercase">
+          <p className="text-surface-600 mb-2 font-mono text-xs uppercase tracking-widest">
             Reste informé
           </p>
-          <h2 className="mb-3 font-display text-3xl font-bold text-surface-900">
+          <h2 className="font-display text-surface-900 mb-3 text-3xl font-bold">
             Le FCI dans ta boîte
           </h2>
-          <p className="mb-8 text-base text-surface-600">
-            Reçois le score chaque semaine — sans drama, sans spam,{' '}
-            avec les données qui changent ta façon de voir les prix.
+          <p className="text-surface-600 mb-8 text-base">
+            Reçois le score chaque semaine — sans drama, sans spam, avec les données qui changent ta
+            façon de voir les prix.
           </p>
           <NewsletterForm source="homepage-footer" />
         </div>

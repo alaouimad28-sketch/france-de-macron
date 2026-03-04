@@ -46,7 +46,9 @@ export async function POST(request: NextRequest) {
     const locale =
       typeof body['locale'] === 'string' && body['locale'].length <= 5 ? body['locale'] : 'fr'
     const source =
-      typeof body['source'] === 'string' && body['source'].length <= 50 ? body['source'] : 'homepage'
+      typeof body['source'] === 'string' && body['source'].length <= 50
+        ? body['source']
+        : 'homepage'
 
     // 3. Hash IP server-side
     const forwarded = request.headers.get('x-forwarded-for')
