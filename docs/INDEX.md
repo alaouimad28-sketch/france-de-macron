@@ -46,6 +46,7 @@
 | [scripts/eurostat-youth-unemployment-backfill/README.md](../scripts/eurostat-youth-unemployment-backfill/README.md) | Ingestion chômage jeunes Eurostat (FR vs UE-27)                                    |
 | [scripts/deploy/README.md](../scripts/deploy/README.md)                                                             | Préflight production, vérification artefacts et endpoint cron sécurisé             |
 | [scripts/qa/README.md](../scripts/qa/README.md)                                                                     | Automatisation QA Phase 7 (smoke, reduced motion, headers sécurité)                |
+| [scripts/seo/README.md](../scripts/seo/README.md)                                                                   | Audit Lighthouse reproductible + Core Web Vitals (proxy labo) avec artefacts       |
 
 ---
 
@@ -149,7 +150,9 @@ docs/
 | `scripts/qa/check-security-headers.ts`                       | Vérification headers de sécurité sur app démarrée localement               |
 | `scripts/qa/check-meta-descriptions.ts`                      | Vérification SEO: meta descriptions présentes et <= 155 caractères         |
 | `scripts/qa/check-fci-intuition.ts`                          | Validation intuition FCI (benchmarks synthétiques + fenêtres 2020/2022)    |
+| `scripts/seo/run-lighthouse-audit.ts`                        | Audit Lighthouse reproductible (JSON/HTML) + report CWV avec seuils PASS/FAIL |
 | `supabase/migrations/*.sql`                                  | Schéma DB et RLS                                                           |
+
 
 ---
 
@@ -180,8 +183,10 @@ docs/
 | `pnpm run qa:smoke`                 | Smoke checks routes/pages + APIs (home/about/methodology/votes/newsletter validation)        |
 | `pnpm run qa:security-headers`      | Vérifier les headers de sécurité en local sur l’app buildée                                  |
 | `pnpm run qa:meta-descriptions`     | Vérifier les meta descriptions SEO (présence + longueur <= 155)                              |
+| `pnpm run qa:lighthouse-cwv`        | Exécuter l’audit Lighthouse + vérification CWV (proxy labo) avec sortie artefacts            |
+| `pnpm run seo:lighthouse`           | Alias explicite pour l’audit Lighthouse/CWV reproductible                                    |
 | `pnpm run qa:fci-intuition`         | Valider l’intuition FCI (scénarios synthétiques, et live 2020/2022 si env Supabase présents) |
-| `pnpm run qa:phase7`                | Exécuter toute l’automatisation QA Phase 7                                                   |
+| `pnpm run qa:phase7`                | Exécuter toute l’automatisation QA Phase 7 (inclut Lighthouse/CWV)                           |
 | `pnpm run validate`                 | Vérifier avant commit (typecheck web + scripts, lint, format)                                |
 
 **Supabase local** : après `pnpm run db:start`, Studio = http://127.0.0.1:54323, API = http://127.0.0.1:54321, **MCP** = http://127.0.0.1:54321/mcp (pour Cursor / requêtes IA sur la base). Voir [README](../README.md#référence-supabase-local-après-supabase-start) et [TESTER-LE-SITE.md](TESTER-LE-SITE.md).

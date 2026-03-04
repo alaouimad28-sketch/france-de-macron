@@ -42,3 +42,6 @@ build/
 
 # Test coverage
 coverage/
+
+# Generated audit artifacts
+artifacts/

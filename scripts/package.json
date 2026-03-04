@@ -19,12 +19,15 @@
     "qa:reduced-motion": "tsx qa/check-reduced-motion.ts",
     "qa:security-headers": "tsx qa/check-security-headers.ts",
     "qa:meta-descriptions": "tsx qa/check-meta-descriptions.ts",
-    "qa:fci-intuition": "tsx qa/check-fci-intuition.ts"
+    "qa:lighthouse-cwv": "tsx seo/run-lighthouse-audit.ts",
+    "qa:fci-intuition": "tsx qa/check-fci-intuition.ts",
+    "seo:lighthouse": "tsx seo/run-lighthouse-audit.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",
     "adm-zip": "^0.5.16",
     "dotenv": "^16.4.5",
+    "lighthouse": "^12.8.2",
     "sax": "^1.4.1"
   },
   "devDependencies": {

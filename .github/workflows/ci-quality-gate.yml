@@ -43,3 +43,11 @@ jobs:
 
       - name: Phase 7 QA automation
         run: pnpm run qa:phase7
+
+      - name: Upload Lighthouse artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-audit-artifacts
+          path: artifacts/lighthouse
+          if-no-files-found: warn
