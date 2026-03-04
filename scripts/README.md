@@ -8,15 +8,15 @@ Ce dossier contient les jobs d'ingestion de données pour France de Macron.
 
 ```
 scripts/
-├── shared/              # Module partagé : download, parse, upsert, FCI (utilisé par j30, last, daily, fci-backfill)
-├── fuel-backfill-j30/   # Backfill initial : 30 derniers jours de données carburant
-├── fuel-backfill-annee/ # Backfill par archives annuelles (2007 → aujourd'hui)
-├── fuel-backfill-last/  # Rafraîchir uniquement hier (et optionnellement aujourd'hui)
-├── fuel-daily/          # Job quotidien : ingestion J-1 (ou replay avec FUEL_DATE)
-├── fci-backfill/        # Backfill FCI : calcul du score pour tous les jours depuis 2019 (série temporelle)
-├── deploy/              # Vérifications production (preflight, cron endpoint, artefacts)
-├── qa/                  # Automatisation QA Phase 7
-└── security/            # Checks sécurité (headers, etc.)
+├── shared/                  # Module partagé : download, parse, upsert, FCI (utilisé par j30, last, daily, fci-backfill)
+├── fuel-backfill-j30/       # Backfill initial : 30 derniers jours de données carburant
+├── fuel-backfill-annee/     # Backfill par archives annuelles (2007 → aujourd'hui)
+├── fuel-backfill-last/      # Rafraîchir uniquement hier (et optionnellement aujourd'hui)
+├── fuel-daily/              # Job quotidien : ingestion J-1 (ou replay avec FUEL_DATE)
+├── fci-backfill/            # Backfill FCI : calcul du score pour tous les jours depuis 2019 (série temporelle)
+├── insee-ipc-food-backfill/ # Scaffold P0 IPC alimentaire INSEE (fetch/normalize/store)
+├── deploy/                  # Vérifications production (preflight, cron endpoint, artefacts)
+└── qa/                      # Automatisation QA Phase 7
 ```
 
 ## Jobs disponibles
@@ -83,13 +83,22 @@ START_DATE=2019-01-01 END_DATE=2024-12-31 pnpm run fci:backfill
 
 Voir [fci-backfill/README.md](fci-backfill/README.md) pour le détail.
 
+### `insee:ipc:food:backfill` — Scaffold IPC alimentaire INSEE (P0)
+
+Prépare le pipeline d’ingestion mensuel (fetch/normalize/store) pour l’IPC alimentaire INSEE.
+
+```bash
+pnpm run insee:ipc:food:backfill
+```
+
+Voir [insee-ipc-food-backfill/README.md](insee-ipc-food-backfill/README.md) pour le détail.
+
 ### `deploy:*` — Vérifications production (Phase 6)
 
 Checks vérifiables pour la mise en prod (sans afficher les secrets).
 
 ```bash
 pnpm run deploy:preflight
-pnpm run deploy:check-vercel
 pnpm run deploy:verify-production
 pnpm run deploy:verify-cron
 pnpm run deploy:verify
@@ -105,7 +114,6 @@ Checks CI-friendly pour routes clés, APIs, reduced motion et headers sécurité
 pnpm run qa:reduced-motion
 pnpm run qa:smoke
 pnpm run qa:security-headers
-pnpm run qa:meta-descriptions
 pnpm run qa:phase7
 ```
 

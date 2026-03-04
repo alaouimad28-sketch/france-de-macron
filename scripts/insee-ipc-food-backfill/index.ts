@@ -16,7 +16,6 @@
 import * as path from 'path'
 import { config } from 'dotenv'
 import { createClient } from '@supabase/supabase-js'
-import type { Database } from '../../apps/web/src/lib/supabase/database.types'
 
 const envPaths = [
   path.join(process.cwd(), 'apps', 'web', '.env.local'),
@@ -104,7 +103,7 @@ async function storeIpcFoodMonthly(records: IpcFoodMonthlyRecord[]): Promise<num
     )
   }
 
-  const supabase = createClient<Database>(url, key)
+  const supabase = createClient(url, key)
 
   const payload = records.map((record) => ({
     month: record.month,
