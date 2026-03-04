@@ -286,10 +286,10 @@
 ### Route Handler : newsletter
 
 - [x] Route créée (`/api/newsletter`) avec placeholder
-- [ ] Ajouter validation Zod du body (`email`, `locale`, `source`, `honeypot`)
+- [x] Ajouter validation Zod du body (`email`, `locale`, `source`, `honeypot`)
 - [x] Vérifier honeypot vide côté serveur
 - [x] Valider format email (regex)
-- [ ] Rate limit par IP (via `request.headers.get('x-forwarded-for')` + compteur Supabase ou Upstash)
+- [x] Rate limit par IP (via `request.headers.get('x-forwarded-for')` + compteur Supabase ou Upstash)
 - [x] Insérer via `createClient<Database>` (service role — même effet que createServiceClient)
 - [x] Gérer le conflit `unique(email)` → retourner 200 sans message d'erreur (pas d'enum harvesting)
 - [x] Retourner `{ success: true }` ou `{ error: string }`
@@ -301,7 +301,7 @@
 - [x] **POST** : valider body (scope, vote, fingerprint_hash)
 - [x] Générer `ip_hash` côté serveur (`hashString(x-forwarded-for / x-real-ip)`)
 - [x] Insérer via `createClient<Database>` (service role) avec gestion du conflit unique (409 si déjà voté)
-- [ ] Rate limit : max 10 votes / IP / heure
+- [x] Rate limit : max 10 votes / IP / heure
 - [x] Retourner les nouveaux comptages après vote
 
 ---
@@ -439,6 +439,12 @@
 ### Mars 2026 — Doc UI (gauge, header, footer, couleurs)
 
 - **Docs** : design-system.md (spectre FCI bleu/rouge binaire, dégradé page, § FCIGauge hybride SVG+HTML, « depuis hier »), PRD.md (FCI hero arc 180°, couleurs 0–24 bleu / 25–100 rouge), progress.md (FCIGauge 180°, variation « depuis hier », header masqué au scroll down, footer thème clair), INDEX.md (FCIGauge, Header, Footer).
+
+### Mars 2026 — Phase 4 hardening APIs
+
+- `/api/newsletter` durcie avec schéma Zod (`email`, `locale`, `source`, `honeypot`) et **rate limit IP 3/h** basé sur `newsletter_signups.ip_hash` + `created_at`.
+- `/api/votes` durcie avec validation Zod du payload POST, validation du `scope` sur GET et **rate limit IP 10/h** basé sur `votes.ip_hash` + `created_at`.
+- Comportements anti-enum et anti-bot conservés : honeypot newsletter silencieux (200), conflit `unique(email)` silencieux, service-role côté serveur uniquement.
 
 ### Mars 2025 — Cron fuel-daily
 
