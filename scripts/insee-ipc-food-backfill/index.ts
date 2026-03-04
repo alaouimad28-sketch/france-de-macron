@@ -113,7 +113,7 @@ async function storeIpcFoodMonthly(records: IpcFoodMonthlyRecord[]): Promise<num
     raw_payload: record.rawPayload,
   }))
 
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from('ipc_food_monthly')
     .upsert(payload, { onConflict: 'month,source_series_id' })
 
