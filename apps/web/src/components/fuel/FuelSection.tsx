@@ -117,7 +117,7 @@ export async function FuelSection() {
     : ''
 
   return (
-    <section id="carburants" aria-label="Prix des carburants" className="px-4 py-2.5">
+    <section id="carburants" aria-label="Prix des carburants" className="scroll-mt-24 px-4 py-2.5">
       <div className="mx-auto max-w-4xl">
         {/* En-tête section */}
         <div className="mb-8">

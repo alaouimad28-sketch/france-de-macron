@@ -58,7 +58,7 @@ export async function FCIHero() {
     <section
       id="hero"
       aria-label="French Cooked Index"
-      className="relative overflow-hidden py-[15px]"
+      className="relative scroll-mt-24 overflow-hidden py-[15px]"
     >
       <div className="relative z-10 mx-auto flex max-w-2xl flex-col items-center justify-center overflow-hidden px-4 py-0 text-center md:py-0">
         {/* Eyebrow chip */}
