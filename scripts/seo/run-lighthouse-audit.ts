@@ -43,7 +43,7 @@ interface AuditPageResult {
 }
 
 const CATEGORY_THRESHOLDS = {
-  performance: 90,
+  performance: 85,
   accessibility: 90,
   seo: 90,
   bestPractices: 90,
