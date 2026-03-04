@@ -7,7 +7,16 @@
     "fuel:backfill:annees": "tsx fuel-backfill-annee/index.ts",
     "fuel:backfill:last": "tsx fuel-backfill-last/index.ts",
     "fuel:daily": "tsx fuel-daily/index.ts",
-    "fci:backfill": "tsx fci-backfill/index.ts"
+    "fci:backfill": "tsx fci-backfill/index.ts",
+    "deploy:check-vercel": "tsx deploy/check-vercel-setup.ts",
+    "deploy:preflight": "tsx deploy/preflight.ts",
+    "deploy:verify-production": "tsx deploy/verify-production.ts",
+    "deploy:verify-cron": "tsx deploy/verify-cron-endpoint.ts",
+    "deploy:verify": "pnpm run deploy:preflight && pnpm run deploy:verify-production && pnpm run deploy:verify-cron",
+    "security:check-headers": "tsx security/check-headers.ts",
+    "qa:smoke": "tsx qa/smoke-checks.ts",
+    "qa:reduced-motion": "tsx qa/check-reduced-motion.ts",
+    "qa:security-headers": "tsx qa/check-security-headers.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",

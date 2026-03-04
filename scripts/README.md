@@ -13,7 +13,9 @@ scripts/
 ├── fuel-backfill-annee/ # Backfill par archives annuelles (2007 → aujourd'hui)
 ├── fuel-backfill-last/  # Rafraîchir uniquement hier (et optionnellement aujourd'hui)
 ├── fuel-daily/          # Job quotidien : ingestion J-1 (ou replay avec FUEL_DATE)
-└── fci-backfill/        # Backfill FCI : calcul du score pour tous les jours depuis 2019 (série temporelle)
+├── fci-backfill/        # Backfill FCI : calcul du score pour tous les jours depuis 2019 (série temporelle)
+├── deploy/              # Vérifications prod (preflight, cron endpoint, artefacts)
+└── security/            # Checks sécurité (headers, etc.)
 ```
 
 ## Jobs disponibles
@@ -79,6 +81,19 @@ START_DATE=2019-01-01 END_DATE=2024-12-31 pnpm run fci:backfill
 ```
 
 Voir [fci-backfill/README.md](fci-backfill/README.md) pour le détail.
+
+### `deploy:*` — Vérifications production (Phase 6)
+
+Checks vérifiables pour la mise en prod (sans afficher les secrets).
+
+```bash
+pnpm run deploy:preflight
+pnpm run deploy:verify-production
+pnpm run deploy:verify-cron
+pnpm run deploy:verify
+```
+
+Voir [deploy/README.md](deploy/README.md) pour le détail.
 
 ## Variables d'environnement requises
 

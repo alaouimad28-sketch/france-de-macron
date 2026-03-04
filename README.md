@@ -234,10 +234,12 @@ scripts/
 ├── fuel-backfill-annee/ # Backfill par archives annuelles (2007 → aujourd'hui)
 ├── fuel-backfill-last/  # Rafraîchir hier (et optionnellement aujourd'hui)
 ├── fuel-daily/          # Job quotidien J-1 (ou FUEL_DATE=YYYYMMDD pour replay)
-└── fci-backfill/        # Backfill FCI : score pour tous les jours depuis 2019 (série temporelle)
+├── fci-backfill/        # Backfill FCI : score pour tous les jours depuis 2019 (série temporelle)
+├── deploy/              # Vérifications prod (preflight, artefacts, cron endpoint)
+└── security/            # Checks sécurité
 ```
 
-Voir [scripts/README.md](scripts/README.md). Commandes : `pnpm run fuel:backfill` (J-30), `pnpm run fuel:backfill:last` (dernier jour), `pnpm run fuel:backfill:annees` (archives), `pnpm run fuel:daily` (quotidien ou replay), `pnpm run fci:backfill` (historique FCI depuis 2019).
+Voir [scripts/README.md](scripts/README.md). Commandes : `pnpm run fuel:backfill` (J-30), `pnpm run fuel:backfill:last` (dernier jour), `pnpm run fuel:backfill:annees` (archives), `pnpm run fuel:daily` (quotidien ou replay), `pnpm run fci:backfill` (historique FCI depuis 2019), `pnpm run deploy:verify` (préflight + artefacts + cron).
 
 ---
 
@@ -291,6 +293,10 @@ Depuis la racine du projet, lancer les checks suivants avant de committer :
 ```bash
 # Tout en un (typecheck web + scripts, lint, format)
 pnpm run validate
+
+# QA Phase 7 (nécessite un build)
+pnpm run build
+pnpm run qa:phase7
 ```
 
 Ou étape par étape :

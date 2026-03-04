@@ -33,9 +33,14 @@ git checkout orchestrator/autonomous-dev-base
 git pull --ff-only
 pnpm install
 pnpm run validate
+pnpm run deploy:preflight
+pnpm run deploy:check-vercel
 ```
 
-**Stop si échec**. Corriger avant de continuer.
+**Pass/Fail (bloquant)**
+
+- ✅ PASS: `validate`, `deploy:preflight` et `deploy:check-vercel` retournent exit code `0`
+- ❌ FAIL: au moins une commande retourne non-zero → **stop release**
 
 ---
 
@@ -121,31 +126,34 @@ Validation attendue:
 
 ---
 
-## 7) Test manuel du cron sécurisé
+## 7) Vérification cron sécurisé (helper automatisé)
 
 ```bash
-# Sans token -> doit retourner 401
-curl -i "$PROD_URL$CRON_PATH"
-
-# Avec token -> doit retourner 200
-curl -i -H "Authorization: Bearer $CRON_SECRET" "$PROD_URL$CRON_PATH"
+# Variables requises: NEXT_PUBLIC_APP_URL, CRON_SECRET
+export NEXT_PUBLIC_APP_URL="$PROD_URL"
+pnpm run deploy:verify-cron
 ```
 
-Attendu:
+**Pass/Fail (bloquant)**
 
-- 401 sans header
-- 200 avec header + payload JSON `ok: true` (ou partial si jour indisponible)
+- ✅ PASS: check 1 retourne 401 sans token, check 2 retourne 200 avec token, JSON contient `ok` + `date`
+- ❌ FAIL: tout autre status/payload → **stop release**
 
 ---
 
 ## 8) Smoke QA (release gate)
 
-- Home charge (desktop + mobile)
-- Graph carburants visible
-- Vote: 1er vote OK, 2e vote même jour bloqué
-- Newsletter: submit valide + gestion doublon
-- `securityheaders.com` sans régression majeure CSP
-- Logs Vercel/Supabase: pas de secret exposé
+| Check                          | PASS                                                 | FAIL                                        |
+| ------------------------------ | ---------------------------------------------------- | ------------------------------------------- |
+| Home charge (desktop + mobile) | Page rendue sans erreur runtime/hydration            | Crash, écran blanc, erreur runtime          |
+| Graph carburants visible       | 3 séries visibles + tooltip fonctionnel              | Graph manquant ou données invalides         |
+| Vote                           | 1er vote accepté, 2e vote même jour refusé           | Double vote accepté ou erreur serveur       |
+| Newsletter                     | Email valide accepté, doublon géré sans fuite d’info | Erreur non gérée, fuite d’info, endpoint KO |
+| Cron endpoint                  | `pnpm run deploy:verify-cron` passe                  | Vérification cron en échec                  |
+| Security headers               | Pas de régression majeure sur `securityheaders.com`  | Régression notable (CSP/headers manquants)  |
+| Logs                           | Aucun secret exposé (Vercel/Supabase)                | Secret visible en clair                     |
+
+**Règle de release**: tous les checks doivent être PASS avant lancement public.
 
 ---
 

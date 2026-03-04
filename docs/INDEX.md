@@ -40,6 +40,8 @@
 | [scripts/fuel-backfill-j30/README.md](../scripts/fuel-backfill-j30/README.md)   | Détail du backfill J-30                                                            |
 | [scripts/fuel-backfill-last/README.md](../scripts/fuel-backfill-last/README.md) | Rafraîchir dernier(s) jour(s) (J-1, optionnel J-0)                                 |
 | [scripts/fci-backfill/README.md](../scripts/fci-backfill/README.md)             | Backfill FCI : calcul du score pour tous les jours depuis 2019 (série temporelle)  |
+| [scripts/deploy/README.md](../scripts/deploy/README.md)                         | Préflight production, vérification artefacts et endpoint cron sécurisé             |
+| [scripts/qa/README.md](../scripts/qa/README.md)                                 | Automatisation QA Phase 7 (smoke, reduced motion, headers sécurité)                |
 
 ---
 
@@ -121,27 +123,44 @@ docs/
 | `apps/web/src/hooks/use-toast.ts`                       | shadcn toast hook (exactOptionalPropertyTypes fix)                    |
 | `apps/web/tailwind.config.ts`                           | Design tokens                                                         |
 | `apps/web/eslint.config.mjs`                            | Config ESLint 9 (flat config)                                         |
+| `scripts/deploy/preflight.ts`                           | Vérifie présence env vars critiques + cohérence configuration         |
+| `scripts/deploy/verify-cron-endpoint.ts`                | Vérifie 401/200 + payload du cron endpoint sécurisé                   |
+| `scripts/deploy/verify-production.ts`                   | Vérifie artefacts production (`robots.txt`, `sitemap.ts`)             |
+| `scripts/deploy/check-vercel-setup.ts`                  | Vérifie config cron dans `apps/web/vercel.json`                       |
+| `scripts/security/check-headers.ts`                     | Vérification des headers de sécurité (CSP, XFO, nosniff, permissions) |
+| `scripts/qa/smoke-checks.ts`                            | Smoke checks CI des routes/pages + APIs clés                          |
+| `scripts/qa/check-reduced-motion.ts`                    | Vérification couverture reduced motion                                |
+| `scripts/qa/check-security-headers.ts`                  | Vérification headers de sécurité sur app démarrée localement          |
 | `supabase/migrations/*.sql`                             | Schéma DB et RLS                                                      |
 
 ---
 
 ## Commandes utiles
 
-| Commande                        | Description                                                                                 |
-| ------------------------------- | ------------------------------------------------------------------------------------------- |
-| `pnpm install`                  | Installer les dépendances                                                                   |
-| `pnpm dev`                      | Lancer le serveur de dev (Next.js)                                                          |
-| `pnpm build`                    | Build production                                                                            |
-| `pnpm lint`                     | Linter (ESLint)                                                                             |
-| `pnpm run db:start`             | Démarrer Supabase local (ignore health checks)                                              |
-| `pnpm run db:push:local`        | Appliquer les migrations sur la base **locale** (après db:start)                            |
-| `pnpm run db:push`              | Appliquer les migrations sur le projet **lié** (nécessite supabase link)                    |
-| `pnpm run db:types`             | Régénérer les types TypeScript depuis le schéma                                             |
-| `pnpm run fuel:backfill`        | Backfill carburants J-30 (one-shot)                                                         |
-| `pnpm run fuel:backfill:annees` | Backfill par archives annuelles (2007 → aujourd’hui)                                        |
-| `pnpm run fuel:backfill:last`   | Rafraîchir uniquement hier (et optionnellement aujourd’hui avec `BACKFILL_INCLUDE_TODAY=1`) |
-| `pnpm run fuel:daily`           | Job quotidien J-1 (ou replay avec `FUEL_DATE=YYYYMMDD`, cron `/api/cron/fuel-daily`)        |
-| `pnpm run fci:backfill`         | Backfill FCI : calcul du score pour tous les jours depuis 2019 (série temporelle)           |
-| `pnpm run validate`             | Vérifier avant commit (typecheck web + scripts, lint, format)                               |
+| Commande                            | Description                                                                                 |
+| ----------------------------------- | ------------------------------------------------------------------------------------------- |
+| `pnpm install`                      | Installer les dépendances                                                                   |
+| `pnpm dev`                          | Lancer le serveur de dev (Next.js)                                                          |
+| `pnpm build`                        | Build production                                                                            |
+| `pnpm lint`                         | Linter (ESLint)                                                                             |
+| `pnpm run db:start`                 | Démarrer Supabase local (ignore health checks)                                              |
+| `pnpm run db:push:local`            | Appliquer les migrations sur la base **locale** (après db:start)                            |
+| `pnpm run db:push`                  | Appliquer les migrations sur le projet **lié** (nécessite supabase link)                    |
+| `pnpm run db:types`                 | Régénérer les types TypeScript depuis le schéma                                             |
+| `pnpm run fuel:backfill`            | Backfill carburants J-30 (one-shot)                                                         |
+| `pnpm run fuel:backfill:annees`     | Backfill par archives annuelles (2007 → aujourd’hui)                                        |
+| `pnpm run fuel:backfill:last`       | Rafraîchir uniquement hier (et optionnellement aujourd’hui avec `BACKFILL_INCLUDE_TODAY=1`) |
+| `pnpm run fuel:daily`               | Job quotidien J-1 (ou replay avec `FUEL_DATE=YYYYMMDD`, cron `/api/cron/fuel-daily`)        |
+| `pnpm run fci:backfill`             | Backfill FCI : calcul du score pour tous les jours depuis 2019 (série temporelle)           |
+| `pnpm run deploy:preflight`         | Vérifier les env vars critiques et la cohérence de config (sans révéler de secrets)         |
+| `pnpm run deploy:verify-production` | Vérifier les artefacts production requis (`robots.txt`, `sitemap.ts`)                       |
+| `pnpm run deploy:verify-cron`       | Vérifier l’endpoint cron sécurisé (401 sans token, 200 avec token)                          |
+| `pnpm run deploy:verify`            | Enchaîner preflight + artefacts + vérification endpoint cron                                |
+| `pnpm run qa:reduced-motion`        | Vérifier la couverture reduced motion                                                       |
+| `pnpm run qa:smoke`                 | Smoke checks routes/pages + APIs (home/about/methodology/votes/newsletter validation)       |
+| `pnpm run qa:security-headers`      | Vérifier les headers de sécurité en local sur l’app buildée                                 |
+| `pnpm run qa:phase7`                | Exécuter toute l’automatisation QA Phase 7                                                  |
+| `pnpm run security:check-headers`   | Vérifier les headers de sécurité d’une URL (`HEADERS_CHECK_URL`)                            |
+| `pnpm run validate`                 | Vérifier avant commit (typecheck web + scripts, lint, format)                               |
 
 **Supabase local** : après `pnpm run db:start`, Studio = http://127.0.0.1:54323, API = http://127.0.0.1:54321, **MCP** = http://127.0.0.1:54321/mcp (pour Cursor / requêtes IA sur la base). Voir [README](../README.md#référence-supabase-local-après-supabase-start) et [TESTER-LE-SITE.md](TESTER-LE-SITE.md).
