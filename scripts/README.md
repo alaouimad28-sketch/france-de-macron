@@ -17,7 +17,8 @@ scripts/
 ├── insee-ipc-food-backfill/ # Ingestion IPC alimentaire INSEE (fetch/normalize/store)
 ├── eurostat-youth-unemployment-backfill/ # Ingestion chômage jeunes Eurostat (FR vs UE-27)
 ├── deploy/                  # Vérifications production (preflight, cron endpoint, artefacts)
-└── qa/                      # Automatisation QA Phase 7
+├── qa/                      # Automatisation QA Phase 7
+└── seo/                     # Audits Lighthouse + Core Web Vitals (proxy labo)
 ```
 
 ## Jobs disponibles
@@ -120,16 +121,28 @@ Voir [deploy/README.md](deploy/README.md) pour le détail.
 
 ### `qa:*` — Automatisation QA (Phase 7)
 
-Checks CI-friendly pour routes clés, APIs, reduced motion et headers sécurité.
+Checks CI-friendly pour routes clés, APIs, reduced motion, headers sécurité et audit Lighthouse/CWV.
 
 ```bash
 pnpm run qa:reduced-motion
 pnpm run qa:smoke
 pnpm run qa:security-headers
+pnpm run qa:lighthouse-cwv
 pnpm run qa:phase7
 ```
 
 Voir [qa/README.md](qa/README.md) pour le détail.
+
+### `seo:lighthouse` — Audit Lighthouse + CWV (artefacts local/CI)
+
+Audit Lighthouse reproductible avec sortie artefacts (`json`, `html`, `report.md`, `summary.json`) et seuils PASS/FAIL sur catégories + Core Web Vitals (proxy labo).
+
+```bash
+pnpm run seo:lighthouse
+LIGHTHOUSE_PATHS="/,/about" pnpm run seo:lighthouse
+```
+
+Voir [seo/README.md](seo/README.md) pour le détail.
 
 ## Variables d'environnement requises
 

@@ -34,8 +34,10 @@
     "qa:reduced-motion": "pnpm --filter scripts qa:reduced-motion",
     "qa:security-headers": "pnpm --filter scripts qa:security-headers",
     "qa:meta-descriptions": "pnpm --filter scripts qa:meta-descriptions",
+    "qa:lighthouse-cwv": "pnpm --filter scripts seo:lighthouse",
+    "seo:lighthouse": "pnpm --filter scripts seo:lighthouse",
     "qa:fci-intuition": "pnpm --filter scripts qa:fci-intuition",
-    "qa:phase7": "pnpm run qa:reduced-motion && pnpm run qa:smoke && pnpm run qa:security-headers && pnpm run qa:meta-descriptions"
+    "qa:phase7": "pnpm run qa:reduced-motion && pnpm run qa:smoke && pnpm run qa:security-headers && pnpm run qa:meta-descriptions && pnpm run qa:lighthouse-cwv"
   },
   "devDependencies": {
     "prettier": "^3.3.3",

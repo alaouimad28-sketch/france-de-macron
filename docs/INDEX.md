@@ -46,6 +46,7 @@
 | [scripts/eurostat-youth-unemployment-backfill/README.md](../scripts/eurostat-youth-unemployment-backfill/README.md) | Ingestion chômage jeunes Eurostat (FR vs UE-27)                                    |
 | [scripts/deploy/README.md](../scripts/deploy/README.md)                                                             | Préflight production, vérification artefacts et endpoint cron sécurisé             |
 | [scripts/qa/README.md](../scripts/qa/README.md)                                                                     | Automatisation QA Phase 7 (smoke, reduced motion, headers sécurité)                |
+| [scripts/seo/README.md](../scripts/seo/README.md)                                                                   | Audit Lighthouse reproductible + Core Web Vitals (proxy labo) avec artefacts       |
 
 ---
 
@@ -101,52 +102,53 @@ docs/
 
 ## Fichiers de code clés (référence)
 
-| Fichier                                                      | Rôle                                                                       |
-| ------------------------------------------------------------ | -------------------------------------------------------------------------- |
-| `apps/web/src/types/index.ts`                                | Types métier (FuelCode, FCIDaily, VoteCounts…)                             |
-| `apps/web/src/lib/supabase/database.types.ts`                | Types générés Supabase                                                     |
-| `apps/web/src/lib/supabase/server.ts`                        | createReadClient() / createServiceClient()                                 |
-| `apps/web/src/lib/supabase/client.ts`                        | Client navigateur (anon key)                                               |
-| `apps/web/src/lib/utils.ts`                                  | Helpers (formatFuelPrice, getFCILabel, hashString)                         |
-| `apps/web/src/app/layout.tsx`                                | Metadata OG, structure HTML, Header/Footer/Toaster                         |
-| `apps/web/src/app/page.tsx`                                  | Page home — assemblage FCIHero + sections + JSON-LD WebSite                |
-| `apps/web/src/app/indicators/page.tsx`                       | Page indicateurs — hub FCI + carburants + IPC alimentaire + chômage jeunes |
-| `apps/web/src/app/sitemap.ts`                                | Sitemap XML généré via MetadataRoute                                       |
-| `apps/web/public/robots.txt`                                 | Directives robots (Allow `/`, Disallow `/api/`) + lien sitemap             |
-| `apps/web/public/og-image.png`                               | OG image statique (placeholder MVP)                                        |
-| `apps/web/src/app/api/votes/route.ts`                        | GET/POST votes (comptage, fingerprint, ip_hash)                            |
-| `apps/web/src/app/api/newsletter/route.ts`                   | POST newsletter (honeypot, email, dedup)                                   |
-| `apps/web/src/app/api/youth-unemployment/route.ts`           | GET chômage jeunes (FR/UE-27, limit borné)                                 |
-| `apps/web/src/components/fci/FCIGauge.tsx`                   | Jauge arc 180° (SVG + HTML), bleu/rouge, « depuis hier »                   |
-| `apps/web/src/components/fci/FCIHero.tsx`                    | Server Component hero — fetch fci_daily                                    |
-| `apps/web/src/components/fuel/FuelChart.tsx`                 | Recharts LineChart 3 carburants, spikes, events                            |
-| `apps/web/src/components/fuel/PeriodChip.tsx`                | Sélecteur de période (7j/30j/…)                                            |
-| `apps/web/src/components/fuel/FuelSection.tsx`               | Server Component carburants — fetch + pivot                                |
-| `apps/web/src/components/food/FoodInflationSection.tsx`      | Server Component IPC alimentaire — fetch `ipc_food_monthly` + KPI YoY      |
-| `apps/web/src/components/youth/YouthUnemploymentSection.tsx` | Server Component chômage jeunes — FR vs UE-27 + variation 3 mois           |
-| `apps/web/src/components/vote/CookedVote.tsx`                | Votes cooked/uncooked, fingerprint, localStorage                           |
-| `apps/web/src/components/newsletter/NewsletterForm.tsx`      | Formulaire newsletter avec honeypot                                        |
-| `apps/web/src/components/layout/Header.tsx`                  | Header blanc, masqué au scroll down / réapparaît au scroll up              |
-| `apps/web/src/components/layout/Footer.tsx`                  | Footer thème clair (surface-100), liens, copyright                         |
-| `apps/web/src/components/layout/ScrollReveal.tsx`            | Reveal `fade-in-up` au scroll (IntersectionObserver + reduced motion)      |
-| `apps/web/src/hooks/use-toast.ts`                            | shadcn toast hook (exactOptionalPropertyTypes fix)                         |
-| `apps/web/tailwind.config.ts`                                | Design tokens                                                              |
-| `apps/web/eslint.config.mjs`                                 | Config ESLint 9 (flat config)                                              |
-| `scripts/insee-ipc-food-backfill/index.ts`                   | Ingestion INSEE IPC alimentaire (fetch/normalize/store idempotent)         |
-| `scripts/insee-ipc-food-backfill/README.md`                  | Détails d'exécution (env, dry-run, parsing BDM) du module IPC              |
-| `scripts/eurostat-youth-unemployment-backfill/index.ts`      | Ingestion chômage jeunes Eurostat (une_rt_m, FR + UE-27, upsert)           |
-| `scripts/eurostat-youth-unemployment-backfill/README.md`     | Détails d'exécution (params Eurostat, DRY_RUN, idempotence)                |
-| `scripts/deploy/preflight.ts`                                | Vérifie présence env vars critiques + cohérence configuration              |
-| `scripts/deploy/verify-cron-endpoint.ts`                     | Vérifie 401/200 + payload du cron endpoint sécurisé                        |
-| `scripts/deploy/verify-production.ts`                        | Vérifie artefacts production (`robots.txt`, `sitemap.ts`)                  |
-| `scripts/deploy/check-vercel-setup.ts`                       | Vérifie config cron dans `apps/web/vercel.json`                            |
-| `scripts/security/check-headers.ts`                          | Vérification des headers de sécurité (CSP, XFO, nosniff, permissions)      |
-| `scripts/qa/smoke-checks.ts`                                 | Smoke checks CI des routes/pages + APIs clés                               |
-| `scripts/qa/check-reduced-motion.ts`                         | Vérification couverture reduced motion                                     |
-| `scripts/qa/check-security-headers.ts`                       | Vérification headers de sécurité sur app démarrée localement               |
-| `scripts/qa/check-meta-descriptions.ts`                      | Vérification SEO: meta descriptions présentes et <= 155 caractères         |
-| `scripts/qa/check-fci-intuition.ts`                          | Validation intuition FCI (benchmarks synthétiques + fenêtres 2020/2022)    |
-| `supabase/migrations/*.sql`                                  | Schéma DB et RLS                                                           |
+| Fichier                                                      | Rôle                                                                          |
+| ------------------------------------------------------------ | ----------------------------------------------------------------------------- |
+| `apps/web/src/types/index.ts`                                | Types métier (FuelCode, FCIDaily, VoteCounts…)                                |
+| `apps/web/src/lib/supabase/database.types.ts`                | Types générés Supabase                                                        |
+| `apps/web/src/lib/supabase/server.ts`                        | createReadClient() / createServiceClient()                                    |
+| `apps/web/src/lib/supabase/client.ts`                        | Client navigateur (anon key)                                                  |
+| `apps/web/src/lib/utils.ts`                                  | Helpers (formatFuelPrice, getFCILabel, hashString)                            |
+| `apps/web/src/app/layout.tsx`                                | Metadata OG, structure HTML, Header/Footer/Toaster                            |
+| `apps/web/src/app/page.tsx`                                  | Page home — assemblage FCIHero + sections + JSON-LD WebSite                   |
+| `apps/web/src/app/indicators/page.tsx`                       | Page indicateurs — hub FCI + carburants + IPC alimentaire + chômage jeunes    |
+| `apps/web/src/app/sitemap.ts`                                | Sitemap XML généré via MetadataRoute                                          |
+| `apps/web/public/robots.txt`                                 | Directives robots (Allow `/`, Disallow `/api/`) + lien sitemap                |
+| `apps/web/public/og-image.png`                               | OG image statique (placeholder MVP)                                           |
+| `apps/web/src/app/api/votes/route.ts`                        | GET/POST votes (comptage, fingerprint, ip_hash)                               |
+| `apps/web/src/app/api/newsletter/route.ts`                   | POST newsletter (honeypot, email, dedup)                                      |
+| `apps/web/src/app/api/youth-unemployment/route.ts`           | GET chômage jeunes (FR/UE-27, limit borné)                                    |
+| `apps/web/src/components/fci/FCIGauge.tsx`                   | Jauge arc 180° (SVG + HTML), bleu/rouge, « depuis hier »                      |
+| `apps/web/src/components/fci/FCIHero.tsx`                    | Server Component hero — fetch fci_daily                                       |
+| `apps/web/src/components/fuel/FuelChart.tsx`                 | Recharts LineChart 3 carburants, spikes, events                               |
+| `apps/web/src/components/fuel/PeriodChip.tsx`                | Sélecteur de période (7j/30j/…)                                               |
+| `apps/web/src/components/fuel/FuelSection.tsx`               | Server Component carburants — fetch + pivot                                   |
+| `apps/web/src/components/food/FoodInflationSection.tsx`      | Server Component IPC alimentaire — fetch `ipc_food_monthly` + KPI YoY         |
+| `apps/web/src/components/youth/YouthUnemploymentSection.tsx` | Server Component chômage jeunes — FR vs UE-27 + variation 3 mois              |
+| `apps/web/src/components/vote/CookedVote.tsx`                | Votes cooked/uncooked, fingerprint, localStorage                              |
+| `apps/web/src/components/newsletter/NewsletterForm.tsx`      | Formulaire newsletter avec honeypot                                           |
+| `apps/web/src/components/layout/Header.tsx`                  | Header blanc, masqué au scroll down / réapparaît au scroll up                 |
+| `apps/web/src/components/layout/Footer.tsx`                  | Footer thème clair (surface-100), liens, copyright                            |
+| `apps/web/src/components/layout/ScrollReveal.tsx`            | Reveal `fade-in-up` au scroll (IntersectionObserver + reduced motion)         |
+| `apps/web/src/hooks/use-toast.ts`                            | shadcn toast hook (exactOptionalPropertyTypes fix)                            |
+| `apps/web/tailwind.config.ts`                                | Design tokens                                                                 |
+| `apps/web/eslint.config.mjs`                                 | Config ESLint 9 (flat config)                                                 |
+| `scripts/insee-ipc-food-backfill/index.ts`                   | Ingestion INSEE IPC alimentaire (fetch/normalize/store idempotent)            |
+| `scripts/insee-ipc-food-backfill/README.md`                  | Détails d'exécution (env, dry-run, parsing BDM) du module IPC                 |
+| `scripts/eurostat-youth-unemployment-backfill/index.ts`      | Ingestion chômage jeunes Eurostat (une_rt_m, FR + UE-27, upsert)              |
+| `scripts/eurostat-youth-unemployment-backfill/README.md`     | Détails d'exécution (params Eurostat, DRY_RUN, idempotence)                   |
+| `scripts/deploy/preflight.ts`                                | Vérifie présence env vars critiques + cohérence configuration                 |
+| `scripts/deploy/verify-cron-endpoint.ts`                     | Vérifie 401/200 + payload du cron endpoint sécurisé                           |
+| `scripts/deploy/verify-production.ts`                        | Vérifie artefacts production (`robots.txt`, `sitemap.ts`)                     |
+| `scripts/deploy/check-vercel-setup.ts`                       | Vérifie config cron dans `apps/web/vercel.json`                               |
+| `scripts/security/check-headers.ts`                          | Vérification des headers de sécurité (CSP, XFO, nosniff, permissions)         |
+| `scripts/qa/smoke-checks.ts`                                 | Smoke checks CI des routes/pages + APIs clés                                  |
+| `scripts/qa/check-reduced-motion.ts`                         | Vérification couverture reduced motion                                        |
+| `scripts/qa/check-security-headers.ts`                       | Vérification headers de sécurité sur app démarrée localement                  |
+| `scripts/qa/check-meta-descriptions.ts`                      | Vérification SEO: meta descriptions présentes et <= 155 caractères            |
+| `scripts/qa/check-fci-intuition.ts`                          | Validation intuition FCI (benchmarks synthétiques + fenêtres 2020/2022)       |
+| `scripts/seo/run-lighthouse-audit.ts`                        | Audit Lighthouse reproductible (JSON/HTML) + report CWV avec seuils PASS/FAIL |
+| `supabase/migrations/*.sql`                                  | Schéma DB et RLS                                                              |
 
 ---
 
@@ -177,8 +179,10 @@ docs/
 | `pnpm run qa:smoke`                 | Smoke checks routes/pages + APIs (home/about/methodology/votes/newsletter validation)        |
 | `pnpm run qa:security-headers`      | Vérifier les headers de sécurité en local sur l’app buildée                                  |
 | `pnpm run qa:meta-descriptions`     | Vérifier les meta descriptions SEO (présence + longueur <= 155)                              |
+| `pnpm run qa:lighthouse-cwv`        | Exécuter l’audit Lighthouse + vérification CWV (proxy labo) avec sortie artefacts            |
+| `pnpm run seo:lighthouse`           | Alias explicite pour l’audit Lighthouse/CWV reproductible                                    |
 | `pnpm run qa:fci-intuition`         | Valider l’intuition FCI (scénarios synthétiques, et live 2020/2022 si env Supabase présents) |
-| `pnpm run qa:phase7`                | Exécuter toute l’automatisation QA Phase 7                                                   |
+| `pnpm run qa:phase7`                | Exécuter toute l’automatisation QA Phase 7 (inclut Lighthouse/CWV)                           |
 | `pnpm run validate`                 | Vérifier avant commit (typecheck web + scripts, lint, format)                                |
 
 **Supabase local** : après `pnpm run db:start`, Studio = http://127.0.0.1:54323, API = http://127.0.0.1:54321, **MCP** = http://127.0.0.1:54321/mcp (pour Cursor / requêtes IA sur la base). Voir [README](../README.md#référence-supabase-local-après-supabase-start) et [TESTER-LE-SITE.md](TESTER-LE-SITE.md).

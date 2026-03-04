@@ -313,8 +313,8 @@
 - [x] `public/robots.txt` — Allow: /, Disallow: /api/
 - [x] JSON-LD structured data sur la landing page
 - [x] Vérifier meta descriptions < 155 caractères sur toutes les pages
-- [ ] Audit Lighthouse (objectif > 90 sur perf + SEO + accessibilité)
-- [ ] Vérifier Core Web Vitals : LCP < 2.5s, CLS < 0.1
+- [x] Audit Lighthouse (objectif > 90 sur perf + SEO + accessibilité)
+- [x] Vérifier Core Web Vitals : LCP < 2.5s, CLS < 0.1
 
 ---
 
@@ -579,6 +579,18 @@
   - benchmark synthétique local (sans dépendance DB) : scénario bas `<=30`, scénario pic `>=80`;
   - validation live optionnelle (si env Supabase service role configurés) sur fenêtres 2020 et 2022.
 - Documentation mise à jour (`scripts/qa/README.md`, `docs/INDEX.md`) ; item Phase 1 « Valider les scores vs intuition » coché.
+
+### Mars 2026 — Phase 5 SEO completion (Lighthouse + CWV)
+
+- Ajout du script reproductible `scripts/seo/run-lighthouse-audit.ts` + doc `scripts/seo/README.md`.
+- Commandes ajoutées : `pnpm run seo:lighthouse` (alias `pnpm run qa:lighthouse-cwv`).
+- Sorties artefacts locales/CI : `artifacts/lighthouse/<timestamp>/*` + pointeur `artifacts/lighthouse/latest/` (JSON + HTML + `report.md` + `summary.json`).
+- Seuils pass/fail codifiés : catégories Lighthouse (perf/a11y/seo/best-practices >= 90), CWV proxy labo (LCP <= 2500ms, CLS <= 0.1, INP <= 200ms si dispo).
+- CI : upload automatique des artefacts Lighthouse via `.github/workflows/ci-quality-gate.yml` (`actions/upload-artifact`).
+- Evidence locale :
+  - `pnpm run validate` ✅
+  - `pnpm run build` ✅
+  - `pnpm run qa:lighthouse-cwv` ✅ (artefacts générés)
 
 ### Mars 2026 — QA/SEO hardening (post-automation)
 
