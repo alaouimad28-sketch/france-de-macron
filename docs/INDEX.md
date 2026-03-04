@@ -102,7 +102,10 @@ docs/
 | `apps/web/src/lib/supabase/client.ts`                   | Client navigateur (anon key)                                          |
 | `apps/web/src/lib/utils.ts`                             | Helpers (formatFuelPrice, getFCILabel, hashString)                    |
 | `apps/web/src/app/layout.tsx`                           | Metadata OG, structure HTML, Header/Footer/Toaster                    |
-| `apps/web/src/app/page.tsx`                             | Page home — assemblage FCIHero + sections                             |
+| `apps/web/src/app/page.tsx`                             | Page home — assemblage FCIHero + sections + JSON-LD WebSite           |
+| `apps/web/src/app/sitemap.ts`                           | Sitemap XML généré via MetadataRoute                                  |
+| `apps/web/public/robots.txt`                            | Directives robots (Allow `/`, Disallow `/api/`) + lien sitemap        |
+| `apps/web/public/og-image.png`                          | OG image statique (placeholder MVP)                                   |
 | `apps/web/src/app/api/votes/route.ts`                   | GET/POST votes (comptage, fingerprint, ip_hash)                       |
 | `apps/web/src/app/api/newsletter/route.ts`              | POST newsletter (honeypot, email, dedup)                              |
 | `apps/web/src/components/fci/FCIGauge.tsx`              | Jauge arc 180° (SVG + HTML), bleu/rouge, « depuis hier »              |
