@@ -1,0 +1,44 @@
+name: CI Quality Gate
+
+on:
+  pull_request:
+    branches:
+      - orchestrator/autonomous-dev-base
+  push:
+    branches:
+      - orchestrator/autonomous-dev-base
+      - chore/ci-quality-gate-*
+
+concurrency:
+  group: ci-quality-gate-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-and-build:
+    name: Validate + Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate
+        run: pnpm run validate
+
+      - name: Build
+        run: pnpm run build
