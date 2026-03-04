@@ -14,6 +14,9 @@ pnpm run qa:smoke
 # 3) Vérifie les headers de sécurité attendus
 pnpm run qa:security-headers
 
+# 4) Vérifie l'intuition historique FCI (2020 bas, 2022 pic)
+pnpm run qa:fci-intuition
+
 # Tout-en-un
 pnpm run qa:phase7
 ```
@@ -48,6 +51,15 @@ Avec assertions CSP minimales:
 
 - `default-src 'self'`
 - `frame-ancestors 'none'`
+
+### FCI intuition
+
+- Benchmark synthétique local (sans DB):
+  - scénario « COVID bas » attendu `<= 30`
+  - scénario « pic 2022 » attendu `>= 80`
+- Validation live optionnelle (si env Supabase service role fournis):
+  - fenêtre 2020-03 → 2020-06 : minimum attendu `<= 35`
+  - fenêtre 2022-03 → 2022-10 : maximum attendu `>= 80`
 
 ## Note CI
 

@@ -143,7 +143,7 @@
   - Calculer le score
   - Upsert dans `fci_daily` avec `components` et `weights` JSONB
   - Intégré dans `scripts/fuel-daily/index.ts` (appel après upsert carburants)
-- [ ] Valider les scores calculés vs intuition (pic 2022 ≈ 80+, COVID-2020 ≈ 20)
+- [x] Valider les scores calculés vs intuition (pic 2022 ≈ 80+, COVID-2020 ≈ 20)
 - [x] **Backfill FCI historique** — script `fci-backfill` : calcule le FCI v1 pour tous les jours depuis 2019 (ou `START_DATE`) afin d’avoir la série temporelle pour graphiques. Commande `pnpm run fci:backfill`, env `START_DATE` / `END_DATE`. Voir `scripts/fci-backfill/README.md`.
 
 ### Endpoint cron (Vercel)
@@ -520,6 +520,13 @@
 - Documentation source enrichie dans `docs/data/sources.md` (série cible, plan d’ingestion, incertitudes ouvertes).
 - Nouveau log de recherche `docs/addons-research.md` pour tracer hypothèses + prochaines actions immédiates.
 
+### Mars 2026 — Autonomous Additions P0 (IPC alimentaire INSEE, ingestion live)
+
+- Script `scripts/insee-ipc-food-backfill/index.ts` rendu **opérationnel** : fetch réel API INSEE BDM, parser JSON robuste (TIME_PERIOD/OBS_VALUE + variantes), normalisation mensuelle, upsert idempotent vers `ipc_food_monthly`.
+- Ajout d’un mode `DRY_RUN=1` pour QA sans écriture base.
+- Échec explicite si payload INSEE ne retourne aucune observation exploitable (évite faux positifs silencieux).
+- Docs mises à jour (`scripts/insee-ipc-food-backfill/README.md`, `scripts/README.md`, `docs/INDEX.md`, `docs/data/sources.md`) pour refléter le passage scaffold → ingestion live.
+
 ### Mars 2026 — Phase 7 sécurité headers (CSP)
 
 - Renforcement des headers de sécurité globaux dans `apps/web/next.config.ts` : ajout `object-src 'none'`, `base-uri 'self'`, `form-action 'self'`, `X-DNS-Prefetch-Control`, `Strict-Transport-Security`.
@@ -556,6 +563,14 @@
 - Ajout des scripts `scripts/qa/*` : smoke checks (routes + APIs), reduced motion, security headers.
 - Intégration des checks en CI (`.github/workflows/ci-quality-gate.yml`) via `pnpm run qa:phase7` après le build.
 - Vérifications locales exécutées : `pnpm run qa:phase7`, `pnpm run validate`, `pnpm run build` ✅.
+
+### Mars 2026 — Validation intuition FCI (Phase 1)
+
+- Ajout du script `scripts/qa/check-fci-intuition.ts` + commande `pnpm run qa:fci-intuition`.
+- Le check couvre deux niveaux :
+  - benchmark synthétique local (sans dépendance DB) : scénario bas `<=30`, scénario pic `>=80`;
+  - validation live optionnelle (si env Supabase service role configurés) sur fenêtres 2020 et 2022.
+- Documentation mise à jour (`scripts/qa/README.md`, `docs/INDEX.md`) ; item Phase 1 « Valider les scores vs intuition » coché.
 
 ### Mars 2026 — QA/SEO hardening (post-automation)
 
