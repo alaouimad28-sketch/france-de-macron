@@ -436,6 +436,13 @@
 
 > Utiliser cette section pour noter les décisions prises en cours de route, les bugs bloquants, et les déviations par rapport au plan.
 
+### Mars 2026 — Sprint UI indicateurs (continuation)
+
+- Ajout d’une page dédiée `/indicators` qui agrège 4 cartes live (FCI, carburants, IPC alimentaire, chômage jeunes) avec liens directs vers les sections détaillées de la home.
+- Navigation home améliorée pour les nouveaux modules (food + youth) : ancres harmonisées (`#fci`, `#carburants`, `#alimentation`, `#jeunesse`, `#vote`, `#newsletter`), CTA “Tous les indicateurs”, espacements section uniformisés (`py-12/16`).
+- Accessibilité renforcée sur les nouvelles sections : usage systématique de `aria-labelledby` + `id` de heading (`h1/h2`) sur FCI, carburants, alimentation, jeunesse, vote, newsletter.
+- Header principal enrichi avec un lien de navigation vers `/indicators`.
+
 ### Mars 2025 — Session initiale
 
 - Scaffold complet livré (Phase 0 entièrement ✅)

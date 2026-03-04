@@ -77,7 +77,11 @@ export async function FuelSection() {
 
   if (fuelRows.length === 0) {
     return (
-      <section id="carburants" aria-label="Prix des carburants" className="px-4 py-2.5 text-center">
+      <section
+        id="carburants"
+        aria-labelledby="carburants-heading"
+        className="px-4 py-12 text-center md:py-16"
+      >
         <p className="text-surface-600 text-sm">Données carburants indisponibles pour le moment.</p>
       </section>
     )
@@ -117,14 +121,20 @@ export async function FuelSection() {
     : ''
 
   return (
-    <section id="carburants" aria-label="Prix des carburants" className="scroll-mt-24 px-4 py-2.5">
+    <section
+      id="carburants"
+      aria-labelledby="carburants-heading"
+      className="scroll-mt-24 px-4 py-12 md:py-16"
+    >
       <div className="mx-auto max-w-4xl">
         {/* En-tête section */}
         <div className="mb-8">
           <p className="text-surface-600 mb-2 font-mono text-xs uppercase tracking-widest">
             Module carburants
           </p>
-          <h2 className="font-display text-surface-900 text-3xl font-bold">Prix à la pompe</h2>
+          <h2 id="carburants-heading" className="font-display text-surface-900 text-3xl font-bold">
+            Prix à la pompe
+          </h2>
           {formattedDate && (
             <p className="text-surface-600 mt-1 text-sm">Dernière donnée : {formattedDate}</p>
           )}

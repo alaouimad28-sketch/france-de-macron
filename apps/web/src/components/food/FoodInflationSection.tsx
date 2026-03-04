@@ -30,10 +30,16 @@ export async function FoodInflationSection() {
     return (
       <section
         id="alimentation"
-        aria-label="Inflation alimentaire"
-        className="scroll-mt-24 px-4 py-2.5"
+        aria-labelledby="alimentation-heading"
+        className="scroll-mt-24 px-4 py-12 md:py-16"
       >
         <div className="border-surface-200 mx-auto max-w-4xl rounded-xl border bg-white p-6 text-center shadow-sm">
+          <h2
+            id="alimentation-heading"
+            className="font-display text-surface-900 mb-2 text-2xl font-bold"
+          >
+            Panier alimentaire
+          </h2>
           <p className="text-surface-600 text-sm">
             Module alimentation en préparation : les données IPC INSEE seront visibles ici.
           </p>
@@ -69,15 +75,20 @@ export async function FoodInflationSection() {
   return (
     <section
       id="alimentation"
-      aria-label="Inflation alimentaire"
-      className="scroll-mt-24 px-4 py-2.5"
+      aria-labelledby="alimentation-heading"
+      className="scroll-mt-24 px-4 py-12 md:py-16"
     >
       <div className="mx-auto max-w-4xl">
         <div className="mb-6">
           <p className="text-surface-600 mb-2 font-mono text-xs uppercase tracking-widest">
             Module alimentation
           </p>
-          <h2 className="font-display text-surface-900 text-3xl font-bold">Panier alimentaire</h2>
+          <h2
+            id="alimentation-heading"
+            className="font-display text-surface-900 text-3xl font-bold"
+          >
+            Panier alimentaire
+          </h2>
           <p className="text-surface-600 mt-1 text-sm">Source : INSEE IPC alimentaire (mensuel).</p>
         </div>
 

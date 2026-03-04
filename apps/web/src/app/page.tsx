@@ -1,9 +1,5 @@
 /**
  * Home page — Server Component (SSR)
- *
- * Assemble les 4 sections : FCIHero, FuelSection, CookedVote, NewsletterForm.
- * Les fetches Supabase sont effectués dans les Server Components enfants
- * (FCIHero et FuelSection) directement — pas de waterfall.
  */
 
 import { FCIHero } from '@/components/fci/FCIHero'
@@ -29,6 +25,15 @@ const websiteJsonLd = {
   inLanguage: 'fr-FR',
 }
 
+const HOME_ANCHORS = [
+  { href: '#fci', label: 'Indice FCI' },
+  { href: '#carburants', label: 'Carburants' },
+  { href: '#alimentation', label: 'Alimentation' },
+  { href: '#jeunesse', label: 'Jeunesse' },
+  { href: '#vote', label: 'Vote' },
+  { href: '#newsletter', label: 'Newsletter' },
+]
+
 function SectionDivider() {
   return (
     <div className="mx-auto max-w-4xl px-4" aria-hidden="true">
@@ -44,63 +49,59 @@ export default function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
       />
+
       <ScrollReveal>
         <FCIHero />
       </ScrollReveal>
 
       <nav
-        aria-label="Navigation des sections"
-        className="mx-auto mb-4 flex max-w-4xl flex-wrap justify-center gap-2 px-4"
+        aria-label="Navigation des modules de la page d'accueil"
+        className="mx-auto mb-8 flex max-w-5xl flex-wrap items-center justify-center gap-2 px-4 md:mb-10"
       >
-        {[
-          { href: '#hero', label: 'Indice FCI' },
-          { href: '#carburants', label: 'Carburants' },
-          { href: '#alimentation', label: 'Alimentation' },
-          { href: '#jeunesse', label: 'Jeunesse' },
-          { href: '#vote', label: 'Vote' },
-          { href: '#newsletter', label: 'Newsletter' },
-        ].map((item) => (
+        {HOME_ANCHORS.map((item) => (
           <a
             key={item.href}
             href={item.href}
-            className="border-surface-200 text-surface-700 hover:bg-surface-100 rounded-full border bg-white px-3 py-1.5 text-xs font-medium transition-colors"
+            className="border-surface-200 text-surface-700 hover:bg-surface-100 focus-visible:ring-republic-500 rounded-full border bg-white px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2"
           >
             {item.label}
           </a>
         ))}
+        <a
+          href="/indicators"
+          className="bg-republic-500 hover:bg-republic-400 focus-visible:ring-republic-500 rounded-full px-3 py-1.5 text-xs font-semibold text-white transition-colors focus-visible:outline-none focus-visible:ring-2"
+        >
+          Tous les indicateurs
+        </a>
       </nav>
 
       <SectionDivider />
-
       <ScrollReveal>
         <FuelSection />
       </ScrollReveal>
 
       <SectionDivider />
-
       <ScrollReveal>
         <FoodInflationSection />
       </ScrollReveal>
 
       <SectionDivider />
-
       <ScrollReveal>
         <YouthUnemploymentSection />
       </ScrollReveal>
 
       <SectionDivider />
-
       <ScrollReveal>
         <section
           id="vote"
-          aria-label="Vote cooked / uncooked"
-          className="scroll-mt-24 px-4 py-[15px]"
+          aria-labelledby="vote-heading"
+          className="scroll-mt-24 px-4 py-12 md:py-16"
         >
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-surface-600 mb-2 font-mono text-xs uppercase tracking-widest">
               Ton avis
             </p>
-            <h2 className="font-display text-surface-900 mb-3 text-3xl font-bold">
+            <h2 id="vote-heading" className="font-display text-surface-900 mb-3 text-3xl font-bold">
               Toi, tu te sens comment ?
             </h2>
             <p className="text-surface-600 mb-8 text-sm">
@@ -112,18 +113,20 @@ export default function HomePage() {
       </ScrollReveal>
 
       <SectionDivider />
-
       <ScrollReveal>
         <section
           id="newsletter"
-          aria-label="Inscription newsletter"
-          className="scroll-mt-24 px-4 py-[15px]"
+          aria-labelledby="newsletter-heading"
+          className="scroll-mt-24 px-4 py-12 md:py-16"
         >
           <div className="mx-auto max-w-xl text-center">
             <p className="text-surface-600 mb-2 font-mono text-xs uppercase tracking-widest">
               Reste informé
             </p>
-            <h2 className="font-display text-surface-900 mb-3 text-3xl font-bold">
+            <h2
+              id="newsletter-heading"
+              className="font-display text-surface-900 mb-3 text-3xl font-bold"
+            >
               Le FCI dans ta boîte
             </h2>
             <p className="text-surface-600 mb-8 text-base">

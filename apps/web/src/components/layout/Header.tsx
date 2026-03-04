@@ -14,6 +14,7 @@ import { usePathname } from 'next/navigation'
 
 const NAV_LINKS = [
   { href: '/', label: 'Accueil' },
+  { href: '/indicators', label: 'Indicateurs' },
   { href: '/about', label: 'À propos' },
   { href: '/methodology', label: 'Méthodologie' },
 ]
