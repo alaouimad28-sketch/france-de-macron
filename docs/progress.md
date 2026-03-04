@@ -526,6 +526,7 @@
 - Ajout d’un mode `DRY_RUN=1` pour QA sans écriture base.
 - Échec explicite si payload INSEE ne retourne aucune observation exploitable (évite faux positifs silencieux).
 - Docs mises à jour (`scripts/insee-ipc-food-backfill/README.md`, `scripts/README.md`, `docs/INDEX.md`, `docs/data/sources.md`) pour refléter le passage scaffold → ingestion live.
+- Validation repo exécutée après implémentation : `pnpm run validate` ✅ et `pnpm run build` ✅.
 
 ### Mars 2026 — Phase 7 sécurité headers (CSP)
 

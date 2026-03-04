@@ -160,7 +160,7 @@ docs/
 | `pnpm run fuel:backfill:last`       | Rafraîchir uniquement hier (et optionnellement aujourd’hui avec `BACKFILL_INCLUDE_TODAY=1`)  |
 | `pnpm run fuel:daily`               | Job quotidien J-1 (ou replay avec `FUEL_DATE=YYYYMMDD`, cron `/api/cron/fuel-daily`)         |
 | `pnpm run fci:backfill`             | Backfill FCI : calcul du score pour tous les jours depuis 2019 (série temporelle)            |
-| `pnpm run insee:ipc:food:backfill`  | Scaffold ingestion INSEE IPC alimentaire (fetch/normalize/store, TODO parser BDM)            |
+| `pnpm run insee:ipc:food:backfill`  | Ingestion INSEE IPC alimentaire (fetch/normalize/store idempotent, mode DRY_RUN)             |
 | `pnpm run deploy:preflight`         | Vérifier les env vars critiques et la cohérence de config (sans révéler de secrets)          |
 | `pnpm run deploy:verify-production` | Vérifier les artefacts production requis (`robots.txt`, `sitemap.ts`)                        |
 | `pnpm run deploy:verify-cron`       | Vérifier l’endpoint cron sécurisé (401 sans token, 200 avec token)                           |
