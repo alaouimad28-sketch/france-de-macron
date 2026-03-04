@@ -363,7 +363,7 @@
   - **Acceptance criteria** : table `ipc_food_monthly` créée, script d’ingestion idempotent opérationnel, section UI dédiée visible en home/modules, doc source/méthode mise à jour.
 - [x] **Intégrer Eurostat chômage jeunes (15–24)**
   - **Acceptance criteria** : table `youth_unemployment_monthly` alimentée pour FR + médiane UE, endpoint de lecture stable, affichage variation 3 mois + annotation.
-- [ ] **Livrer la décomposition FCI (Explainability)**
+- [x] **Livrer la décomposition FCI (Explainability)**
   - **Acceptance criteria** : endpoint `/api/fci/decomposition` disponible, UI contribution par composante en production, version de méthodo tracée (`fci_method_version`).
 
 ### P1 — Sprint suivant (élargissement couverture)
@@ -613,3 +613,10 @@
 - Nouveau job `scripts/eurostat-youth-unemployment-backfill/` + commande `pnpm run eurostat:youth:backfill` (fetch API Eurostat, normalize mensuel, upsert FR + UE-27, `DRY_RUN=1`).
 - API de lecture stable ajoutée : `GET /api/youth-unemployment` (`geo=FR|EU27_2020`, `limit` borné).
 - Nouveau module home `YouthUnemploymentSection` (France vs UE-27, écart courant, variation 3 mois avec annotation auto si > +1 pt).
+
+### Mars 2026 — Autonomous Additions P0 (FCI Explainability)
+
+- Endpoint `GET /api/fci/decomposition` ajouté : renvoie score du jour (ou `?day=YYYY-MM-DD`), composantes pondérées, total reconstruit et `methodologyVersion`.
+- Nouveau module home `FCIDecompositionSection` : affichage contribution par composante (barres + formule `score × poids`) dans le hero FCI.
+- Traçabilité méthodologique robuste : fallback sécurisé `fci_method_version` → `methodology_version` → `components.fci_method_version` → `v1`.
+- Refacto partagé : helpers `apps/web/src/lib/fci-explainability.ts` utilisés à la fois par l’API et l’UI pour éviter les divergences de calcul.

@@ -76,6 +76,23 @@ export interface FCIDaily {
   weights: FCIWeights
 }
 
+export interface FCIContribution {
+  key: string
+  score: number
+  weight: number
+  contribution: number
+}
+
+export interface FCIDecompositionResponse {
+  day: string
+  score: number
+  methodology_version: string
+  fci_method_version: string
+  components: FCIComponents
+  weights: FCIWeights
+  contributions: FCIContribution[]
+}
+
 /** Données pour afficher la gauge FCI dans le hero */
 export interface FCIHeroData {
   latest: FCIDaily

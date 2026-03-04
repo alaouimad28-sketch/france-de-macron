@@ -2,6 +2,7 @@
  * Home page — Server Component (SSR)
  */
 
+import { FCIDecompositionSection } from '@/components/fci/FCIDecompositionSection'
 import { FCIHero } from '@/components/fci/FCIHero'
 import { FoodInflationSection } from '@/components/food/FoodInflationSection'
 import { FuelSection } from '@/components/fuel/FuelSection'
@@ -27,6 +28,7 @@ const websiteJsonLd = {
 
 const HOME_ANCHORS = [
   { href: '#fci', label: 'Indice FCI' },
+  { href: '#decomposition', label: 'Décomposition' },
   { href: '#carburants', label: 'Carburants' },
   { href: '#alimentation', label: 'Alimentation' },
   { href: '#jeunesse', label: 'Jeunesse' },
@@ -74,6 +76,11 @@ export default function HomePage() {
           Tous les indicateurs
         </a>
       </nav>
+
+      <SectionDivider />
+      <ScrollReveal>
+        <FCIDecompositionSection />
+      </ScrollReveal>
 
       <SectionDivider />
       <ScrollReveal>

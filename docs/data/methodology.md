@@ -166,6 +166,8 @@ Chaque entrée dans `fci_daily` stocke :
 - `components` : les scores de chaque composante (JSONB)
 - `weights` : les pondérations utilisées (JSONB)
 
+Dans l’API d’explicabilité (`/api/fci/decomposition`), la version exposée est résolue avec fallback sûr : `fci_method_version` (si présent) → `methodology_version` → `components.fci_method_version` → `v1`.
+
 Cela permet de :
 
 - Retracer comment un score a été calculé à n'importe quelle date
