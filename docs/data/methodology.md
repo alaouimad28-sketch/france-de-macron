@@ -128,13 +128,14 @@ FCI = clamp(FCI, 0, 100)
 
 ### 4.1 Nouvelles composantes prévues
 
-| Composante      | Indicateur                | Source        | Fréquence   |
-| --------------- | ------------------------- | ------------- | ----------- |
-| Énergie         | Prix carburants (actuel)  | roulez-eco.fr | Quotidien   |
-| Alimentation    | IPC alimentaire           | INSEE         | Mensuel     |
-| Logement        | Loyers (grandes villes)   | CLAMEUR       | Trimestriel |
-| Travail         | Chômage 15–24 ans         | Eurostat      | Trimestriel |
-| Pouvoir d'achat | Salaire réel vs inflation | DARES/INSEE   | Trimestriel |
+| Composante         | Indicateur                          | Source          | Fréquence                           |
+| ------------------ | ----------------------------------- | --------------- | ----------------------------------- |
+| Énergie mobilité   | Prix carburants (actuel)            | roulez-eco.fr   | Quotidien                           |
+| Énergie domestique | TRVE résidentiel (option BASE/HPHC) | CRE / data.gouv | Événementiel (révisions tarifaires) |
+| Alimentation       | IPC alimentaire                     | INSEE           | Mensuel                             |
+| Logement           | Loyers (grandes villes)             | CLAMEUR         | Trimestriel                         |
+| Travail            | Chômage 15–24 ans                   | Eurostat        | Trimestriel                         |
+| Pouvoir d'achat    | Salaire réel vs inflation           | DARES/INSEE     | Trimestriel                         |
 
 ### 4.2 Pondérations v2 (proposées)
 
