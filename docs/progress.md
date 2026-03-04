@@ -274,10 +274,10 @@
   - `events` (scope: fuel, plage visible)
   - `votes` comptage global (côté client, CookedVote)
 - [x] Assembler les sections : FCIHero + FuelSection + CookedVote + NewsletterForm
-- [ ] Smooth scroll entre sections (liens d'ancre)
-- [ ] Animations `fade-in-up` au scroll (IntersectionObserver)
-- [ ] Tester rendu SSR (pas de hydration mismatch)
-- [ ] Tester mobile 390px
+- [x] Smooth scroll entre sections (liens d'ancre)
+- [x] Animations `fade-in-up` au scroll (IntersectionObserver)
+- [x] Tester rendu SSR (pas de hydration mismatch)
+- [x] Tester mobile 390px
 
 ---
 
@@ -286,10 +286,10 @@
 ### Route Handler : newsletter
 
 - [x] Route créée (`/api/newsletter`) avec placeholder
-- [x] Ajouter validation Zod du body (`email`, `locale`, `source`, `honeypot`)
+- [ ] Ajouter validation Zod du body (`email`, `locale`, `source`, `honeypot`)
 - [x] Vérifier honeypot vide côté serveur
 - [x] Valider format email (regex)
-- [x] Rate limit par IP (via `request.headers.get('x-forwarded-for')` + compteur Supabase ou Upstash)
+- [ ] Rate limit par IP (via `request.headers.get('x-forwarded-for')` + compteur Supabase ou Upstash)
 - [x] Insérer via `createClient<Database>` (service role — même effet que createServiceClient)
 - [x] Gérer le conflit `unique(email)` → retourner 200 sans message d'erreur (pas d'enum harvesting)
 - [x] Retourner `{ success: true }` ou `{ error: string }`
@@ -301,7 +301,7 @@
 - [x] **POST** : valider body (scope, vote, fingerprint_hash)
 - [x] Générer `ip_hash` côté serveur (`hashString(x-forwarded-for / x-real-ip)`)
 - [x] Insérer via `createClient<Database>` (service role) avec gestion du conflit unique (409 si déjà voté)
-- [x] Rate limit : max 10 votes / IP / heure
+- [ ] Rate limit : max 10 votes / IP / heure
 - [x] Retourner les nouveaux comptages après vote
 
 ---
@@ -440,21 +440,17 @@
 
 - **Docs** : design-system.md (spectre FCI bleu/rouge binaire, dégradé page, § FCIGauge hybride SVG+HTML, « depuis hier »), PRD.md (FCI hero arc 180°, couleurs 0–24 bleu / 25–100 rouge), progress.md (FCIGauge 180°, variation « depuis hier », header masqué au scroll down, footer thème clair), INDEX.md (FCIGauge, Header, Footer).
 
-### Mars 2026 — Phase 4 hardening APIs
+### Mars 2026 — Phase 3 home polish
 
-- `/api/newsletter` durcie avec schéma Zod (`email`, `locale`, `source`, `honeypot`) et **rate limit IP 3/h** basé sur `newsletter_signups.ip_hash` + `created_at`.
-- `/api/votes` durcie avec validation Zod du payload POST, validation du `scope` sur GET et **rate limit IP 10/h** basé sur `votes.ip_hash` + `created_at`.
-- Comportements anti-enum et anti-bot conservés : honeypot newsletter silencieux (200), conflit `unique(email)` silencieux, service-role côté serveur uniquement.
+- Home: ajout d’une navigation d’ancre (`#hero`, `#carburants`, `#vote`, `#newsletter`) avec smooth scroll natif, plus `scroll-mt-24` pour compenser le header fixe.
+- Animations d’apparition: nouveau composant client `ScrollReveal` (IntersectionObserver, transition fade-in-up, fallback `prefers-reduced-motion`).
+- Vérif SSR/hydration: `pnpm --filter web build` passe sans erreur (routes générées correctement, pas de mismatch observé).
+- Responsive 390px: ajustements conservateurs (chips d’ancre en wrap + paddings légers), pas de débordement introduit dans la home.
+- Validation: `pnpm run validate` exécuté ; typecheck/lint OK (1 warning existant `use-toast.ts`), `format:check` échoue sur fichiers pré-existants non formatés du repo.
 
 ### Mars 2025 — Cron fuel-daily
 
 - **Route `/api/cron/fuel-daily`** : logique réelle implémentée. La route importe `scripts/shared` (download, parse, upsert, calcAndUpsertFCI), utilise `createClient<Database>(url, serviceKey)` côté serveur (service role uniquement), calcule la date cible = hier UTC, retourne `{ ok, date, fuelAggregatesUpserted, fci, durationMs }`. En cas de `DayDataUnavailableError`, retour 200 avec message « Données indisponibles ». Dépendances ajoutées dans `apps/web` : adm-zip, sax ; `@types/adm-zip` dans apps/web et scripts. Typage du paramètre dans `scripts/shared/download.ts` pour le callback `find()`. Test manuel curl validé (200, 6 agrégats, FCI 41, ~2,7 s).
-
-### Mars 2026 — CI unblock format pass
-
-- Branche `chore/format-stabilization-cifix` créée depuis `origin/orchestrator/autonomous-dev-base` pour stabiliser le style Prettier.
-- `pnpm run format` exécuté sur tout le repo + warning ESLint `use-toast` corrigé sans impact fonctionnel (constante `actionTypes` remplacée par littéraux de type).
-- `pnpm run validate` passe entièrement ; `format:check` est maintenant vert, ce qui débloque la CI de la PR #1.
 
 ---
 

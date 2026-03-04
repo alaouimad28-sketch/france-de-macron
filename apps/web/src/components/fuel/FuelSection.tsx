@@ -77,8 +77,12 @@ export async function FuelSection() {
 
   if (fuelRows.length === 0) {
     return (
-      <section id="carburants" aria-label="Prix des carburants" className="px-4 py-2.5 text-center">
-        <p className="text-surface-600 text-sm">Données carburants indisponibles pour le moment.</p>
+      <section
+        id="carburants"
+        aria-label="Prix des carburants"
+        className="px-4 py-2.5 text-center"
+      >
+        <p className="text-sm text-surface-600">Données carburants indisponibles pour le moment.</p>
       </section>
     )
   }
@@ -104,29 +108,35 @@ export async function FuelSection() {
       fuelCode,
       price: price ?? 0,
       variationVs7d:
-        price !== undefined && oldPrice !== undefined ? calcVariationPct(price, oldPrice) : null,
+        price !== undefined && oldPrice !== undefined
+          ? calcVariationPct(price, oldPrice)
+          : null,
     }
   }).filter((p) => p.price > 0)
 
   const trendLabel = getTrendLabel(latestPrices)
   const latestDay = latest?.date ?? ''
   const formattedDate = latestDay
-    ? new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long' }).format(
-        new Date(latestDay),
-      )
+    ? new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long' }).format(new Date(latestDay))
     : ''
 
   return (
-    <section id="carburants" aria-label="Prix des carburants" className="px-4 py-2.5">
+    <section
+      id="carburants"
+      aria-label="Prix des carburants"
+      className="scroll-mt-24 px-4 py-2.5"
+    >
       <div className="mx-auto max-w-4xl">
         {/* En-tête section */}
         <div className="mb-8">
-          <p className="text-surface-600 mb-2 font-mono text-xs uppercase tracking-widest">
+          <p className="mb-2 font-mono text-xs tracking-widest text-surface-600 uppercase">
             Module carburants
           </p>
-          <h2 className="font-display text-surface-900 text-3xl font-bold">Prix à la pompe</h2>
+          <h2 className="font-display text-3xl font-bold text-surface-900">
+            Prix à la pompe
+          </h2>
           {formattedDate && (
-            <p className="text-surface-600 mt-1 text-sm">Dernière donnée : {formattedDate}</p>
+            <p className="mt-1 text-sm text-surface-600">Dernière donnée : {formattedDate}</p>
           )}
         </div>
 
@@ -146,7 +156,7 @@ export async function FuelSection() {
             return (
               <div
                 key={fuelCode}
-                className="border-surface-200 rounded-xl border bg-white px-4 py-3 shadow-sm"
+                className="rounded-xl border border-surface-200 bg-white px-4 py-3 shadow-sm"
               >
                 <div className="mb-1 flex items-center gap-2">
                   <span
@@ -154,17 +164,16 @@ export async function FuelSection() {
                     style={{ backgroundColor: FUEL_COLORS[fuelCode] }}
                     aria-hidden="true"
                   />
-                  <span className="text-surface-600 text-xs font-medium">
+                  <span className="text-xs font-medium text-surface-600">
                     {FUEL_LABELS[fuelCode]}
                   </span>
                 </div>
-                <p className="text-surface-800 font-mono text-xl font-semibold">
+                <p className="font-mono text-xl font-semibold text-surface-800">
                   {formatFuelPrice(price)}
                 </p>
                 {variationVs7d !== null && (
                   <p className={`mt-0.5 font-mono text-xs ${variationColor}`}>
-                    {variationSign}
-                    {variationVs7d.toFixed(1)}% vs 7j
+                    {variationSign}{variationVs7d.toFixed(1)}% vs 7j
                   </p>
                 )}
               </div>
@@ -173,15 +182,15 @@ export async function FuelSection() {
         </div>
 
         {/* Tendance */}
-        <p className="text-surface-600 mb-6 text-sm">{trendLabel}</p>
+        <p className="mb-6 text-sm text-surface-600">{trendLabel}</p>
 
         {/* Graphique */}
-        <div className="border-surface-200 rounded-xl border bg-white p-4 shadow-sm md:p-6">
+        <div className="rounded-xl border border-surface-200 bg-white p-4 shadow-sm md:p-6">
           <FuelChart data={chartData} events={eventRows} />
         </div>
 
         {/* Source */}
-        <p className="text-surface-600 mt-3 text-xs">
+        <p className="mt-3 text-xs text-surface-600">
           Source : données officielles open data (roulez-eco.fr). Moyennes nationales.
         </p>
       </div>
