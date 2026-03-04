@@ -37,7 +37,8 @@
     "qa:lighthouse-cwv": "pnpm --filter scripts seo:lighthouse",
     "seo:lighthouse": "pnpm --filter scripts seo:lighthouse",
     "qa:fci-intuition": "pnpm --filter scripts qa:fci-intuition",
-    "qa:phase7": "pnpm run qa:reduced-motion && pnpm run qa:smoke && pnpm run qa:security-headers && pnpm run qa:meta-descriptions && pnpm run qa:lighthouse-cwv"
+    "qa:electricity-unit": "pnpm --filter scripts qa:electricity-unit",
+    "qa:phase7": "pnpm run qa:reduced-motion && pnpm run qa:smoke && pnpm run qa:security-headers && pnpm run qa:meta-descriptions && pnpm run qa:electricity-unit && pnpm run qa:lighthouse-cwv"
   },
   "devDependencies": {
     "prettier": "^3.3.3",

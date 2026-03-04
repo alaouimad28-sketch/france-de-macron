@@ -97,6 +97,7 @@
 - ✅ INSEE IPC alimentaire : ingestion + section UI livrées.
 - ✅ Eurostat chômage jeunes : ingestion FR + UE-27 (`une_rt_m`) + section UI variation 3 mois livrées.
 - ⏳ Explainability FCI : restant en P0.
+- ✅ TRVE électricité (P1) : backend ingestion + schéma + timeline events + test unité dédiés livrés.
 
 ## Définition de done (global)
 

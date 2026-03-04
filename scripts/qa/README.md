@@ -17,6 +17,9 @@ pnpm run qa:security-headers
 # 4) Vérifie l'intuition historique FCI (2020 bas, 2022 pic)
 pnpm run qa:fci-intuition
 
+# 5) Vérifie la cohérence d'unité des tarifs électricité (ct€/kWh)
+pnpm run qa:electricity-unit
+
 # Tout-en-un
 pnpm run qa:phase7
 ```
@@ -60,6 +63,14 @@ Avec assertions CSP minimales:
 - Validation live optionnelle (si env Supabase service role fournis):
   - fenêtre 2020-03 → 2020-06 : minimum attendu `<= 35`
   - fenêtre 2022-03 → 2022-10 : maximum attendu `>= 80`
+
+### Électricité — cohérence unité
+
+- Benchmark synthétique local sur conversions `€/kWh -> ct€/kWh`.
+- Validation live optionnelle (si env Supabase service role fournis):
+  - dataset `electricity_tariff_history` Option Base 6 kVA;
+  - assertion stricte `value_eur_kwh × 100 = value_ct_kwh` (tolérance flottante minime);
+  - bornes sanity `5 <= value_ct_kwh <= 100`.
 
 ## Note CI
 

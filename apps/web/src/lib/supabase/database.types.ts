@@ -33,6 +33,60 @@ export type Database = {
         }
         Relationships: []
       }
+      electricity_tariff_history: {
+        Row: {
+          annual_fixed_ttc_eur: number | null
+          created_at: string
+          effective_date: string
+          end_date: string | null
+          id: string
+          method_version: string
+          option_code: string
+          source_dataset: string
+          source_meta: Json | null
+          source_url: string
+          subscribed_power_kva: number
+          tariff_component: string
+          updated_at: string
+          value_ct_kwh: number
+          value_eur_kwh: number
+        }
+        Insert: {
+          annual_fixed_ttc_eur?: number | null
+          created_at?: string
+          effective_date: string
+          end_date?: string | null
+          id?: string
+          method_version?: string
+          option_code: string
+          source_dataset?: string
+          source_meta?: Json | null
+          source_url: string
+          subscribed_power_kva: number
+          tariff_component: string
+          updated_at?: string
+          value_ct_kwh: number
+          value_eur_kwh: number
+        }
+        Update: {
+          annual_fixed_ttc_eur?: number | null
+          created_at?: string
+          effective_date?: string
+          end_date?: string | null
+          id?: string
+          method_version?: string
+          option_code?: string
+          source_dataset?: string
+          source_meta?: Json | null
+          source_url?: string
+          subscribed_power_kva?: number
+          tariff_component?: string
+          updated_at?: string
+          value_ct_kwh?: number
+          value_eur_kwh?: number
+        }
+        Relationships: []
+      }
       events: {
         Row: {
           created_at: string

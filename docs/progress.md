@@ -368,8 +368,9 @@
 
 ### P1 — Sprint suivant (élargissement couverture)
 
-- [ ] **Ajouter composante tarifs électricité (TRVE CRE/data.gouv)**
+- [x] **Ajouter composante tarifs électricité (TRVE CRE/data.gouv)**
   - **Acceptance criteria** : historique tarifaire ingéré et versionné, événements de changement tarifaire visibles sur timeline, tests de cohérence unité (ct€/kWh).
+  - Livré : intégration timeline événements dans le module `ElectricityTariffSection` (TRVE Base 6 kVA) + migration d’extension `events.scope='electricity'` avec seeds ; check QA `pnpm run qa:electricity-unit` (cohérence `value_eur_kwh × 100 = value_ct_kwh` + bornes sanity).
 - [ ] **Piloter module loyers sur 5 villes**
   - **Acceptance criteria** : dataset normalisé pour Paris/Lyon/Marseille/Lille/Toulouse, pipeline documenté (source/licence), composant UI comparatif livré.
 
@@ -613,6 +614,19 @@
 - Nouveau job `scripts/eurostat-youth-unemployment-backfill/` + commande `pnpm run eurostat:youth:backfill` (fetch API Eurostat, normalize mensuel, upsert FR + UE-27, `DRY_RUN=1`).
 - API de lecture stable ajoutée : `GET /api/youth-unemployment` (`geo=FR|EU27_2020`, `limit` borné).
 - Nouveau module home `YouthUnemploymentSection` (France vs UE-27, écart courant, variation 3 mois avec annotation auto si > +1 pt).
+
+### Mars 2026 — Autonomous Additions P1 (TRVE électricité, backend incremental)
+
+- Migration additive `20240101000010_init_electricity_tariff_history.sql` ajoutée (`public.electricity_tariff_history`, RLS lecture publique, contrainte d’idempotence versionnée).
+- Nouveau job `scripts/electricity-trve-backfill/` + commande `pnpm run electricity:trve:backfill` (sources CRE/data.gouv Option Base + HPHC, normalisation en ct€/kWh, `DRY_RUN=1`).
+- Documentation mise à jour : `docs/data/sources.md`, `docs/data/methodology.md`, `docs/INDEX.md`, `README.md`, `scripts/README.md`.
+
+### Mars 2026 — Autonomous Additions P1 (TRVE électricité, completion slice)
+
+- Ajout du composant home `ElectricityTariffSection` avec timeline des changements de tarif (Option Base 6 kVA) et annotation événementielle inline.
+- Intégration des événements dédiés : migration `20260304184600_add_electricity_scope_events.sql` (scope `electricity` + seeds de changements tarifaires majeurs).
+- QA dédiée ajoutée : `scripts/qa/check-electricity-unit.ts`, commande `pnpm run qa:electricity-unit`, et inclusion dans `qa:phase7`.
+- Hub `/indicators` enrichi avec carte “Électricité TRVE” (ancre `/#electricite`).
 
 ### Mars 2026 — Autonomous Additions P0 (FCI Explainability)
 
