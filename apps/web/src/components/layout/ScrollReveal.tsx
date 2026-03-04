@@ -41,8 +41,8 @@ export function ScrollReveal({ children, className, once = true }: ScrollRevealP
       className={[
         'motion-safe:transition-all motion-safe:duration-700 motion-safe:ease-out',
         isVisible
-          ? 'opacity-100 translate-y-0'
-          : 'opacity-0 translate-y-4 motion-reduce:opacity-100 motion-reduce:translate-y-0',
+          ? 'translate-y-0 opacity-100'
+          : 'translate-y-4 opacity-0 motion-reduce:translate-y-0 motion-reduce:opacity-100',
         className ?? '',
       ].join(' ')}
     >
