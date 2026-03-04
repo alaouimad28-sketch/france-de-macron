@@ -60,8 +60,8 @@
 
 ## Contribution & qualité
 
-| Document                                                                 | Description                                                                 |
-| ------------------------------------------------------------------------ | --------------------------------------------------------------------------- |
+| Document                                                                  | Description                                                                            |
+| ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
 | [docs/contributing-review-checklist.md](contributing-review-checklist.md) | Processus Git + checklist auteur/reviewer + critères de merge sur branche orchestrator |
 
 ---
