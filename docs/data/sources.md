@@ -150,14 +150,14 @@ Supabase → Front : SSR Next.js (at request time, données fraîches)
 
 ### 2.1 Inflation alimentaire — INSEE
 
-| Champ         | Valeur                                                          |
-| ------------- | --------------------------------------------------------------- |
-| Source        | INSEE — Indices des Prix à la Consommation (IPC)                |
-| URL           | `https://api.insee.fr/series/BDM/V1/data/SERIES_BDM/001767226`  |
-| Format        | JSON (API REST, série BDM)                                      |
-| Fréquence     | Mensuel                                                         |
-| Licence       | Licence Ouverte / Open Licence v2.0                             |
-| Disponibilité | Gratuit, clé API requise (inscription INSEE, token Bearer API)  |
+| Champ         | Valeur                                                         |
+| ------------- | -------------------------------------------------------------- |
+| Source        | INSEE — Indices des Prix à la Consommation (IPC)               |
+| URL           | `https://api.insee.fr/series/BDM/V1/data/SERIES_BDM/001767226` |
+| Format        | JSON (API REST, série BDM)                                     |
+| Fréquence     | Mensuel                                                        |
+| Licence       | Licence Ouverte / Open Licence v2.0                            |
+| Disponibilité | Gratuit, clé API requise (inscription INSEE, token Bearer API) |
 
 #### 2.1.1 Série cible MVP (scaffold P0)
 

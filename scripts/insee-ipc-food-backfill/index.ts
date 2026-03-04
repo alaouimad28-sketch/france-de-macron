@@ -47,8 +47,7 @@ interface IpcFoodMonthlyRecord {
 async function fetchInseeIpcFoodSeries(seriesId: string): Promise<InseeRawObservation[]> {
   const token = process.env['INSEE_API_TOKEN']
   const baseUrl =
-    process.env['INSEE_BDM_API_BASE_URL'] ??
-    'https://api.insee.fr/series/BDM/V1/data/SERIES_BDM'
+    process.env['INSEE_BDM_API_BASE_URL'] ?? 'https://api.insee.fr/series/BDM/V1/data/SERIES_BDM'
 
   if (!token) {
     console.warn('[insee-ipc-food] TODO: missing INSEE_API_TOKEN, skipping remote fetch scaffold')
@@ -100,7 +99,9 @@ async function storeIpcFoodMonthly(records: IpcFoodMonthlyRecord[]): Promise<num
   const key = process.env['SUPABASE_SERVICE_ROLE_KEY']
 
   if (!url || !key) {
-    throw new Error('[insee-ipc-food] NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required')
+    throw new Error(
+      '[insee-ipc-food] NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required',
+    )
   }
 
   const supabase = createClient<Database>(url, key)
