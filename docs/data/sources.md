@@ -185,12 +185,26 @@ Supabase → Front : SSR Next.js (at request time, données fraîches)
 
 ### 2.2 Chômage jeunes — Eurostat
 
-| Champ     | Valeur                                                     |
-| --------- | ---------------------------------------------------------- |
-| Source    | Eurostat — Labour Force Survey                             |
-| URL       | API Eurostat (SDMX)                                        |
-| Fréquence | Trimestriel                                                |
-| Licence   | Eurostat copyright (usage libre pour data non-commerciale) |
+| Champ     | Valeur                                                                         |
+| --------- | ------------------------------------------------------------------------------ |
+| Source    | Eurostat — Labour Force Survey                                                 |
+| URL       | `https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m` |
+| Fréquence | Mensuel                                                                        |
+| Licence   | Eurostat reuse policy (source à citer)                                         |
+
+#### 2.2.1 Paramètres retenus (MVP)
+
+- Dataset : `une_rt_m`
+- Filtres : `age=Y15-24`, `sex=T`, `unit=PC_ACT`, `s_adj=SA`
+- Géos suivis : `FR`, `EU27_2020`
+- Script : `scripts/eurostat-youth-unemployment-backfill/index.ts`
+- Stockage : table `public.youth_unemployment_monthly` (migration additive `20240101000009`).
+
+#### 2.2.2 Pipeline ingestion
+
+1. **Fetch** : appel API Eurostat JSON par `geo`.
+2. **Normalize** : mapping `time=YYYY-MM` vers `month=YYYY-MM-01` + extraction `unemployment_rate`.
+3. **Store** : upsert idempotent via clé `(month, geo, age, sex, seasonal_adjustment, unit)`.
 
 ### 2.3 Loyers — CLAMEUR / OLAP
 

@@ -119,7 +119,7 @@ docs/
 | `apps/web/src/components/fuel/FuelChart.tsx`            | Recharts LineChart 3 carburants, spikes, events                         |
 | `apps/web/src/components/fuel/PeriodChip.tsx`           | Sélecteur de période (7j/30j/…)                                         |
 | `apps/web/src/components/fuel/FuelSection.tsx`          | Server Component carburants — fetch + pivot                             |
-| `apps/web/src/components/food/FoodInflationSection.tsx` | Server Component IPC alimentaire — fetch `ipc_food_monthly` + KPI YoY |
+| `apps/web/src/components/food/FoodInflationSection.tsx` | Server Component IPC alimentaire — fetch `ipc_food_monthly` + KPI YoY   |
 | `apps/web/src/components/vote/CookedVote.tsx`           | Votes cooked/uncooked, fingerprint, localStorage                        |
 | `apps/web/src/components/newsletter/NewsletterForm.tsx` | Formulaire newsletter avec honeypot                                     |
 | `apps/web/src/components/layout/Header.tsx`             | Header blanc, masqué au scroll down / réapparaît au scroll up           |
