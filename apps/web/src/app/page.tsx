@@ -15,6 +15,18 @@ import { CookedVote } from '@/components/vote/CookedVote'
 const PAGE_GRADIENT =
   'linear-gradient(to right, rgba(35,85,238,0.35) 0%, rgba(255,255,255,0.95) 38%, rgba(255,255,255,0.95) 62%, rgba(244,63,94,0.35) 100%)'
 
+const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://france-de-macron.fr'
+
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'France de Macron',
+  url: appUrl,
+  description:
+    'Dashboard satirique et data-driven pour suivre le French Cooked Index™ et les prix des carburants.',
+  inLanguage: 'fr-FR',
+}
+
 function SectionDivider() {
   return (
     <div className="mx-auto max-w-4xl px-4" aria-hidden="true">
@@ -26,6 +38,10 @@ function SectionDivider() {
 export default function HomePage() {
   return (
     <div className="min-h-screen" style={{ background: PAGE_GRADIENT }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+      />
       <ScrollReveal>
         <FCIHero />
       </ScrollReveal>
