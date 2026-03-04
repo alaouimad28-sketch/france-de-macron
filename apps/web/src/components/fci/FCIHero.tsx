@@ -32,10 +32,13 @@ export async function FCIHero() {
   if (error || !data || data.length === 0) {
     return (
       <section
-        id="hero"
-        aria-label="French Cooked Index"
+        id="fci"
+        aria-labelledby="fci-heading"
         className="relative flex min-h-[60vh] flex-col items-center justify-center overflow-hidden px-4 py-20"
       >
+        <h1 id="fci-heading" className="sr-only">
+          French Cooked Index
+        </h1>
         <p className="text-surface-600 text-center text-sm">
           Données indisponibles pour le moment.
         </p>
@@ -56,9 +59,9 @@ export async function FCIHero() {
 
   return (
     <section
-      id="hero"
-      aria-label="French Cooked Index"
-      className="relative scroll-mt-24 overflow-hidden py-[15px]"
+      id="fci"
+      aria-labelledby="fci-heading"
+      className="relative scroll-mt-24 overflow-hidden py-12 md:py-16"
     >
       <div className="relative z-10 mx-auto flex max-w-2xl flex-col items-center justify-center overflow-hidden px-4 py-0 text-center md:py-0">
         {/* Eyebrow chip */}
@@ -69,7 +72,10 @@ export async function FCIHero() {
         </div>
 
         {/* Titre */}
-        <h1 className="font-display text-surface-900 mb-8 ml-4 text-4xl font-black leading-tight tracking-tight sm:text-5xl md:text-6xl">
+        <h1
+          id="fci-heading"
+          className="font-display text-surface-900 mb-8 ml-4 text-4xl font-black leading-tight tracking-tight sm:text-5xl md:text-6xl"
+        >
           Dans la France de Macron...
           <br />
           <span style={{ color: scoreColor }}>on est cooked ?</span>
