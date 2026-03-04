@@ -9,6 +9,7 @@
     "fuel:daily": "tsx fuel-daily/index.ts",
     "fci:backfill": "tsx fci-backfill/index.ts",
     "insee:ipc:food:backfill": "tsx insee-ipc-food-backfill/index.ts",
+    "eurostat:youth:backfill": "tsx eurostat-youth-unemployment-backfill/index.ts",
     "deploy:check-vercel": "tsx deploy/check-vercel-setup.ts",
     "deploy:preflight": "tsx deploy/preflight.ts",
     "deploy:verify-production": "tsx deploy/verify-production.ts",

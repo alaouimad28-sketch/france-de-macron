@@ -15,6 +15,7 @@ scripts/
 ├── fuel-daily/              # Job quotidien : ingestion J-1 (ou replay avec FUEL_DATE)
 ├── fci-backfill/            # Backfill FCI : calcul du score pour tous les jours depuis 2019 (série temporelle)
 ├── insee-ipc-food-backfill/ # Ingestion IPC alimentaire INSEE (fetch/normalize/store)
+├── eurostat-youth-unemployment-backfill/ # Ingestion chômage jeunes Eurostat (FR vs UE-27)
 ├── deploy/                  # Vérifications production (preflight, cron endpoint, artefacts)
 └── qa/                      # Automatisation QA Phase 7
 ```
@@ -92,6 +93,17 @@ pnpm run insee:ipc:food:backfill
 ```
 
 Voir [insee-ipc-food-backfill/README.md](insee-ipc-food-backfill/README.md) pour le détail.
+
+### `eurostat:youth:backfill` — Chômage jeunes Eurostat (P0)
+
+Ingestion idempotente du chômage 15–24 ans (France + UE-27) depuis l’API publique Eurostat.
+
+```bash
+pnpm run eurostat:youth:backfill
+DRY_RUN=1 pnpm run eurostat:youth:backfill
+```
+
+Voir [eurostat-youth-unemployment-backfill/README.md](eurostat-youth-unemployment-backfill/README.md) pour le détail.
 
 ### `deploy:*` — Vérifications production (Phase 6)
 

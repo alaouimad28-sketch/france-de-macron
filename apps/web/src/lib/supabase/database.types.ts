@@ -170,6 +170,57 @@ export type Database = {
         }
         Relationships: []
       }
+      youth_unemployment_monthly: {
+        Row: {
+          age: string
+          created_at: string
+          geo: string
+          geo_label: string
+          id: string
+          month: string
+          seasonal_adjustment: string
+          sex: string
+          source_dataset: string
+          source_meta: Json | null
+          source_url: string
+          unemployment_rate: number
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          age?: string
+          created_at?: string
+          geo: string
+          geo_label: string
+          id?: string
+          month: string
+          seasonal_adjustment?: string
+          sex?: string
+          source_dataset?: string
+          source_meta?: Json | null
+          source_url: string
+          unemployment_rate: number
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          age?: string
+          created_at?: string
+          geo?: string
+          geo_label?: string
+          id?: string
+          month?: string
+          seasonal_adjustment?: string
+          sex?: string
+          source_dataset?: string
+          source_meta?: Json | null
+          source_url?: string
+          unemployment_rate?: number
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       newsletter_signups: {
         Row: {
           created_at: string
