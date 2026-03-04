@@ -508,3 +508,17 @@
 | CLS                                 | < 0.1              | —      |
 | Sample count moyen carburant        | > 1000 stations    | —      |
 | Uptime cron quotidien               | > 99%              | —      |
+
+### Mars 2026 — Automatisation QA Phase 7
+
+- Ajout des scripts `scripts/qa/*` : smoke checks (routes + APIs), reduced motion, security headers.
+- Intégration des checks en CI (`.github/workflows/ci-quality-gate.yml`) via `pnpm run qa:phase7` après le build.
+- Vérifications locales exécutées : `pnpm run qa:phase7`, `pnpm run validate`, `pnpm run build` ✅.
+
+### Mars 2026 — QA/SEO hardening (post-automation)
+
+- Évaluation des items restants après l’automatisation Phase 7 :
+  - **Automatisable depuis repo** : vérification longueur meta descriptions (Phase 5) ✅
+  - **Toujours manuels / externes** : tests mobile réel iOS/Android, inscription newsletter avec vrai email, CSP via securityheaders.com, secrets dans logs Vercel, soft/public launch.
+- Ajout du check `qa:meta-descriptions` (pages `/`, `/about`, `/methodology`, `/disclaimer`) avec assertion `<meta name="description">` présent et longueur ≤ 155.
+- `qa:phase7` inclut désormais ce contrôle SEO en plus des checks reduced motion/smoke/security headers.

@@ -40,3 +40,6 @@ jobs:
 
       - name: Build
         run: pnpm run build
+
+      - name: Phase 7 QA automation
+        run: pnpm run qa:phase7

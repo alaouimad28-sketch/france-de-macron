@@ -131,6 +131,7 @@ docs/
 | `scripts/qa/smoke-checks.ts`                            | Smoke checks CI des routes/pages + APIs clés                          |
 | `scripts/qa/check-reduced-motion.ts`                    | Vérification couverture reduced motion                                |
 | `scripts/qa/check-security-headers.ts`                  | Vérification headers de sécurité sur app démarrée localement          |
+| `scripts/qa/check-meta-descriptions.ts`                 | Vérification SEO: meta descriptions présentes et <= 155 caractères    |
 | `supabase/migrations/*.sql`                             | Schéma DB et RLS                                                      |
 
 ---
@@ -159,6 +160,7 @@ docs/
 | `pnpm run qa:reduced-motion`        | Vérifier la couverture reduced motion                                                       |
 | `pnpm run qa:smoke`                 | Smoke checks routes/pages + APIs (home/about/methodology/votes/newsletter validation)       |
 | `pnpm run qa:security-headers`      | Vérifier les headers de sécurité en local sur l’app buildée                                 |
+| `pnpm run qa:meta-descriptions`     | Vérifier les meta descriptions SEO (présence + longueur <= 155)                             |
 | `pnpm run qa:phase7`                | Exécuter toute l’automatisation QA Phase 7                                                  |
 | `pnpm run security:check-headers`   | Vérifier les headers de sécurité d’une URL (`HEADERS_CHECK_URL`)                            |
 | `pnpm run validate`                 | Vérifier avant commit (typecheck web + scripts, lint, format)                               |

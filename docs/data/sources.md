@@ -150,14 +150,39 @@ Supabase → Front : SSR Next.js (at request time, données fraîches)
 
 ### 2.1 Inflation alimentaire — INSEE
 
-| Champ         | Valeur                                                         |
-| ------------- | -------------------------------------------------------------- |
-| Source        | INSEE — Indices des Prix à la Consommation (IPC)               |
-| URL           | `https://api.insee.fr/series/BDM/V1/data/SERIES_BDM/001767226` |
-| Format        | JSON (API REST)                                                |
-| Fréquence     | Mensuel                                                        |
-| Licence       | Licence Ouverte / Open Licence v2.0                            |
-| Disponibilité | Gratuit, clé API requise (inscription INSEE)                   |
+| Champ         | Valeur                                                          |
+| ------------- | --------------------------------------------------------------- |
+| Source        | INSEE — Indices des Prix à la Consommation (IPC)                |
+| URL           | `https://api.insee.fr/series/BDM/V1/data/SERIES_BDM/001767226`  |
+| Format        | JSON (API REST, série BDM)                                      |
+| Fréquence     | Mensuel                                                         |
+| Licence       | Licence Ouverte / Open Licence v2.0                             |
+| Disponibilité | Gratuit, clé API requise (inscription INSEE, token Bearer API)  |
+
+#### 2.1.1 Série cible MVP (scaffold P0)
+
+- Série BDM pressentie : **`001767226`** (IPC alimentation, France entière).
+- Stockage prévu : table `public.ipc_food_monthly` (migration additive `20240101000008`).
+- Clé d'idempotence prévue : `(month, source_series_id)`.
+- Granularité MVP : **mensuelle**, sans désaisonnalisation (valeurs brutes publiées).
+
+#### 2.1.2 Plan technique d'ingestion (scaffold)
+
+1. **Fetch** (script `scripts/insee-ipc-food-backfill/index.ts`)
+   - Appel de l'endpoint BDM avec `Authorization: Bearer $INSEE_API_TOKEN`.
+   - Variables prévues : `INSEE_BDM_API_BASE_URL`, `INSEE_IPC_FOOD_SERIES_ID`.
+2. **Normalize**
+   - Mapper les observations vers `{ month, index_value }`.
+   - Contraindre `month` au 1er jour du mois (`date_trunc('month', month) = month`).
+3. **Store**
+   - Upsert vers `public.ipc_food_monthly`.
+   - Persistance du `raw_payload` pour traçabilité / debug parser.
+
+#### 2.1.3 Incertitudes ouvertes (TODO)
+
+- Confirmer la structure exacte du payload BDM sur la série retenue (path des observations).
+- Confirmer la stratégie de rotation du token INSEE pour exécution cron.
+- Vérifier si une série plus spécifique « alimentation hors tabac » doit remplacer `001767226`.
 
 ### 2.2 Chômage jeunes — Eurostat
 

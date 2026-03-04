@@ -197,7 +197,7 @@ Si une couche est contournée, les autres tiennent.
 
 - [ ] Aucun secret dans le diff git (`git log --all -S "supabase_key"`)
 - [ ] `.env.local` absent du repo (`.gitignore` vérifié)
-- [ ] CSP headers actifs en production (vérifier via securityheaders.com)
+- [ ] CSP headers actifs en production (vérifier via securityheaders.com et/ou `pnpm run security:check-headers`)
 - [ ] RLS activé sur toutes les tables (vérifier dans dashboard Supabase)
 - [ ] `CRON_SECRET` configuré dans Vercel
 - [ ] Route `/api/cron/fuel-daily` retourne 401 sans le bon header
