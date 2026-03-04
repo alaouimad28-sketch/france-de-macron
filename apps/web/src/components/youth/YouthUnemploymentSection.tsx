@@ -39,8 +39,18 @@ export async function YouthUnemploymentSection() {
 
   if (!latestFr || !latestEu) {
     return (
-      <section id="jeunesse" className="scroll-mt-24 px-4 py-2.5" aria-label="Chômage jeunes">
+      <section
+        id="jeunesse"
+        className="scroll-mt-24 px-4 py-12 md:py-16"
+        aria-labelledby="jeunesse-heading"
+      >
         <div className="border-surface-200 mx-auto max-w-4xl rounded-xl border bg-white p-6 text-center shadow-sm">
+          <h2
+            id="jeunesse-heading"
+            className="font-display text-surface-900 mb-2 text-2xl font-bold"
+          >
+            Chômage jeunes 15–24
+          </h2>
           <p className="text-surface-600 text-sm">Module chômage jeunes en préparation.</p>
         </div>
       </section>
@@ -51,13 +61,19 @@ export async function YouthUnemploymentSection() {
   const spread = latestFr.unemployment_rate - latestEu.unemployment_rate
 
   return (
-    <section id="jeunesse" className="scroll-mt-24 px-4 py-2.5" aria-label="Chômage jeunes">
+    <section
+      id="jeunesse"
+      className="scroll-mt-24 px-4 py-12 md:py-16"
+      aria-labelledby="jeunesse-heading"
+    >
       <div className="mx-auto max-w-4xl">
         <div className="mb-6">
           <p className="text-surface-600 mb-2 font-mono text-xs uppercase tracking-widest">
             Module emploi
           </p>
-          <h2 className="font-display text-surface-900 text-3xl font-bold">Chômage jeunes 15–24</h2>
+          <h2 id="jeunesse-heading" className="font-display text-surface-900 text-3xl font-bold">
+            Chômage jeunes 15–24
+          </h2>
           <p className="text-surface-600 mt-1 text-sm">Source : Eurostat (une_rt_m, mensuel).</p>
         </div>
 
