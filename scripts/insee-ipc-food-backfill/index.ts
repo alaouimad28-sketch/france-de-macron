@@ -1,18 +1,6 @@
 /// <reference types="node" />
 /// <reference path="../fuel-backfill-annee/dotenv.d.ts" />
 
-/**
- * Job (scaffold): insee-ipc-food-backfill
- *
- * Objective (P0): prepare the ingestion path for INSEE IPC alimentaire.
- * This scaffold is intentionally non-breaking and does NOT perform live writes yet.
- *
- * Planned flow:
- *   1) fetch INSEE BDM series payload (auth + endpoint to validate)
- *   2) normalize monthly observations
- *   3) upsert into public.ipc_food_monthly
- */
-
 import * as path from 'path'
 import { config } from 'dotenv'
 import { createClient } from '@supabase/supabase-js'
@@ -29,10 +17,25 @@ for (const p of envPaths) {
 }
 
 const DEFAULT_SERIES_ID = process.env['INSEE_IPC_FOOD_SERIES_ID'] ?? '001767226'
+const DEFAULT_BASE_URL =
+  process.env['INSEE_BDM_API_BASE_URL'] ?? 'https://api.insee.fr/series/BDM/V1/data/SERIES_BDM'
+const DEFAULT_TIMEOUT_MS = Number(process.env['INSEE_API_TIMEOUT_MS'] ?? '30000')
+const DRY_RUN = process.env['DRY_RUN'] === '1'
+
+type JsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | JsonValue[]
+  | {
+      [key: string]: JsonValue
+    }
 
 interface InseeRawObservation {
   period: string
   value: number
+  rawPayload: Record<string, JsonValue>
 }
 
 interface IpcFoodMonthlyRecord {
@@ -40,37 +43,157 @@ interface IpcFoodMonthlyRecord {
   indexValue: number
   sourceSeriesId: string
   sourceLabel: string
-  rawPayload: Record<string, unknown>
+  rawPayload: Record<string, JsonValue>
+}
+
+interface IpcFoodMonthlyInsert {
+  month: string
+  index_value: number
+  source_series_id: string
+  source_label: string
+  raw_payload: Record<string, JsonValue>
+}
+
+function asObject(value: JsonValue): Record<string, JsonValue> | null {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null
+  return value as Record<string, JsonValue>
+}
+
+function coercePeriodToMonth(periodRaw: string): string | null {
+  const period = periodRaw.trim()
+
+  const yyyyMm = /^(\d{4})-(\d{2})$/
+  const yyyyMmDd = /^(\d{4})-(\d{2})-(\d{2})$/
+  const yyyyMmm = /^(\d{4})M(\d{2})$/i
+
+  const m1 = period.match(yyyyMm)
+  if (m1) {
+    return `${m1[1]}-${m1[2]}-01`
+  }
+
+  const m2 = period.match(yyyyMmDd)
+  if (m2) {
+    return `${m2[1]}-${m2[2]}-01`
+  }
+
+  const m3 = period.match(yyyyMmm)
+  if (m3) {
+    return `${m3[1]}-${m3[2]}-01`
+  }
+
+  return null
+}
+
+function parseObservationCandidate(
+  candidate: Record<string, JsonValue>,
+): InseeRawObservation | null {
+  const periodKeys = ['period', 'TIME_PERIOD', '@TIME_PERIOD', 'time_period', 'date', 'month']
+  const valueKeys = ['value', 'OBS_VALUE', '@OBS_VALUE', 'obs_value', 'index', 'index_value']
+
+  let periodRaw: string | null = null
+  for (const key of periodKeys) {
+    const maybe = candidate[key]
+    if (typeof maybe === 'string' && maybe.trim().length > 0) {
+      periodRaw = maybe
+      break
+    }
+  }
+
+  let valueRaw: number | null = null
+  for (const key of valueKeys) {
+    const maybe = candidate[key]
+    if (typeof maybe === 'number' && Number.isFinite(maybe)) {
+      valueRaw = maybe
+      break
+    }
+
+    if (typeof maybe === 'string') {
+      const parsed = Number(maybe.replace(',', '.'))
+      if (Number.isFinite(parsed)) {
+        valueRaw = parsed
+        break
+      }
+    }
+  }
+
+  if (!periodRaw || valueRaw === null) return null
+
+  const month = coercePeriodToMonth(periodRaw)
+  if (!month) return null
+
+  return {
+    period: month,
+    value: valueRaw,
+    rawPayload: candidate,
+  }
+}
+
+function extractObservationsFromJson(payload: JsonValue): InseeRawObservation[] {
+  const results: InseeRawObservation[] = []
+
+  const visit = (node: JsonValue): void => {
+    if (Array.isArray(node)) {
+      for (const item of node) visit(item)
+      return
+    }
+
+    const objectNode = asObject(node)
+    if (!objectNode) return
+
+    const parsed = parseObservationCandidate(objectNode)
+    if (parsed) {
+      results.push(parsed)
+    }
+
+    for (const value of Object.values(objectNode)) {
+      visit(value)
+    }
+  }
+
+  visit(payload)
+
+  const dedup = new Map<string, InseeRawObservation>()
+  for (const obs of results) {
+    dedup.set(obs.period, obs)
+  }
+
+  return [...dedup.values()].sort((a, b) => a.period.localeCompare(b.period))
 }
 
 async function fetchInseeIpcFoodSeries(seriesId: string): Promise<InseeRawObservation[]> {
   const token = process.env['INSEE_API_TOKEN']
-  const baseUrl =
-    process.env['INSEE_BDM_API_BASE_URL'] ?? 'https://api.insee.fr/series/BDM/V1/data/SERIES_BDM'
 
   if (!token) {
-    console.warn('[insee-ipc-food] TODO: missing INSEE_API_TOKEN, skipping remote fetch scaffold')
-    return []
+    throw new Error('[insee-ipc-food] Missing INSEE_API_TOKEN (Bearer token required).')
   }
 
-  const url = `${baseUrl}/${encodeURIComponent(seriesId)}`
+  const url = `${DEFAULT_BASE_URL}/${encodeURIComponent(seriesId)}`
+
   const response = await fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`,
       Accept: 'application/json',
     },
+    signal: AbortSignal.timeout(DEFAULT_TIMEOUT_MS),
   })
 
   if (!response.ok) {
-    throw new Error(`[insee-ipc-food] INSEE request failed (${response.status}) on ${url}`)
+    const body = await response.text()
+    throw new Error(
+      `[insee-ipc-food] INSEE request failed (${response.status}) on ${url}: ${body.slice(0, 300)}`,
+    )
   }
 
-  const payload = (await response.json()) as Record<string, unknown>
+  const payload = (await response.json()) as JsonValue
+  const observations = extractObservationsFromJson(payload)
 
-  // TODO: confirm exact response shape for BDM series payload
-  // TODO: map payload observations to { period: YYYY-MM, value: number }
-  void payload
-  return []
+  if (observations.length === 0) {
+    throw new Error(
+      '[insee-ipc-food] No monthly observations found in INSEE payload. Check parser keys / response shape.',
+    )
+  }
+
+  return observations
 }
 
 function normalizeIpcObservations(
@@ -78,21 +201,22 @@ function normalizeIpcObservations(
   sourceSeriesId: string,
 ): IpcFoodMonthlyRecord[] {
   return observations
-    .filter((obs) => Number.isFinite(obs.value))
+    .filter((obs) => Number.isFinite(obs.value) && obs.value > 0)
     .map((obs) => ({
       month: obs.period,
       indexValue: obs.value,
       sourceSeriesId,
       sourceLabel: 'INSEE IPC alimentaire (SERIES_BDM)',
-      rawPayload: {
-        period: obs.period,
-        value: obs.value,
-      },
+      rawPayload: obs.rawPayload,
     }))
 }
 
 async function storeIpcFoodMonthly(records: IpcFoodMonthlyRecord[]): Promise<number> {
   if (records.length === 0) return 0
+  if (DRY_RUN) {
+    console.log('[insee-ipc-food] DRY_RUN=1, skipping DB upsert')
+    return records.length
+  }
 
   const url = process.env['NEXT_PUBLIC_SUPABASE_URL']
   const key = process.env['SUPABASE_SERVICE_ROLE_KEY']
@@ -105,7 +229,7 @@ async function storeIpcFoodMonthly(records: IpcFoodMonthlyRecord[]): Promise<num
 
   const supabase = createClient(url, key)
 
-  const payload = records.map((record) => ({
+  const payload: IpcFoodMonthlyInsert[] = records.map((record) => ({
     month: record.month,
     index_value: record.indexValue,
     source_series_id: record.sourceSeriesId,
@@ -113,7 +237,7 @@ async function storeIpcFoodMonthly(records: IpcFoodMonthlyRecord[]): Promise<num
     raw_payload: record.rawPayload,
   }))
 
-  const { error } = await (supabase as any)
+  const { error } = await supabase
     .from('ipc_food_monthly')
     .upsert(payload, { onConflict: 'month,source_series_id' })
 
@@ -127,12 +251,15 @@ async function storeIpcFoodMonthly(records: IpcFoodMonthlyRecord[]): Promise<num
 async function main(): Promise<void> {
   const startedAt = Date.now()
 
-  console.log('[insee-ipc-food] starting scaffold run')
+  console.log('[insee-ipc-food] starting run')
   console.log('[insee-ipc-food] series id:', DEFAULT_SERIES_ID)
+  console.log('[insee-ipc-food] dry run:', DRY_RUN)
 
   const observations = await fetchInseeIpcFoodSeries(DEFAULT_SERIES_ID)
   const normalized = normalizeIpcObservations(observations, DEFAULT_SERIES_ID)
   const stored = await storeIpcFoodMonthly(normalized)
+
+  const latest = normalized[normalized.length - 1]
 
   console.log(
     '[insee-ipc-food] done',
@@ -141,6 +268,8 @@ async function main(): Promise<void> {
         observationsFetched: observations.length,
         recordsNormalized: normalized.length,
         recordsStored: stored,
+        latestMonth: latest?.month ?? null,
+        latestIndexValue: latest?.indexValue ?? null,
         durationMs: Date.now() - startedAt,
       },
       null,

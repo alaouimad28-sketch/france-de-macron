@@ -14,7 +14,7 @@ scripts/
 ├── fuel-backfill-last/      # Rafraîchir uniquement hier (et optionnellement aujourd'hui)
 ├── fuel-daily/              # Job quotidien : ingestion J-1 (ou replay avec FUEL_DATE)
 ├── fci-backfill/            # Backfill FCI : calcul du score pour tous les jours depuis 2019 (série temporelle)
-├── insee-ipc-food-backfill/ # Scaffold P0 IPC alimentaire INSEE (fetch/normalize/store)
+├── insee-ipc-food-backfill/ # Ingestion IPC alimentaire INSEE (fetch/normalize/store)
 ├── deploy/                  # Vérifications production (preflight, cron endpoint, artefacts)
 └── qa/                      # Automatisation QA Phase 7
 ```
@@ -83,9 +83,9 @@ START_DATE=2019-01-01 END_DATE=2024-12-31 pnpm run fci:backfill
 
 Voir [fci-backfill/README.md](fci-backfill/README.md) pour le détail.
 
-### `insee:ipc:food:backfill` — Scaffold IPC alimentaire INSEE (P0)
+### `insee:ipc:food:backfill` — Ingestion IPC alimentaire INSEE (P0)
 
-Prépare le pipeline d’ingestion mensuel (fetch/normalize/store) pour l’IPC alimentaire INSEE.
+Ingestion mensuelle idempotente (fetch/normalize/store) pour l’IPC alimentaire INSEE.
 
 ```bash
 pnpm run insee:ipc:food:backfill

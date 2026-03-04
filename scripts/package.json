@@ -17,7 +17,8 @@
     "qa:smoke": "tsx qa/smoke-checks.ts",
     "qa:reduced-motion": "tsx qa/check-reduced-motion.ts",
     "qa:security-headers": "tsx qa/check-security-headers.ts",
-    "qa:meta-descriptions": "tsx qa/check-meta-descriptions.ts"
+    "qa:meta-descriptions": "tsx qa/check-meta-descriptions.ts",
+    "qa:fci-intuition": "tsx qa/check-fci-intuition.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",
