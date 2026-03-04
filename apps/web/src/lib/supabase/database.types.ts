@@ -137,6 +137,39 @@ export type Database = {
           },
         ]
       }
+      ipc_food_monthly: {
+        Row: {
+          created_at: string
+          id: string
+          index_value: number
+          month: string
+          raw_payload: Json | null
+          source_label: string
+          source_series_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          index_value: number
+          month: string
+          raw_payload?: Json | null
+          source_label?: string
+          source_series_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          index_value?: number
+          month?: string
+          raw_payload?: Json | null
+          source_label?: string
+          source_series_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       newsletter_signups: {
         Row: {
           created_at: string

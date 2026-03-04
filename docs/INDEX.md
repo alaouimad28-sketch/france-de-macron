@@ -108,7 +108,7 @@ docs/
 | `apps/web/src/lib/supabase/client.ts`                   | Client navigateur (anon key)                                          |
 | `apps/web/src/lib/utils.ts`                             | Helpers (formatFuelPrice, getFCILabel, hashString)                    |
 | `apps/web/src/app/layout.tsx`                           | Metadata OG, structure HTML, Header/Footer/Toaster                    |
-| `apps/web/src/app/page.tsx`                             | Page home — assemblage FCIHero + sections + JSON-LD WebSite           |
+| `apps/web/src/app/page.tsx`                             | Page home — assemblage FCIHero + carburants + alimentation + modules  |
 | `apps/web/src/app/sitemap.ts`                           | Sitemap XML généré via MetadataRoute                                  |
 | `apps/web/public/robots.txt`                            | Directives robots (Allow `/`, Disallow `/api/`) + lien sitemap        |
 | `apps/web/public/og-image.png`                          | OG image statique (placeholder MVP)                                   |
@@ -119,6 +119,7 @@ docs/
 | `apps/web/src/components/fuel/FuelChart.tsx`            | Recharts LineChart 3 carburants, spikes, events                       |
 | `apps/web/src/components/fuel/PeriodChip.tsx`           | Sélecteur de période (7j/30j/…)                                       |
 | `apps/web/src/components/fuel/FuelSection.tsx`          | Server Component carburants — fetch + pivot                           |
+| `apps/web/src/components/food/FoodInflationSection.tsx` | Server Component IPC alimentaire — fetch `ipc_food_monthly` + KPI YoY |
 | `apps/web/src/components/vote/CookedVote.tsx`           | Votes cooked/uncooked, fingerprint, localStorage                      |
 | `apps/web/src/components/newsletter/NewsletterForm.tsx` | Formulaire newsletter avec honeypot                                   |
 | `apps/web/src/components/layout/Header.tsx`             | Header blanc, masqué au scroll down / réapparaît au scroll up         |
