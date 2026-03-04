@@ -4,8 +4,8 @@
  * POST /api/newsletter
  *   Accepte { email, locale?, source?, honeypot? }
  *   - Vérifie le honeypot côté serveur (retourne 200 silencieux si rempli)
- *   - Valide le format email
- *   - Hash l'IP pour l'anti-abus
+ *   - Valide le payload avec Zod
+ *   - Applique un rate limit IP (max 3 inscriptions / heure)
  *   - Insert via service role (bypass RLS)
  *   - Conflit unique(email) → 200 silencieux (pas d'enum harvesting)
  *
@@ -13,11 +13,10 @@
  */
 import { createClient } from '@supabase/supabase-js'
 import { type NextRequest, NextResponse } from 'next/server'
+import { z } from 'zod'
 import { hashString } from '@/lib/utils'
 import type { Database } from '@/lib/supabase/database.types'
 
-// Use createClient<Database> directly (consistent with cron route pattern).
-// createServerClient from @supabase/ssr resolves insert types as 'never' in this version.
 function getServiceClient() {
   return createClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -25,41 +24,73 @@ function getServiceClient() {
   )
 }
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const NEWSLETTER_SIGNUPS_PER_HOUR = 3
+
+const newsletterBodySchema = z.object({
+  email: z.string().trim().email().max(320),
+  locale: z.enum(['fr', 'en']).optional().default('fr'),
+  source: z
+    .string()
+    .trim()
+    .min(1)
+    .max(50)
+    .regex(/^[a-zA-Z0-9:_/-]+$/)
+    .optional()
+    .default('homepage'),
+  honeypot: z.string().optional().default(''),
+})
+
+async function isNewsletterRateLimited(ipHash: string): Promise<boolean> {
+  const supabase = getServiceClient()
+  const oneHourAgoIso = new Date(Date.now() - 60 * 60 * 1000).toISOString()
+
+  const { count, error } = await supabase
+    .from('newsletter_signups')
+    .select('id', { count: 'exact', head: true })
+    .eq('ip_hash', ipHash)
+    .gte('created_at', oneHourAgoIso)
+
+  if (error) {
+    throw new Error(`Newsletter rate-limit query failed: ${error.message}`)
+  }
+
+  return (count ?? 0) >= NEWSLETTER_SIGNUPS_PER_HOUR
+}
+
+function getClientIp(request: NextRequest): string {
+  const forwarded = request.headers.get('x-forwarded-for')
+  return forwarded?.split(',')[0]?.trim() ?? request.headers.get('x-real-ip') ?? 'unknown'
+}
 
 export async function POST(request: NextRequest) {
   try {
-    const body = (await request.json()) as Record<string, unknown>
+    const rawBody = (await request.json()) as unknown
+    const parsedBody = newsletterBodySchema.safeParse(rawBody)
 
-    // 1. Honeypot — retour 200 silencieux pour ne pas informer les bots
-    const honeypot = body['honeypot']
-    if (typeof honeypot === 'string' && honeypot.length > 0) {
+    if (!parsedBody.success) {
+      return NextResponse.json({ error: 'Invalid payload' }, { status: 400 })
+    }
+
+    const { email, locale, source, honeypot } = parsedBody.data
+
+    // Honeypot — retour 200 silencieux pour ne pas informer les bots
+    if (honeypot.trim().length > 0) {
       return NextResponse.json({ success: true })
     }
 
-    // 2. Validate email
-    const email = body['email']
-    if (typeof email !== 'string' || !EMAIL_REGEX.test(email)) {
-      return NextResponse.json({ error: 'Email invalide' }, { status: 400 })
+    const ip = getClientIp(request)
+    const ipHash = await hashString(ip)
+
+    // Rate-limit soft : réponse silencieuse pour limiter l'oracle anti-bot
+    if (await isNewsletterRateLimited(ipHash)) {
+      return NextResponse.json({ success: true })
     }
 
-    const locale =
-      typeof body['locale'] === 'string' && body['locale'].length <= 5 ? body['locale'] : 'fr'
-    const source =
-      typeof body['source'] === 'string' && body['source'].length <= 50
-        ? body['source']
-        : 'homepage'
-
-    // 3. Hash IP server-side
-    const forwarded = request.headers.get('x-forwarded-for')
-    const ip = forwarded?.split(',')[0]?.trim() ?? request.headers.get('x-real-ip') ?? 'unknown'
-    const ipHash = await hashString(ip)
     const userAgent = request.headers.get('user-agent')
 
-    // 4. Insert via service role
     const supabase = getServiceClient()
     const { error } = await supabase.from('newsletter_signups').insert({
-      email: email.toLowerCase().trim(),
+      email: email.toLowerCase(),
       locale,
       source,
       ip_hash: ipHash,
