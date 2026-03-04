@@ -444,6 +444,12 @@
 
 - **Route `/api/cron/fuel-daily`** : logique réelle implémentée. La route importe `scripts/shared` (download, parse, upsert, calcAndUpsertFCI), utilise `createClient<Database>(url, serviceKey)` côté serveur (service role uniquement), calcule la date cible = hier UTC, retourne `{ ok, date, fuelAggregatesUpserted, fci, durationMs }`. En cas de `DayDataUnavailableError`, retour 200 avec message « Données indisponibles ». Dépendances ajoutées dans `apps/web` : adm-zip, sax ; `@types/adm-zip` dans apps/web et scripts. Typage du paramètre dans `scripts/shared/download.ts` pour le callback `find()`. Test manuel curl validé (200, 6 agrégats, FCI 41, ~2,7 s).
 
+### Mars 2026 — CI unblock format pass
+
+- Branche `chore/format-stabilization-cifix` créée depuis `origin/orchestrator/autonomous-dev-base` pour stabiliser le style Prettier.
+- `pnpm run format` exécuté sur tout le repo + warning ESLint `use-toast` corrigé sans impact fonctionnel (constante `actionTypes` remplacée par littéraux de type).
+- `pnpm run validate` passe entièrement ; `format:check` est maintenant vert, ce qui débloque la CI de la PR #1.
+
 ---
 
 ## Métriques à suivre

@@ -93,30 +93,30 @@ docs/
 
 ## Fichiers de code clés (référence)
 
-| Fichier                                              | Rôle                                               |
-| ---------------------------------------------------- | -------------------------------------------------- |
-| `apps/web/src/types/index.ts`                        | Types métier (FuelCode, FCIDaily, VoteCounts…)     |
-| `apps/web/src/lib/supabase/database.types.ts`        | Types générés Supabase                             |
-| `apps/web/src/lib/supabase/server.ts`                | createReadClient() / createServiceClient()         |
-| `apps/web/src/lib/supabase/client.ts`                | Client navigateur (anon key)                       |
-| `apps/web/src/lib/utils.ts`                          | Helpers (formatFuelPrice, getFCILabel, hashString) |
-| `apps/web/src/app/layout.tsx`                        | Metadata OG, structure HTML, Header/Footer/Toaster |
-| `apps/web/src/app/page.tsx`                          | Page home — assemblage FCIHero + sections          |
-| `apps/web/src/app/api/votes/route.ts`                | GET/POST votes (comptage, fingerprint, ip_hash)    |
-| `apps/web/src/app/api/newsletter/route.ts`           | POST newsletter (honeypot, email, dedup)           |
-| `apps/web/src/components/fci/FCIGauge.tsx`           | Jauge arc 180° (SVG + HTML), bleu/rouge, « depuis hier » |
-| `apps/web/src/components/fci/FCIHero.tsx`            | Server Component hero — fetch fci_daily            |
-| `apps/web/src/components/fuel/FuelChart.tsx`         | Recharts LineChart 3 carburants, spikes, events    |
-| `apps/web/src/components/fuel/PeriodChip.tsx`        | Sélecteur de période (7j/30j/…)                   |
-| `apps/web/src/components/fuel/FuelSection.tsx`       | Server Component carburants — fetch + pivot        |
-| `apps/web/src/components/vote/CookedVote.tsx`        | Votes cooked/uncooked, fingerprint, localStorage   |
-| `apps/web/src/components/newsletter/NewsletterForm.tsx` | Formulaire newsletter avec honeypot             |
-| `apps/web/src/components/layout/Header.tsx`          | Header blanc, masqué au scroll down / réapparaît au scroll up |
-| `apps/web/src/components/layout/Footer.tsx`          | Footer thème clair (surface-100), liens, copyright |
-| `apps/web/src/hooks/use-toast.ts`                    | shadcn toast hook (exactOptionalPropertyTypes fix) |
-| `apps/web/tailwind.config.ts`                        | Design tokens                                      |
-| `apps/web/eslint.config.mjs`                         | Config ESLint 9 (flat config)                      |
-| `supabase/migrations/*.sql`                          | Schéma DB et RLS                                   |
+| Fichier                                                 | Rôle                                                          |
+| ------------------------------------------------------- | ------------------------------------------------------------- |
+| `apps/web/src/types/index.ts`                           | Types métier (FuelCode, FCIDaily, VoteCounts…)                |
+| `apps/web/src/lib/supabase/database.types.ts`           | Types générés Supabase                                        |
+| `apps/web/src/lib/supabase/server.ts`                   | createReadClient() / createServiceClient()                    |
+| `apps/web/src/lib/supabase/client.ts`                   | Client navigateur (anon key)                                  |
+| `apps/web/src/lib/utils.ts`                             | Helpers (formatFuelPrice, getFCILabel, hashString)            |
+| `apps/web/src/app/layout.tsx`                           | Metadata OG, structure HTML, Header/Footer/Toaster            |
+| `apps/web/src/app/page.tsx`                             | Page home — assemblage FCIHero + sections                     |
+| `apps/web/src/app/api/votes/route.ts`                   | GET/POST votes (comptage, fingerprint, ip_hash)               |
+| `apps/web/src/app/api/newsletter/route.ts`              | POST newsletter (honeypot, email, dedup)                      |
+| `apps/web/src/components/fci/FCIGauge.tsx`              | Jauge arc 180° (SVG + HTML), bleu/rouge, « depuis hier »      |
+| `apps/web/src/components/fci/FCIHero.tsx`               | Server Component hero — fetch fci_daily                       |
+| `apps/web/src/components/fuel/FuelChart.tsx`            | Recharts LineChart 3 carburants, spikes, events               |
+| `apps/web/src/components/fuel/PeriodChip.tsx`           | Sélecteur de période (7j/30j/…)                               |
+| `apps/web/src/components/fuel/FuelSection.tsx`          | Server Component carburants — fetch + pivot                   |
+| `apps/web/src/components/vote/CookedVote.tsx`           | Votes cooked/uncooked, fingerprint, localStorage              |
+| `apps/web/src/components/newsletter/NewsletterForm.tsx` | Formulaire newsletter avec honeypot                           |
+| `apps/web/src/components/layout/Header.tsx`             | Header blanc, masqué au scroll down / réapparaît au scroll up |
+| `apps/web/src/components/layout/Footer.tsx`             | Footer thème clair (surface-100), liens, copyright            |
+| `apps/web/src/hooks/use-toast.ts`                       | shadcn toast hook (exactOptionalPropertyTypes fix)            |
+| `apps/web/tailwind.config.ts`                           | Design tokens                                                 |
+| `apps/web/eslint.config.mjs`                            | Config ESLint 9 (flat config)                                 |
+| `supabase/migrations/*.sql`                             | Schéma DB et RLS                                              |
 
 ---
 
