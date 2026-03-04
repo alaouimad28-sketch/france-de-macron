@@ -117,8 +117,11 @@ docs/
 | `apps/web/src/app/api/votes/route.ts`                        | GET/POST votes (comptage, fingerprint, ip_hash)                            |
 | `apps/web/src/app/api/newsletter/route.ts`                   | POST newsletter (honeypot, email, dedup)                                   |
 | `apps/web/src/app/api/youth-unemployment/route.ts`           | GET chômage jeunes (FR/UE-27, limit borné)                                 |
+| `apps/web/src/app/api/fci/decomposition/route.ts`            | GET décomposition FCI (latest + `day` optionnel)                           |
 | `apps/web/src/components/fci/FCIGauge.tsx`                   | Jauge arc 180° (SVG + HTML), bleu/rouge, « depuis hier »                   |
 | `apps/web/src/components/fci/FCIHero.tsx`                    | Server Component hero — fetch fci_daily                                    |
+| `apps/web/src/components/fci/FCIDecompositionSection.tsx`    | Section explainability : contributions par composante + version méthodo    |
+| `apps/web/src/lib/fci-explainability.ts`                     | Helpers de décomposition FCI + fallback version (`fci_method_version`)     |
 | `apps/web/src/components/fuel/FuelChart.tsx`                 | Recharts LineChart 3 carburants, spikes, events                            |
 | `apps/web/src/components/fuel/PeriodChip.tsx`                | Sélecteur de période (7j/30j/…)                                            |
 | `apps/web/src/components/fuel/FuelSection.tsx`               | Server Component carburants — fetch + pivot                                |
