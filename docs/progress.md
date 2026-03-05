@@ -385,7 +385,7 @@
 
 - [ ] Source et licence référencées dans `docs/data/sources.md`
 - [ ] Job d’ingestion rejouable + idempotent + journalisé
-- [ ] Tests QA intégrés dans `pnpm run qa:phase7` ou suite dédiée
+- [x] Tests QA intégrés dans `pnpm run qa:phase7` ou suite dédiée
 - [ ] KPI d’impact défini (usage, rétention, compréhension) avant mise en prod
 
 ## BACKLOG POST-MVP (v1.1+)
@@ -436,6 +436,12 @@
 ## Notes de session
 
 > Utiliser cette section pour noter les décisions prises en cours de route, les bugs bloquants, et les déviations par rapport au plan.
+
+### Mars 2026 — QA guardrails datasets additionnels
+
+- Ajout du check `scripts/qa/check-autonomous-datasets.ts` + commande `pnpm run qa:autonomous-datasets` pour valider l’intégrité des tables `ipc_food_monthly` et `youth_unemployment_monthly`.
+- `qa:phase7` inclut désormais ce check afin de couvrir explicitement le garde-fou QA transverse des ajouts P0.
+- Validation ciblée exécutée : `pnpm run qa:autonomous-datasets` (skip live attendu sans env Supabase) + `pnpm run typecheck:scripts` ✅.
 
 ### Mars 2026 — Sprint UI indicateurs (continuation)
 

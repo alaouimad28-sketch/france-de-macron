@@ -20,6 +20,9 @@ pnpm run qa:fci-intuition
 # 5) Vérifie la cohérence d'unité des tarifs électricité (ct€/kWh)
 pnpm run qa:electricity-unit
 
+# 6) Vérifie l'intégrité des datasets autonomous (IPC + chômage jeunes)
+pnpm run qa:autonomous-datasets
+
 # Tout-en-un
 pnpm run qa:phase7
 ```
@@ -71,6 +74,13 @@ Avec assertions CSP minimales:
   - dataset `electricity_tariff_history` Option Base 6 kVA;
   - assertion stricte `value_eur_kwh × 100 = value_ct_kwh` (tolérance flottante minime);
   - bornes sanity `5 <= value_ct_kwh <= 100`.
+
+### Autonomous datasets
+
+Validation live optionnelle (si env Supabase service role fournis):
+
+- `ipc_food_monthly` : volume minimal (`>= 12`), format des mois (`YYYY-MM-DD`), valeurs numériques valides.
+- `youth_unemployment_monthly` : volume minimal (`>= 24`), format des mois (`YYYY-MM-DD`), valeurs numériques valides.
 
 ## Note CI
 

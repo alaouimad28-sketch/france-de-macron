@@ -23,6 +23,7 @@
     "qa:lighthouse-cwv": "tsx seo/run-lighthouse-audit.ts",
     "qa:fci-intuition": "tsx qa/check-fci-intuition.ts",
     "qa:electricity-unit": "tsx qa/check-electricity-unit.ts",
+    "qa:autonomous-datasets": "tsx qa/check-autonomous-datasets.ts",
     "seo:lighthouse": "tsx seo/run-lighthouse-audit.ts"
   },
   "dependencies": {

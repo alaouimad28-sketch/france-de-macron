@@ -153,6 +153,8 @@ docs/
 | `scripts/qa/check-security-headers.ts`                             | Vérification headers de sécurité sur app démarrée localement                             |
 | `scripts/qa/check-meta-descriptions.ts`                            | Vérification SEO: meta descriptions présentes et <= 155 caractères                       |
 | `scripts/qa/check-fci-intuition.ts`                                | Validation intuition FCI (benchmarks synthétiques + fenêtres 2020/2022)                  |
+| `scripts/qa/check-electricity-unit.ts`                             | Vérification cohérence unité TRVE (ct€/kWh)                                               |
+| `scripts/qa/check-autonomous-datasets.ts`                          | Validation datasets autonomous (IPC alimentaire + chômage jeunes) en live                 |
 | `scripts/seo/run-lighthouse-audit.ts`                              | Audit Lighthouse reproductible (JSON/HTML) + report CWV avec seuils PASS/FAIL            |
 | `supabase/migrations/*.sql`                                        | Schéma DB et RLS                                                                         |
 
@@ -190,7 +192,9 @@ docs/
 | `pnpm run seo:lighthouse`            | Alias explicite pour l’audit Lighthouse/CWV reproductible                                    |
 | `pnpm run qa:fci-intuition`          | Valider l’intuition FCI (scénarios synthétiques, et live 2020/2022 si env Supabase présents) |
 | `pnpm run qa:electricity-unit`       | Vérifier la cohérence unité TRVE (`€/kWh × 100 = ct€/kWh`, checks synthétiques + live)       |
-| `pnpm run qa:phase7`                 | Exécuter toute l’automatisation QA Phase 7 (inclut check unité électricité + Lighthouse/CWV) |
+| `pnpm run qa:autonomous-datasets`    | Vérifier les datasets autonomous (IPC alimentaire + chômage jeunes) en live si env Supabase  |
+| `pnpm run qa:phase7`                 | Exécuter toute l'automatisation QA Phase 7 (reduced-motion, smoke, security-headers, meta-descriptions, electricity-unit, autonomous-datasets, Lighthouse/CWV) |
 | `pnpm run validate`                  | Vérifier avant commit (typecheck web + scripts, lint, format)                                |
+
 
 **Supabase local** : après `pnpm run db:start`, Studio = http://127.0.0.1:54323, API = http://127.0.0.1:54321, **MCP** = http://127.0.0.1:54321/mcp (pour Cursor / requêtes IA sur la base). Voir [README](../README.md#référence-supabase-local-après-supabase-start) et [TESTER-LE-SITE.md](TESTER-LE-SITE.md).
