@@ -25,6 +25,7 @@
     "fci:backfill": "pnpm --filter scripts fci:backfill",
     "insee:ipc:food:backfill": "pnpm --filter scripts insee:ipc:food:backfill",
     "eurostat:youth:backfill": "pnpm --filter scripts eurostat:youth:backfill",
+    "electricity:trve:backfill": "pnpm --filter scripts electricity:trve:backfill",
     "deploy:check-vercel": "pnpm --filter scripts deploy:check-vercel",
     "deploy:preflight": "pnpm --filter scripts deploy:preflight",
     "deploy:verify-production": "pnpm --filter scripts deploy:verify-production",
