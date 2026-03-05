@@ -2,14 +2,14 @@
 
 ## État actuel (Mars 2026)
 
-| Source | Statut | Table(s) | Commande / fréquence |
-| ------ | ------ | -------- | -------------------- |
-| **Carburants** (roulez-eco.fr) | En production | `fuel_daily_agg`, `fci_daily` | Cron 02:30 UTC + backfills manuels |
-| **IPC alimentaire** (INSEE BDM) | Implémenté | `ipc_food_monthly` | `pnpm run insee:ipc:food:backfill` |
-| **Chômage jeunes** (Eurostat) | Implémenté | `youth_unemployment_monthly` | `pnpm run eurostat:youth:backfill` |
-| **TRVE électricité** (CRE / data.gouv) | Implémenté | `electricity_tariff_history` | `pnpm run electricity:trve:backfill` |
-| **Loyers** (CLAMEUR / OLL) | Roadmap | — | À venir |
-| **Eurostat multi-pays** (v2 comparaison) | Roadmap | — | À venir |
+| Source                                   | Statut        | Table(s)                      | Commande / fréquence                 |
+| ---------------------------------------- | ------------- | ----------------------------- | ------------------------------------ |
+| **Carburants** (roulez-eco.fr)           | En production | `fuel_daily_agg`, `fci_daily` | Cron 02:30 UTC + backfills manuels   |
+| **IPC alimentaire** (INSEE BDM)          | Implémenté    | `ipc_food_monthly`            | `pnpm run insee:ipc:food:backfill`   |
+| **Chômage jeunes** (Eurostat)            | Implémenté    | `youth_unemployment_monthly`  | `pnpm run eurostat:youth:backfill`   |
+| **TRVE électricité** (CRE / data.gouv)   | Implémenté    | `electricity_tariff_history`  | `pnpm run electricity:trve:backfill` |
+| **Loyers** (CLAMEUR / OLL)               | Roadmap       | —                             | À venir                              |
+| **Eurostat multi-pays** (v2 comparaison) | Roadmap       | —                             | À venir                              |
 
 Le **score FCI** (0–100) est calculé uniquement à partir des **carburants** (v1). Les autres sources alimentent des modules affichés à part sur le site. Voir [methodology.md](methodology.md) et [pipeline.md](pipeline.md).
 
@@ -87,11 +87,11 @@ On ne conserve pas les ZIP/XML : on télécharge, on parse, on agrège par (jour
 
 ### 1.2.2 Où sont stockées les données ?
 
-| Lieu                      | Rôle                                                                                                                                                                      |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Source (gouvernement)** | [donnees.roulez-eco.fr](https://donnees.roulez-eco.fr) — serveurs du ministère. Données brutes (ZIP/XML). On ne stocke pas ces fichiers nous-mêmes.                       |
+| Lieu                      | Rôle                                                                                                                                                                                                                                                                                      |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Source (gouvernement)** | [donnees.roulez-eco.fr](https://donnees.roulez-eco.fr) — serveurs du ministère. Données brutes (ZIP/XML). On ne stocke pas ces fichiers nous-mêmes.                                                                                                                                       |
 | **Notre base (Supabase)** | PostgreSQL (Supabase). Tables : `fuel_daily_agg`, `fci_daily` (carburants + FCI) ; `ipc_food_monthly` (IPC alimentaire) ; `youth_unemployment_monthly` (chômage jeunes) ; `electricity_tariff_history` (TRVE). On ne garde que les agrégats / séries normalisées, pas les fichiers bruts. |
-| **Front**                 | Next.js lit uniquement dans Supabase (SSR). Le client ne contacte jamais roulez-eco.fr.                                                                                   |
+| **Front**                 | Next.js lit uniquement dans Supabase (SSR). Le client ne contacte jamais roulez-eco.fr.                                                                                                                                                                                                   |
 
 En résumé : la **source de vérité** est roulez-eco.fr ; notre **stockage** est Supabase (agrégats uniquement).
 
@@ -262,12 +262,12 @@ Les sources ci-dessous sont ingérées et affichées sur le site (sections dédi
 
 ### 3.2 Données Eurostat multi-pays (v2 comparaison)
 
-| Dataset         | Description             |
-| --------------- | ----------------------- |
-| `prc_hpi_m`     | House price index       |
-| `prc_hicp_manr` | Harmonized inflation    |
+| Dataset         | Description                                                   |
+| --------------- | ------------------------------------------------------------- |
+| `prc_hpi_m`     | House price index                                             |
+| `prc_hicp_manr` | Harmonized inflation                                          |
 | `une_rt_m`      | Unemployment rate (déjà utilisé pour chômage jeunes FR/UE-27) |
-| `nama_10_gdp`   | GDP and main components |
+| `nama_10_gdp`   | GDP and main components                                       |
 
 ---
 

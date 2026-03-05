@@ -85,17 +85,17 @@ Métriques secondaires : scroll depth, votes cooked/uncooked, taux de partage.
 
 ## Roadmap vision (non exhaustive)
 
-| Phase | Contenu | Statut |
-| ----- | ------- | ------ |
-| MVP | FCI (carburants) + newsletter + vote | ✅ Livré |
-| Post-MVP | Inflation alimentaire (INSEE IPC) | ✅ Livré |
-| Post-MVP | Chômage jeunes 15–24 ans (Eurostat, FR vs UE) | ✅ Livré |
-| Post-MVP | Tarifs électricité TRVE (CRE / data.gouv) | ✅ Livré |
-| Post-MVP | Décomposition FCI (explainability) | ✅ Livré |
-| v1.1 | Déploiement prod Vercel + premier lancement public | 🔲 À faire |
-| v2 | Loyers (5 villes) + FCI v2 multi-composantes pondéré | 🔲 Planifié |
-| v3 | Comparaison internationale + stories narratives | 🔲 Planifié |
-| v4 | Contributions communautaires + OpenGraph dynamique | 🔲 Planifié |
+| Phase    | Contenu                                              | Statut      |
+| -------- | ---------------------------------------------------- | ----------- |
+| MVP      | FCI (carburants) + newsletter + vote                 | ✅ Livré    |
+| Post-MVP | Inflation alimentaire (INSEE IPC)                    | ✅ Livré    |
+| Post-MVP | Chômage jeunes 15–24 ans (Eurostat, FR vs UE)        | ✅ Livré    |
+| Post-MVP | Tarifs électricité TRVE (CRE / data.gouv)            | ✅ Livré    |
+| Post-MVP | Décomposition FCI (explainability)                   | ✅ Livré    |
+| v1.1     | Déploiement prod Vercel + premier lancement public   | 🔲 À faire  |
+| v2       | Loyers (5 villes) + FCI v2 multi-composantes pondéré | 🔲 Planifié |
+| v3       | Comparaison internationale + stories narratives      | 🔲 Planifié |
+| v4       | Contributions communautaires + OpenGraph dynamique   | 🔲 Planifié |
 
 ---
 

@@ -15,6 +15,7 @@
 | [docs/progress.md](progress.md)                     | État actuel du projet (todo / done) — source de vérité pour les tâches            |
 | [docs/addons-research.md](addons-research.md)       | Recherche post-Phase-7 : ajouts P0/P1/P2, sources et notes d’implémentation       |
 | [docs/deployment-runbook.md](deployment-runbook.md) | Runbook lancement prod (ordre exact des commandes et checks)                      |
+
 ---
 
 ## Vision et produit

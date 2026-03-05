@@ -8,9 +8,8 @@
 
 **Objectif** : Lancer et valider le concept, capturer les premiers emails.
 
-
-| Fonctionnalité                         | Statut                                         |
-| -------------------------------------- | ---------------------------------------------- |
+| Fonctionnalité                         | Statut                                          |
+| -------------------------------------- | ----------------------------------------------- |
 | Repo scaffold + docs                   | ✅                                              |
 | Schema Supabase + migrations           | ✅                                              |
 | Pipeline carburants J-30               | ✅                                              |
@@ -19,9 +18,8 @@
 | Vote cooked/uncooked                   | ✅                                              |
 | CTA Newsletter                         | ✅                                              |
 | Pages About / Methodology / Disclaimer | ✅                                              |
-| Déploiement Vercel                     | 🔲 À faire                                     |
+| Déploiement Vercel                     | 🔲 À faire                                      |
 | Vercel Cron fuel-daily                 | ✅ Route implémentée ; CRON_SECRET à configurer |
-
 
 ---
 
@@ -55,7 +53,6 @@
 
 ### Nouveaux indicateurs
 
-
 | Indicateur                     | Source         | Fréquence   |
 | ------------------------------ | -------------- | ----------- |
 | Inflation alimentaire          | INSEE (IPC)    | Mensuel     |
@@ -64,7 +61,6 @@
 | Chômage jeunes (15-24 ans)     | Eurostat       | Trimestriel |
 | Précarité étudiante            | CREDOC / OVE   | Annuel      |
 | Dette publique / PIB           | Eurostat       | Trimestriel |
-
 
 ### FCI v2
 
@@ -110,7 +106,6 @@
 
 ## Décisions techniques futures
 
-
 | Décision             | Option A          | Option B  | Trigger                 |
 | -------------------- | ----------------- | --------- | ----------------------- |
 | Analytics            | PostHog           | Plausible | v1.1                    |
@@ -118,5 +113,3 @@
 | Email service        | Résend            | Brevo     | v1.1                    |
 | Notifications push   | PWA + Web Push    | Non       | v2                      |
 | Rate limiting avancé | Upstash Redis     | Vercel KV | Si abus détectés        |
-
-

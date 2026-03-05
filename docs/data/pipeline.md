@@ -4,15 +4,15 @@
 
 Plusieurs pipelines alimentent la base. Le **cron quotidien** ne concerne que les carburants + FCI ; les autres sont des **backfills manuels** (one-shot ou relançables).
 
-| Pipeline | Source | Table(s) Supabase | Déclenchement | Commande |
-| -------- | ------ | ----------------- | ------------- | -------- |
-| **Carburants J-30 / dernier jour** | roulez-eco.fr (ZIP/XML) | `fuel_daily_agg` | Manuel | `pnpm run fuel:backfill`, `pnpm run fuel:backfill:last` |
-| **Carburants par année** | roulez-eco.fr (archives annuelles) | `fuel_daily_agg` | Manuel | `pnpm run fuel:backfill:annees` |
-| **Cron quotidien** | roulez-eco.fr | `fuel_daily_agg`, `fci_daily` | Vercel Cron 02:30 UTC | `/api/cron/fuel-daily` |
-| **FCI historique** | dérivé de `fuel_daily_agg` | `fci_daily` | Manuel | `pnpm run fci:backfill` |
-| **IPC alimentaire** | API INSEE BDM | `ipc_food_monthly` | Manuel | `pnpm run insee:ipc:food:backfill` |
-| **Chômage jeunes** | API Eurostat (`une_rt_m`) | `youth_unemployment_monthly` | Manuel | `pnpm run eurostat:youth:backfill` |
-| **TRVE électricité** | CRE / data.gouv (CSV) | `electricity_tariff_history` | Manuel | `pnpm run electricity:trve:backfill` |
+| Pipeline                           | Source                             | Table(s) Supabase             | Déclenchement         | Commande                                                |
+| ---------------------------------- | ---------------------------------- | ----------------------------- | --------------------- | ------------------------------------------------------- |
+| **Carburants J-30 / dernier jour** | roulez-eco.fr (ZIP/XML)            | `fuel_daily_agg`              | Manuel                | `pnpm run fuel:backfill`, `pnpm run fuel:backfill:last` |
+| **Carburants par année**           | roulez-eco.fr (archives annuelles) | `fuel_daily_agg`              | Manuel                | `pnpm run fuel:backfill:annees`                         |
+| **Cron quotidien**                 | roulez-eco.fr                      | `fuel_daily_agg`, `fci_daily` | Vercel Cron 02:30 UTC | `/api/cron/fuel-daily`                                  |
+| **FCI historique**                 | dérivé de `fuel_daily_agg`         | `fci_daily`                   | Manuel                | `pnpm run fci:backfill`                                 |
+| **IPC alimentaire**                | API INSEE BDM                      | `ipc_food_monthly`            | Manuel                | `pnpm run insee:ipc:food:backfill`                      |
+| **Chômage jeunes**                 | API Eurostat (`une_rt_m`)          | `youth_unemployment_monthly`  | Manuel                | `pnpm run eurostat:youth:backfill`                      |
+| **TRVE électricité**               | CRE / data.gouv (CSV)              | `electricity_tariff_history`  | Manuel                | `pnpm run electricity:trve:backfill`                    |
 
 Le **score FCI affiché** est toujours calculé à partir des **carburants uniquement** (v1). Les autres indicateurs (IPC, chômage, électricité) sont affichés en modules séparés sur le site et ne modifient pas le chiffre FCI. Voir [methodology.md](methodology.md).
 

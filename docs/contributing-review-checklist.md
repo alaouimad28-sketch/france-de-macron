@@ -7,10 +7,14 @@ Ce projet utilise `**orchestrator/autonomous-dev-base**` comme branche d’inté
 ## Flux Git (obligatoire)
 
 1. Mettre à jour la base locale :
-  - `git checkout orchestrator/autonomous-dev-base`
-  - `git pull --ff-only origin orchestrator/autonomous-dev-base`
+
+- `git checkout orchestrator/autonomous-dev-base`
+- `git pull --ff-only origin orchestrator/autonomous-dev-base`
+
 2. Créer une branche feature/fix depuis cette base :
-  - `git checkout -b <type>/<scope>-<short>`
+
+- `git checkout -b <type>/<scope>-<short>`
+
 3. Commits avec Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`).
 4. Ouvrir la PR vers `**orchestrator/autonomous-dev-base**`.
 
@@ -64,4 +68,3 @@ Ce projet utilise `**orchestrator/autonomous-dev-base**` comme branche d’inté
 - CI Quality Gate ✅
 - Aucun commentaire bloquant non traité
 - PR propre (titre, description, impact, tests)
-
