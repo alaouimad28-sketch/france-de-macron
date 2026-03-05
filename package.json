@@ -15,9 +15,10 @@
     "validate": "pnpm run typecheck && pnpm run typecheck:scripts && pnpm run lint && pnpm run format:check",
     "db:push": "pnpm dlx supabase@latest db push",
     "db:push:local": "pnpm dlx supabase@latest db push --local",
+    "db:push:local:all": "pnpm dlx supabase@latest db push --local --include-all",
     "db:start": "pnpm dlx supabase@latest start --ignore-health-check",
-    "db:types": "pnpm dlx supabase@latest gen types typescript --local > apps/web/src/lib/supabase/database.types.ts.tmp && mv apps/web/src/lib/supabase/database.types.ts.tmp apps/web/src/lib/supabase/database.types.ts",
-    "db:types:linked": "pnpm dlx supabase@latest gen types typescript --linked > apps/web/src/lib/supabase/database.types.ts.tmp && mv apps/web/src/lib/supabase/database.types.ts.tmp apps/web/src/lib/supabase/database.types.ts",
+    "db:types": "pnpm dlx supabase@latest gen types typescript --local > apps/web/src/lib/supabase/database.types.ts.tmp && test -s apps/web/src/lib/supabase/database.types.ts.tmp && mv apps/web/src/lib/supabase/database.types.ts.tmp apps/web/src/lib/supabase/database.types.ts || (rm -f apps/web/src/lib/supabase/database.types.ts.tmp && echo 'db:types failed (local DB running?); database.types.ts unchanged' && exit 1)",
+    "db:types:linked": "pnpm dlx supabase@latest gen types typescript --linked > apps/web/src/lib/supabase/database.types.ts.tmp && test -s apps/web/src/lib/supabase/database.types.ts.tmp && mv apps/web/src/lib/supabase/database.types.ts.tmp apps/web/src/lib/supabase/database.types.ts || (rm -f apps/web/src/lib/supabase/database.types.ts.tmp && echo 'db:types:linked failed; database.types.ts unchanged' && exit 1)",
     "fuel:backfill": "pnpm --filter scripts fuel:backfill",
     "fuel:backfill:annees": "pnpm --filter scripts fuel:backfill:annees",
     "fuel:backfill:last": "pnpm --filter scripts fuel:backfill:last",
@@ -38,7 +39,8 @@
     "qa:lighthouse-cwv": "pnpm --filter scripts seo:lighthouse",
     "seo:lighthouse": "pnpm --filter scripts seo:lighthouse",
     "qa:fci-intuition": "pnpm --filter scripts qa:fci-intuition",
-    "qa:phase7": "pnpm run qa:reduced-motion && pnpm run qa:smoke && pnpm run qa:security-headers && pnpm run qa:meta-descriptions && pnpm run qa:lighthouse-cwv"
+    "qa:electricity-unit": "pnpm --filter scripts qa:electricity-unit",
+    "qa:phase7": "pnpm run qa:reduced-motion && pnpm run qa:smoke && pnpm run qa:security-headers && pnpm run qa:meta-descriptions && pnpm run qa:electricity-unit && pnpm run qa:lighthouse-cwv"
   },
   "devDependencies": {
     "prettier": "^3.3.3",

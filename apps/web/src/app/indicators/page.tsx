@@ -14,7 +14,7 @@ interface IndicatorCard {
 export default async function IndicatorsPage() {
   const supabase = await createReadClient()
 
-  const [fciResult, fuelResult, foodResult, youthResult] = await Promise.all([
+  const [fciResult, fuelResult, foodResult, youthResult, electricityResult] = await Promise.all([
     supabase.from('fci_daily').select('day, score').order('day', { ascending: false }).limit(1),
     supabase
       .from('fuel_daily_agg')
@@ -33,6 +33,14 @@ export default async function IndicatorsPage() {
       .eq('geo', 'FR')
       .order('month', { ascending: false })
       .limit(1),
+    supabase
+      .from('electricity_tariff_history')
+      .select('effective_date, value_ct_kwh')
+      .eq('option_code', 'BASE')
+      .eq('subscribed_power_kva', 6)
+      .eq('tariff_component', 'BASE')
+      .order('effective_date', { ascending: false })
+      .limit(1),
   ])
 
   const fci = (fciResult.data?.[0] as { day: string; score: number } | undefined) ?? null
@@ -41,6 +49,9 @@ export default async function IndicatorsPage() {
   const food = (foodResult.data?.[0] as { month: string; index_value: number } | undefined) ?? null
   const youth =
     (youthResult.data?.[0] as { month: string; unemployment_rate: number } | undefined) ?? null
+  const electricity =
+    (electricityResult.data?.[0] as { effective_date: string; value_ct_kwh: number } | undefined) ??
+    null
 
   const cards: IndicatorCard[] = [
     {
@@ -75,6 +86,16 @@ export default async function IndicatorsPage() {
       details: youth ? `Dernier mois : ${youth.month}` : 'Historique non disponible',
       href: '/#jeunesse',
     },
+    {
+      id: 'electricity',
+      title: 'Électricité TRVE',
+      summary: 'Historique tarifaire Option Base 6 kVA.',
+      value: electricity ? `${electricity.value_ct_kwh.toFixed(3)} ct€/kWh` : 'Donnée indisponible',
+      details: electricity
+        ? `Date d'effet : ${electricity.effective_date}`
+        : 'Historique non disponible',
+      href: '/#electricite',
+    },
   ]
 
   return (
@@ -88,8 +109,9 @@ export default async function IndicatorsPage() {
             Tous les indicateurs, au même endroit
           </h1>
           <p className="text-surface-600 mt-3 max-w-2xl text-sm md:text-base">
-            Cette page regroupe les 4 modules live du projet : FCI, carburants, IPC alimentaire, et
-            chômage jeunes. Chaque carte te renvoie vers la section détaillée de la home.
+            Cette page regroupe les modules live du projet : FCI, carburants, IPC alimentaire,
+            chômage jeunes et électricité TRVE. Chaque carte te renvoie vers la section détaillée de
+            la home.
           </p>
         </header>
 

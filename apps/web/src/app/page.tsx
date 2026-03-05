@@ -2,6 +2,7 @@
  * Home page — Server Component (SSR)
  */
 
+import { ElectricityTariffSection } from '@/components/electricity/ElectricityTariffSection'
 import { FCIDecompositionSection } from '@/components/fci/FCIDecompositionSection'
 import { FCIHero } from '@/components/fci/FCIHero'
 import { FoodInflationSection } from '@/components/food/FoodInflationSection'
@@ -32,6 +33,7 @@ const HOME_ANCHORS = [
   { href: '#carburants', label: 'Carburants' },
   { href: '#alimentation', label: 'Alimentation' },
   { href: '#jeunesse', label: 'Jeunesse' },
+  { href: '#electricite', label: 'Électricité' },
   { href: '#vote', label: 'Vote' },
   { href: '#newsletter', label: 'Newsletter' },
 ]
@@ -95,6 +97,11 @@ export default function HomePage() {
       <SectionDivider />
       <ScrollReveal>
         <YouthUnemploymentSection />
+      </ScrollReveal>
+
+      <SectionDivider />
+      <ScrollReveal>
+        <ElectricityTariffSection />
       </ScrollReveal>
 
       <SectionDivider />

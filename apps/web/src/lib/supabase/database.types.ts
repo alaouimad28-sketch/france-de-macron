@@ -33,6 +33,63 @@ export type Database = {
         }
         Relationships: []
       }
+      electricity_tariff_history: {
+        Row: {
+          annual_fixed_ttc_eur: number | null
+          created_at: string
+          effective_date: string
+          end_date: string | null
+          id: string
+          method_version: string
+          option_code: string
+          source_dataset: string
+          source_meta: Json
+          source_url: string
+          subscribed_power_kva: number
+          tariff_component: string
+          tax_included: boolean
+          updated_at: string
+          value_ct_kwh: number
+          value_eur_kwh: number
+        }
+        Insert: {
+          annual_fixed_ttc_eur?: number | null
+          created_at?: string
+          effective_date: string
+          end_date?: string | null
+          id?: string
+          method_version?: string
+          option_code: string
+          source_dataset?: string
+          source_meta?: Json
+          source_url: string
+          subscribed_power_kva: number
+          tariff_component: string
+          tax_included?: boolean
+          updated_at?: string
+          value_ct_kwh: number
+          value_eur_kwh: number
+        }
+        Update: {
+          annual_fixed_ttc_eur?: number | null
+          created_at?: string
+          effective_date?: string
+          end_date?: string | null
+          id?: string
+          method_version?: string
+          option_code?: string
+          source_dataset?: string
+          source_meta?: Json
+          source_url?: string
+          subscribed_power_kva?: number
+          tariff_component?: string
+          tax_included?: boolean
+          updated_at?: string
+          value_ct_kwh?: number
+          value_eur_kwh?: number
+        }
+        Relationships: []
+      }
       events: {
         Row: {
           created_at: string
@@ -170,57 +227,6 @@ export type Database = {
         }
         Relationships: []
       }
-      youth_unemployment_monthly: {
-        Row: {
-          age: string
-          created_at: string
-          geo: string
-          geo_label: string
-          id: string
-          month: string
-          seasonal_adjustment: string
-          sex: string
-          source_dataset: string
-          source_meta: Json | null
-          source_url: string
-          unemployment_rate: number
-          unit: string
-          updated_at: string
-        }
-        Insert: {
-          age?: string
-          created_at?: string
-          geo: string
-          geo_label: string
-          id?: string
-          month: string
-          seasonal_adjustment?: string
-          sex?: string
-          source_dataset?: string
-          source_meta?: Json | null
-          source_url: string
-          unemployment_rate: number
-          unit?: string
-          updated_at?: string
-        }
-        Update: {
-          age?: string
-          created_at?: string
-          geo?: string
-          geo_label?: string
-          id?: string
-          month?: string
-          seasonal_adjustment?: string
-          sex?: string
-          source_dataset?: string
-          source_meta?: Json | null
-          source_url?: string
-          unemployment_rate?: number
-          unit?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       newsletter_signups: {
         Row: {
           created_at: string
@@ -284,6 +290,57 @@ export type Database = {
           scope?: string
           user_agent?: string | null
           vote?: string
+        }
+        Relationships: []
+      }
+      youth_unemployment_monthly: {
+        Row: {
+          age: string
+          created_at: string
+          geo: string
+          geo_label: string
+          id: string
+          month: string
+          seasonal_adjustment: string
+          sex: string
+          source_dataset: string
+          source_meta: Json | null
+          source_url: string
+          unemployment_rate: number
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          age?: string
+          created_at?: string
+          geo: string
+          geo_label: string
+          id?: string
+          month: string
+          seasonal_adjustment?: string
+          sex?: string
+          source_dataset?: string
+          source_meta?: Json | null
+          source_url: string
+          unemployment_rate: number
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          age?: string
+          created_at?: string
+          geo?: string
+          geo_label?: string
+          id?: string
+          month?: string
+          seasonal_adjustment?: string
+          sex?: string
+          source_dataset?: string
+          source_meta?: Json | null
+          source_url?: string
+          unemployment_rate?: number
+          unit?: string
+          updated_at?: string
         }
         Relationships: []
       }

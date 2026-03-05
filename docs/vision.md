@@ -1,5 +1,9 @@
 # Vision — France de Macron
 
+> Ce document décrit le **pourquoi** du projet — pitch, problème, solution, ton, NSM. Il ne change que si la vision produit change fondamentalement. Pour l'état d'avancement, voir `docs/progress.md`. Pour les specs fonctionnelles, voir `docs/product/PRD.md`.
+
+---
+
 ## Le pitch en une phrase
 
 **France de Macron**, c'est le dashboard satirique qui répond à la question que tout le monde se pose : _"À quel point on est cooked ?"_ — avec des vraies données, pas du drama.
@@ -25,7 +29,7 @@ Mais elles sont :
 Un **dashboard satirique mais factuel**, pensé pour les 15–35 ans :
 
 1. **Un score lisible** : le French Cooked Index™ (0–100), semi-scientifique, transparent
-2. **Des graphiques vrais** : prix carburant, inflation, etc. — sources officielles citées
+2. **Des graphiques vrais** : prix carburants (quotidien), inflation alimentaire (INSEE), chômage des jeunes (Eurostat), tarifs électricité TRVE — sources officielles citées
 3. **Un ton Gen Z** : ironique, factuel, pas cringe, pas politique
 4. **Mobile-first** : pensé pour le scroll, pas pour les décideurs
 5. **Viral-ready** : screenshots propres, OG images, ratio cooked/uncooked à partager
@@ -81,12 +85,17 @@ Métriques secondaires : scroll depth, votes cooked/uncooked, taux de partage.
 
 ## Roadmap vision (non exhaustive)
 
-| Phase | Contenu                                            |
-| ----- | -------------------------------------------------- |
-| MVP   | FCI + carburants + newsletter + vote               |
-| v2    | Inflation alimentaire + loyers + FCI pondéré v2    |
-| v3    | Comparaison internationale + stories narratives    |
-| v4    | Contributions communautaires + OpenGraph dynamique |
+| Phase    | Contenu                                              | Statut      |
+| -------- | ---------------------------------------------------- | ----------- |
+| MVP      | FCI (carburants) + newsletter + vote                 | ✅ Livré    |
+| Post-MVP | Inflation alimentaire (INSEE IPC)                    | ✅ Livré    |
+| Post-MVP | Chômage jeunes 15–24 ans (Eurostat, FR vs UE)        | ✅ Livré    |
+| Post-MVP | Tarifs électricité TRVE (CRE / data.gouv)            | ✅ Livré    |
+| Post-MVP | Décomposition FCI (explainability)                   | ✅ Livré    |
+| v1.1     | Déploiement prod Vercel + premier lancement public   | 🔲 À faire  |
+| v2       | Loyers (5 villes) + FCI v2 multi-composantes pondéré | 🔲 Planifié |
+| v3       | Comparaison internationale + stories narratives      | 🔲 Planifié |
+| v4       | Contributions communautaires + OpenGraph dynamique   | 🔲 Planifié |
 
 ---
 

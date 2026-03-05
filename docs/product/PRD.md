@@ -57,11 +57,12 @@ Elle montre "à quel point on est cooked" via le **French Cooked Index™ (FCI)*
 - Dons Stripe
 - Affichage publicitaire
 - Stories narratives
-- Autres indicateurs (inflation, loyers, salaires...)
 - Export PNG / CSV
 - Comparaisons avec d'autres pays
 - Auth utilisateur
 - Mode sombre
+
+_Note : Des indicateurs additionnels (inflation alimentaire IPC, chômage jeunes Eurostat, tarifs électricité TRVE, décomposition FCI) ont été livrés en post-MVP via le pipeline « Autonomous Additions » (voir docs/progress.md et docs/addons-research.md)._
 
 ---
 
@@ -85,7 +86,7 @@ Elle montre "à quel point on est cooked" via le **French Cooked Index™ (FCI)*
 │  "Ça pique depuis 6 mois"       │
 ├─────────────────────────────────┤
 │  VOTE COOKED / UNCOOKED         │
-│  🔥 Cooked (72%) | 🌱 Pas (28%) │
+│  🔥 Cooked (72%) | 🌱 Uncooked (28%) │
 ├─────────────────────────────────┤
 │  CTA NEWSLETTER                 │
 │  "Reste informé, sans drama"    │

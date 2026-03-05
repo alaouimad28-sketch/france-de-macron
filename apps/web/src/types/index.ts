@@ -35,7 +35,7 @@ export type FuelPeriodFilter = '7j' | '30j' | '90j' | '1an' | '5ans' | 'max'
 // Événements / annotations
 // =============================================================================
 
-export type EventScope = 'fuel' | 'global' | 'inflation' | 'political'
+export type EventScope = 'fuel' | 'global' | 'inflation' | 'political' | 'electricity'
 export type EventIcon = 'war' | 'euro' | 'lightning' | 'fire' | 'peace' | 'up' | 'down'
 
 export interface ChartEvent {
