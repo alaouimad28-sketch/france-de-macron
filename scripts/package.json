@@ -21,6 +21,7 @@
     "qa:meta-descriptions": "tsx qa/check-meta-descriptions.ts",
     "qa:lighthouse-cwv": "tsx seo/run-lighthouse-audit.ts",
     "qa:fci-intuition": "tsx qa/check-fci-intuition.ts",
+    "qa:autonomous-datasets": "tsx qa/check-autonomous-datasets.ts",
     "seo:lighthouse": "tsx seo/run-lighthouse-audit.ts"
   },
   "dependencies": {

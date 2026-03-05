@@ -17,6 +17,9 @@ pnpm run qa:security-headers
 # 4) Vérifie l'intuition historique FCI (2020 bas, 2022 pic)
 pnpm run qa:fci-intuition
 
+# 5) Vérifie l'intégrité des datasets autonomous (IPC + chômage jeunes)
+pnpm run qa:autonomous-datasets
+
 # Tout-en-un
 pnpm run qa:phase7
 ```
@@ -60,6 +63,13 @@ Avec assertions CSP minimales:
 - Validation live optionnelle (si env Supabase service role fournis):
   - fenêtre 2020-03 → 2020-06 : minimum attendu `<= 35`
   - fenêtre 2022-03 → 2022-10 : maximum attendu `>= 80`
+
+### Autonomous datasets
+
+Validation live optionnelle (si env Supabase service role fournis):
+
+- `ipc_food_monthly` : volume minimal (`>= 12`), format des mois (`YYYY-MM-DD`), valeurs numériques valides.
+- `youth_unemployment_monthly` : volume minimal (`>= 24`), format des mois (`YYYY-MM-DD`), valeurs numériques valides.
 
 ## Note CI
 
