@@ -37,7 +37,7 @@ Et les migrations pour comprendre le schéma DB :
 18. supabase/migrations/20240101000004_init_votes.sql
 19. supabase/migrations/20240101000006_rls_policies.sql
 
-Vérifie docs/progress.md pour l'état actuel. **Phase 1 (pipeline de données) est terminée** — cron fuel-daily implémenté et testé. **Objectif : livrer toute la Phase 2 (composants UI).** Suivre l’ordre des tâches dans "PHASE 2 — Composants UI" ; cocher chaque case dès qu’elle est faite. **Mettre à jour la doc au fur et à mesure** : cocher progress.md après chaque composant ; mettre à jour docs/INDEX.md (Fichiers de code clés) si tu ajoutes des fichiers ; en fin de Phase 2, note dans "Notes de session".
+Vérifie docs/progress.md pour l'état actuel. **Phases 1 à 5 sont terminées (pipeline, composants UI, home, APIs, SEO) ; addons P0/P1 livrés (IPC, chômage jeunes, TRVE, décomposition FCI). Objectif courant : Phase 6 et Phase 7.** Suivre les sections PHASE 6 et PHASE 7 dans progress.md ; cocher les cases au fur et à mesure. **Mettre à jour la doc** (voir [docs/DOCUMENTATION-GUIDE.md](../docs/DOCUMENTATION-GUIDE.md) pour savoir exactement quoi mettre à jour selon ce que tu as fait) : cocher progress.md après chaque livrable ; mettre à jour docs/INDEX.md si nouveaux fichiers ; Notes de session pour décisions.
 
 RÈGLES ABSOLUES (ne jamais violer) :
 - SUPABASE_SERVICE_ROLE_KEY : jamais préfixé NEXT_PUBLIC_, jamais dans le code client
@@ -89,9 +89,9 @@ Dashboard satirique + factuel qui répond à "on est à quel point cooked ?" ave
 | `apps/web/src/types/index.ts`                         | Contrat de données partagé                   |
 | `apps/web/tailwind.config.ts`                         | Design tokens — ne pas renommer les couleurs |
 
-### Supabase MCP (pour l’agent)
+### Supabase MCP (pour l'agent)
 
-Quand Supabase local tourne (`pnpm run db:start`), le projet expose un serveur MCP (`.cursor/mcp.json`). L’agent peut l’utiliser pour :
+Quand Supabase local tourne (`pnpm run db:start`), le projet expose un serveur MCP (`.cursor/mcp.json`). L'agent peut l'utiliser pour :
 
 - **list_tables** — lister les tables, colonnes, RLS, commentaires
 - **execute_sql** — exécuter du SQL en lecture (ou écriture) sur la base locale
@@ -101,23 +101,14 @@ Quand Supabase local tourne (`pnpm run db:start`), le projet expose un serveur M
 
 Le serveur apparaît dans Cursor sous un nom du type `project-0-france-de-macron-supabase-local`. À privilégier pour inspecter le schéma ou valider des requêtes sans ouvrir Studio.
 
-### Phase 2 — Par où commencer (composants UI)
+### Priorités actuelles (Phase 6 / 7 / addons)
 
-Phase 1 est faite (données en base, cron OK). **Objectif : livrer toute la Phase 2** (setup shadcn, FCIGauge, FCIHero, FuelChart, PeriodChip, FuelSection, CookedVote, NewsletterForm, Header, Footer, layout). La section "PHASE 2 — Composants UI" dans `docs/progress.md` est détaillée en **tâches granulaires avec cases à cocher** : traiter les tâches dans l’ordre et cocher au fur et à mesure.
+Les Phases 1 à 5 sont livrées (pipeline, composants UI, home, APIs, SEO). **Objectif courant** : Phase 6 (déploiement Vercel + Supabase prod, backfill, cron), Phase 7 (QA complète, smoke, sécurité, soft launch). Optionnel : P1 loyers (5 villes), P2 exploration (pression orientation, FCI v2).
 
-1. **Lire en priorité** (si pas déjà lu) :
-   - `docs/design/design-system.md` — palette Cooked Authority, typo, specs composants
-   - `docs/product/PRD.md` § 6 (spécifications fonctionnelles FCI hero, carburants, vote, newsletter)
-
-2. **Ordre de réalisation** : Suivre strictement `docs/progress.md` section "PHASE 2 — Composants UI" : Setup shadcn → FCIGauge → FCIHero → FuelChart → PeriodChip → FuelSection → CookedVote → NewsletterForm → Layout (Header, Footer, intégration).
-
-3. **Documentation à jour au fur et à mesure (obligatoire)** :
-   - **Après chaque composant ou sous-section** : cocher dans `docs/progress.md` toutes les cases correspondantes.
-   - **Dès que tu ajoutes des fichiers** (ex. `components/fci/`, `components/fuel/`) : mettre à jour `docs/INDEX.md` section "Fichiers de code clés" pour lister les nouveaux chemins.
-   - **Si nouvelles commandes ou scripts** : mettre à jour `README.md` et `docs/INDEX.md` (commandes utiles).
-   - **En fin de Phase 2** : vérifier `docs/design/design-system.md` vs implémentation ; ajouter une note dans "Notes de session" de progress.md (ex. "Phase 2 livrée : …").
-
-4. **Référence** : `docs/design/design-system.md` § 5 (inventaire MVP), `apps/web/tailwind.config.ts` (couleurs surface, alert, relief, warning, republic).
+1. **Lire en priorité** : `docs/progress.md` (sections PHASE 6 et PHASE 7), `docs/deployment-runbook.md`, `docs/product/PRD.md` § 6 et `docs/design/design-system.md`.
+2. **Ordre de réalisation** : Suivre progress.md — Phase 6 (config Vercel, env, db:push prod, backfill, verify cron) puis Phase 7 (tests manuels, checklist sécurité, lancement).
+3. **Documentation à jour** : cocher progress.md après chaque étape ; mettre à jour INDEX.md si nouveaux fichiers ; Notes de session pour décisions.
+4. **Référence** : `docs/design/design-system.md` § 5, `apps/web/tailwind.config.ts`.
 
 ### Liens de référence utiles
 
@@ -134,5 +125,5 @@ Phase 1 est faite (données en base, cron OK). **Objectif : livrer toute la Phas
 Pour les sessions de suivi où le contexte est déjà établi :
 
 ```
-Lis docs/progress.md. Phase 1 terminée ; objectif = livrer toute la Phase 2 (composants UI). Suivre l’ordre des sous-sections dans "PHASE 2 — Composants UI" ; cocher chaque case dès que la tâche est faite. Après chaque composant/sous-section : mettre à jour progress.md (cases) ; si nouveaux fichiers, mettre à jour docs/INDEX.md § "Fichiers de code clés". En fin de Phase 2 : note dans "Notes de session". Respecte les règles absolues (pas de service role côté client, pas d’API externe côté navigateur, mobile-first 390px).
+Lis docs/progress.md. Phases 1–5 terminées ; objectif = Phase 6 (déploiement) et Phase 7 (QA, lancement). Suivre les sections PHASE 6 et PHASE 7 ; cocher les cases au fur et à mesure. Mettre à jour progress.md et docs/INDEX.md si nouveaux fichiers. Respecte les règles absolues (pas de service role côté client, pas d'API externe côté navigateur, mobile-first 390px).
 ```

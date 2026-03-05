@@ -1,6 +1,6 @@
 # Progress — France de Macron
 
-> Dernière mise à jour : Mars 2025
+> Dernière mise à jour : Mars 2026
 > Utiliser ce fichier comme source de vérité pour l'état du projet.
 > Cocher les cases au fur et à mesure. Déplacer les items entre colonnes quand nécessaire.
 

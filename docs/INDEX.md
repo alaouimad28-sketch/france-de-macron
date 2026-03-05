@@ -2,7 +2,7 @@
 
 > Vue d’ensemble de toute la documentation du projet. Utilisez cet index pour retrouver rapidement un sujet.
 
-**Dernière mise à jour** : Mars 2025
+**Dernière mise à jour** : Mars 2026
 
 ---
 
@@ -15,8 +15,6 @@
 | [docs/progress.md](progress.md)                     | État actuel du projet (todo / done) — source de vérité pour les tâches            |
 | [docs/addons-research.md](addons-research.md)       | Recherche post-Phase-7 : ajouts P0/P1/P2, sources et notes d’implémentation       |
 | [docs/deployment-runbook.md](deployment-runbook.md) | Runbook lancement prod (ordre exact des commandes et checks)                      |
-| [docs/addons-research.md](addons-research.md)       | Research log autonome (P0/P1) pour modules additionnels                           |
-
 ---
 
 ## Vision et produit
@@ -79,9 +77,10 @@
 ```
 docs/
 ├── INDEX.md              ← Vous êtes ici
-├── kickoff.md            Brief agent / ordre de lecture
-├── progress.md           État du projet (todo / done)
-├── addons-research.md    Ajouts post-Phase-7 (priorités + implémentation)
+├── kickoff.md                Brief agent / ordre de lecture
+├── DOCUMENTATION-GUIDE.md   Guide de mise à jour de la doc (par type de travail)
+├── progress.md               État du projet (todo / done)
+├── addons-research.md        Ajouts post-Phase-7 (priorités + implémentation)
 ├── vision.md             Vision, pitch, ton
 ├── product/
 │   ├── PRD.md            Périmètre MVP

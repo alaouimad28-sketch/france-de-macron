@@ -1,6 +1,24 @@
 # Pipeline de données — France de Macron
 
-## Architecture générale
+## Vue d'ensemble (Mars 2026)
+
+Plusieurs pipelines alimentent la base. Le **cron quotidien** ne concerne que les carburants + FCI ; les autres sont des **backfills manuels** (one-shot ou relançables).
+
+| Pipeline | Source | Table(s) Supabase | Déclenchement | Commande |
+| -------- | ------ | ----------------- | ------------- | -------- |
+| **Carburants J-30 / dernier jour** | roulez-eco.fr (ZIP/XML) | `fuel_daily_agg` | Manuel | `pnpm run fuel:backfill`, `pnpm run fuel:backfill:last` |
+| **Carburants par année** | roulez-eco.fr (archives annuelles) | `fuel_daily_agg` | Manuel | `pnpm run fuel:backfill:annees` |
+| **Cron quotidien** | roulez-eco.fr | `fuel_daily_agg`, `fci_daily` | Vercel Cron 02:30 UTC | `/api/cron/fuel-daily` |
+| **FCI historique** | dérivé de `fuel_daily_agg` | `fci_daily` | Manuel | `pnpm run fci:backfill` |
+| **IPC alimentaire** | API INSEE BDM | `ipc_food_monthly` | Manuel | `pnpm run insee:ipc:food:backfill` |
+| **Chômage jeunes** | API Eurostat (`une_rt_m`) | `youth_unemployment_monthly` | Manuel | `pnpm run eurostat:youth:backfill` |
+| **TRVE électricité** | CRE / data.gouv (CSV) | `electricity_tariff_history` | Manuel | `pnpm run electricity:trve:backfill` |
+
+Le **score FCI affiché** est toujours calculé à partir des **carburants uniquement** (v1). Les autres indicateurs (IPC, chômage, électricité) sont affichés en modules séparés sur le site et ne modifient pas le chiffre FCI. Voir [methodology.md](methodology.md).
+
+---
+
+## Architecture générale (carburants + FCI)
 
 ```
                     ┌─────────────────────────────────┐
@@ -14,14 +32,15 @@
                     │   - Téléchargement               │
                     │   - Parsing XML (ISO-8859-1)     │
                     │   - Calcul agrégats              │
-                    │   - Calcul FCI                   │
+                    │   - Calcul FCI v1                │
                     └──────────────┬──────────────────┘
                                    │ Upsert (service role)
                                    ▼
                     ┌─────────────────────────────────┐
                     │        Supabase Postgres          │
                     │   fuel_daily_agg + fci_daily     │
-                    │   (RLS : lecture publique)        │
+                    │   (+ ipc_food_monthly, etc.)     │
+                    │   (RLS : lecture publique)       │
                     └──────────────┬──────────────────┘
                                    │ Select (anon key via SSR)
                                    ▼
@@ -147,6 +166,42 @@ Commande : `pnpm run fci:backfill`. Variables optionnelles : `START_DATE`, `END_
 
 Voir [scripts/fci-backfill/README.md](../../scripts/fci-backfill/README.md).
 
+### Job 5 : fuel-backfill-annee (archives annuelles)
+
+**Déclenchement** : manuel, pour historique long (2007 → aujourd'hui)
+**Fichier** : `scripts/fuel-backfill-annee/index.ts`
+
+Télécharge un ZIP par année (`/opendata/annee/YYYY`), parse le XML (attribut `maj` par prix), agrège par (jour, carburant), upsert dans `fuel_daily_agg`. Idempotent. Commande : `pnpm run fuel:backfill:annees`. Variables optionnelles : `START_YEAR`, `END_YEAR`.
+
+Voir [scripts/fuel-backfill-annee/README.md](../../scripts/fuel-backfill-annee/README.md) et [sources.md](sources.md) § 1.2.1.
+
+### Job 6 : insee-ipc-food-backfill (IPC alimentaire)
+
+**Déclenchement** : manuel
+**Fichier** : `scripts/insee-ipc-food-backfill/index.ts`
+
+Fetch API INSEE BDM (série IPC alimentation), normalise en mensuel, upsert dans `ipc_food_monthly`. Idempotent. Nécessite `INSEE_API_TOKEN` (ou variable configurée). Commande : `pnpm run insee:ipc:food:backfill`. Mode `DRY_RUN=1` pour tester sans écriture.
+
+Voir [scripts/insee-ipc-food-backfill/README.md](../../scripts/insee-ipc-food-backfill/README.md) et [sources.md](sources.md) § 2.1.
+
+### Job 7 : eurostat-youth-unemployment-backfill (chômage jeunes)
+
+**Déclenchement** : manuel
+**Fichier** : `scripts/eurostat-youth-unemployment-backfill/index.ts`
+
+Fetch API Eurostat (`une_rt_m`, âge 15–24), géos FR + EU27_2020, normalise en mensuel, upsert dans `youth_unemployment_monthly`. Idempotent. Commande : `pnpm run eurostat:youth:backfill`. Option `DRY_RUN=1`.
+
+Voir [scripts/eurostat-youth-unemployment-backfill/README.md](../../scripts/eurostat-youth-unemployment-backfill/README.md) et [sources.md](sources.md) § 2.2.
+
+### Job 8 : electricity-trve-backfill (tarifs électricité TRVE)
+
+**Déclenchement** : manuel
+**Fichier** : `scripts/electricity-trve-backfill/index.ts`
+
+Télécharge les CSV CRE/data.gouv (Option Base, HPHC), normalise en ct€/kWh, upsert dans `electricity_tariff_history`. Idempotent. Commande : `pnpm run electricity:trve:backfill`. Option `DRY_RUN=1`.
+
+Voir [scripts/electricity-trve-backfill/README.md](../../scripts/electricity-trve-backfill/README.md) et [sources.md](sources.md) § 2.3.
+
 ---
 
 ## Calcul des agrégats
@@ -243,7 +298,9 @@ function normalize(
 
 ### Idempotence
 
-Toutes les écritures utilisent `INSERT ... ON CONFLICT (day, fuel_code) DO UPDATE`.
+- **Carburants / FCI** : `INSERT ... ON CONFLICT (day, fuel_code) DO UPDATE` pour `fuel_daily_agg` ; clé unique par jour pour `fci_daily`.
+- **IPC, chômage jeunes, TRVE** : chaque job utilise un upsert idempotent avec sa propre clé (month/geo, effective_date/option_code, etc.).
+
 Un job peut être relancé autant de fois que nécessaire sans créer de doublons.
 Si des données existent déjà partiellement, l’upsert ajoute les lignes manquantes et met à jour les existantes (aucun skip automatique : on retélécharge et on upsert à chaque run).
 

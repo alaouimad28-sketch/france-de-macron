@@ -4,6 +4,15 @@
 
 ---
 
+## État actuel (Mars 2026) — en bref
+
+- **Le score FCI affiché (0–100) est toujours calculé en v1** : **uniquement** Gazole + E10 (niveau vs baseline + variation 30j). Aucun autre indicateur n’entre dans la formule aujourd’hui.
+- **Les autres indicateurs (alimentation IPC, chômage jeunes, électricité TRVE)** sont **ingérés et affichés sur le site** en tant que **modules séparés** (sections « Panier alimentaire », « Chômage jeunes », « Électricité TRVE »). Ils **ne modifient pas le chiffre FCI** ; ils sont là pour le contexte et pour préparer une future **FCI v2** multi-composantes.
+- **Décomposition FCI** : l’API `/api/fci/decomposition` et la section « Décomposition » décrivent **comment le score v1 (carburant seul) est obtenu** (contributions niveau / variation), pas encore un agrégat de plusieurs indicateurs.
+- **FCI v2** (pondération Énergie + Alimentation + Logement + Travail + Pouvoir d’achat) est **planifiée**, pas encore implémentée. La méthodologie v2 sera documentée ici et versionnée lors du passage en production.
+
+---
+
 ## 1. Définition
 
 Le **French Cooked Index™ (FCI)** est un indicateur composite semi-scientifique qui mesure "à quel point l'économie française est difficile pour le quotidien des ménages ordinaires".

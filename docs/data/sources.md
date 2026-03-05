@@ -1,5 +1,20 @@
 # Sources de données — France de Macron
 
+## État actuel (Mars 2026)
+
+| Source | Statut | Table(s) | Commande / fréquence |
+| ------ | ------ | -------- | -------------------- |
+| **Carburants** (roulez-eco.fr) | En production | `fuel_daily_agg`, `fci_daily` | Cron 02:30 UTC + backfills manuels |
+| **IPC alimentaire** (INSEE BDM) | Implémenté | `ipc_food_monthly` | `pnpm run insee:ipc:food:backfill` |
+| **Chômage jeunes** (Eurostat) | Implémenté | `youth_unemployment_monthly` | `pnpm run eurostat:youth:backfill` |
+| **TRVE électricité** (CRE / data.gouv) | Implémenté | `electricity_tariff_history` | `pnpm run electricity:trve:backfill` |
+| **Loyers** (CLAMEUR / OLL) | Roadmap | — | À venir |
+| **Eurostat multi-pays** (v2 comparaison) | Roadmap | — | À venir |
+
+Le **score FCI** (0–100) est calculé uniquement à partir des **carburants** (v1). Les autres sources alimentent des modules affichés à part sur le site. Voir [methodology.md](methodology.md) et [pipeline.md](pipeline.md).
+
+---
+
 ## 1. Carburants — Source principale MVP
 
 ### 1.1 Identification
@@ -75,7 +90,7 @@ On ne conserve pas les ZIP/XML : on télécharge, on parse, on agrège par (jour
 | Lieu                      | Rôle                                                                                                                                                                      |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Source (gouvernement)** | [donnees.roulez-eco.fr](https://donnees.roulez-eco.fr) — serveurs du ministère. Données brutes (ZIP/XML). On ne stocke pas ces fichiers nous-mêmes.                       |
-| **Notre base (Supabase)** | PostgreSQL (Supabase). Tables `fuel_daily_agg` (agrégats jour × carburant), `fci_daily` (score FCI par jour). On ne garde que les **agrégats** calculés, pas le XML brut. |
+| **Notre base (Supabase)** | PostgreSQL (Supabase). Tables : `fuel_daily_agg`, `fci_daily` (carburants + FCI) ; `ipc_food_monthly` (IPC alimentaire) ; `youth_unemployment_monthly` (chômage jeunes) ; `electricity_tariff_history` (TRVE). On ne garde que les agrégats / séries normalisées, pas les fichiers bruts. |
 | **Front**                 | Next.js lit uniquement dans Supabase (SSR). Le client ne contacte jamais roulez-eco.fr.                                                                                   |
 
 En résumé : la **source de vérité** est roulez-eco.fr ; notre **stockage** est Supabase (agrégats uniquement).
@@ -146,7 +161,9 @@ Supabase → Front : SSR Next.js (at request time, données fraîches)
 
 ---
 
-## 2. Sources futures (roadmap)
+## 2. Sources additionnelles (implémentées)
+
+Les sources ci-dessous sont ingérées et affichées sur le site (sections dédiées + page `/indicators`). Elles **ne modifient pas le score FCI**, qui reste calculé en v1 (carburants uniquement).
 
 ### 2.1 Inflation alimentaire — INSEE
 
@@ -159,14 +176,14 @@ Supabase → Front : SSR Next.js (at request time, données fraîches)
 | Licence       | Licence Ouverte / Open Licence v2.0                            |
 | Disponibilité | Gratuit, clé API requise (inscription INSEE, token Bearer API) |
 
-#### 2.1.1 Série cible MVP (P0 implémenté)
+#### 2.1.1 Série et stockage (en place)
 
-- Série BDM pressentie : **`001767226`** (IPC alimentation, France entière).
-- Stockage prévu : table `public.ipc_food_monthly` (migration additive `20240101000008`).
-- Clé d'idempotence prévue : `(month, source_series_id)`.
-- Granularité MVP : **mensuelle**, sans désaisonnalisation (valeurs brutes publiées).
+- Série BDM : **`001767226`** (IPC alimentation, France entière).
+- Table : `public.ipc_food_monthly` (migration `20240101000008`).
+- Clé d'idempotence : `(month, source_series_id)`.
+- Granularité : **mensuelle**, sans désaisonnalisation (valeurs brutes publiées).
 
-#### 2.1.2 Plan technique d'ingestion (implémenté)
+#### 2.1.2 Ingestion
 
 1. **Fetch** (script `scripts/insee-ipc-food-backfill/index.ts`)
    - Appel de l'endpoint BDM avec `Authorization: Bearer $INSEE_API_TOKEN`.
@@ -192,7 +209,7 @@ Supabase → Front : SSR Next.js (at request time, données fraîches)
 | Fréquence | Mensuel                                                                        |
 | Licence   | Eurostat reuse policy (source à citer)                                         |
 
-#### 2.2.1 Paramètres retenus (MVP)
+#### 2.2.1 Paramètres et stockage (en place)
 
 - Dataset : `une_rt_m`
 - Filtres : `age=Y15-24`, `sex=T`, `unit=PC_ACT`, `s_adj=SA`
@@ -206,7 +223,7 @@ Supabase → Front : SSR Next.js (at request time, données fraîches)
 2. **Normalize** : mapping `time=YYYY-MM` vers `month=YYYY-MM-01` + extraction `unemployment_rate`.
 3. **Store** : upsert idempotent via clé `(month, geo, age, sex, seasonal_adjustment, unit)`.
 
-### 2.3 Tarifs électricité TRVE — CRE / data.gouv (P1 démarré)
+### 2.3 Tarifs électricité TRVE — CRE / data.gouv
 
 | Champ      | Valeur                                                                                                                          |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------- |
@@ -226,7 +243,7 @@ Supabase → Front : SSR Next.js (at request time, données fraîches)
 - Idempotence : upsert clé `(effective_date, option_code, subscribed_power_kva, tariff_component, method_version)`
 - QA cohérence unité : `pnpm run qa:electricity-unit` (assertion `value_eur_kwh × 100 = value_ct_kwh` + bornes sanity)
 
-#### 2.3.2 Modèle retenu (MVP P1)
+#### 2.3.2 Modèle retenu
 
 - Option Base : composante `BASE`
 - Option HPHC : composantes `HP` et `HC`
@@ -234,26 +251,32 @@ Supabase → Front : SSR Next.js (at request time, données fraîches)
 - Versionnement méthodologique : `method_version` (défaut `trve_v1`)
 - Timeline événements : annotations éditoriales stockées dans `public.events` avec `scope='electricity'` (migration `20260304184600_add_electricity_scope_events.sql`), affichées dans le module UI électricité.
 
-### 2.4 Loyers — CLAMEUR / OLAP
+---
+
+## 3. Sources futures (roadmap)
+
+### 3.1 Loyers — CLAMEUR / OLAP
 
 - Disponibilité partielle (certaines villes uniquement)
-- À évaluer en v2
+- À évaluer pour FCI v2 / module loyers
 
-### 2.5 Données Eurostat multi-pays (v2 comparaison)
+### 3.2 Données Eurostat multi-pays (v2 comparaison)
 
 | Dataset         | Description             |
 | --------------- | ----------------------- |
 | `prc_hpi_m`     | House price index       |
 | `prc_hicp_manr` | Harmonized inflation    |
-| `une_rt_m`      | Unemployment rate       |
+| `une_rt_m`      | Unemployment rate (déjà utilisé pour chômage jeunes FR/UE-27) |
 | `nama_10_gdp`   | GDP and main components |
 
 ---
 
-## 3. Politique d'utilisation des données
+## 4. Politique d'utilisation des données
 
-- Toutes les données utilisées en MVP sont sous **Licence Ouverte / Open Licence v2.0** (équivalent CC-BY)
-- Citation de la source obligatoire dans l'interface (footer + page Méthodologie)
+- **Carburants, IPC INSEE** : Licence Ouverte / Open Licence v2.0 (équivalent CC-BY).
+- **Eurostat** : politique de réutilisation Eurostat (source à citer).
+- **TRVE (data.gouv)** : licence du jeu à confirmer (dataset parfois « notspecified »).
+- Citation de la source obligatoire dans l'interface (footer + page Méthodologie).
 - Pas de redistribution des données brutes (on redistribue les agrégats)
 - Les archives annuelles ne sont téléchargées qu'une fois (pas de scraping intensif)
 - Respect des `robots.txt` et conditions d'utilisation de chaque source

@@ -1,4 +1,10 @@
-export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
 
 export type Database = {
   public: {
@@ -30,60 +36,6 @@ export type Database = {
           name?: string
           update_frequency?: string | null
           url?: string
-        }
-        Relationships: []
-      }
-      electricity_tariff_history: {
-        Row: {
-          annual_fixed_ttc_eur: number | null
-          created_at: string
-          effective_date: string
-          end_date: string | null
-          id: string
-          method_version: string
-          option_code: string
-          source_dataset: string
-          source_meta: Json | null
-          source_url: string
-          subscribed_power_kva: number
-          tariff_component: string
-          updated_at: string
-          value_ct_kwh: number
-          value_eur_kwh: number
-        }
-        Insert: {
-          annual_fixed_ttc_eur?: number | null
-          created_at?: string
-          effective_date: string
-          end_date?: string | null
-          id?: string
-          method_version?: string
-          option_code: string
-          source_dataset?: string
-          source_meta?: Json | null
-          source_url: string
-          subscribed_power_kva: number
-          tariff_component: string
-          updated_at?: string
-          value_ct_kwh: number
-          value_eur_kwh: number
-        }
-        Update: {
-          annual_fixed_ttc_eur?: number | null
-          created_at?: string
-          effective_date?: string
-          end_date?: string | null
-          id?: string
-          method_version?: string
-          option_code?: string
-          source_dataset?: string
-          source_meta?: Json | null
-          source_url?: string
-          subscribed_power_kva?: number
-          tariff_component?: string
-          updated_at?: string
-          value_ct_kwh?: number
-          value_eur_kwh?: number
         }
         Relationships: []
       }
@@ -183,11 +135,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'fuel_daily_agg_source_id_fkey'
-            columns: ['source_id']
+            foreignKeyName: "fuel_daily_agg_source_id_fkey"
+            columns: ["source_id"]
             isOneToOne: false
-            referencedRelation: 'data_sources'
-            referencedColumns: ['id']
+            referencedRelation: "data_sources"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -220,57 +172,6 @@ export type Database = {
           raw_payload?: Json | null
           source_label?: string
           source_series_id?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      youth_unemployment_monthly: {
-        Row: {
-          age: string
-          created_at: string
-          geo: string
-          geo_label: string
-          id: string
-          month: string
-          seasonal_adjustment: string
-          sex: string
-          source_dataset: string
-          source_meta: Json | null
-          source_url: string
-          unemployment_rate: number
-          unit: string
-          updated_at: string
-        }
-        Insert: {
-          age?: string
-          created_at?: string
-          geo: string
-          geo_label: string
-          id?: string
-          month: string
-          seasonal_adjustment?: string
-          sex?: string
-          source_dataset?: string
-          source_meta?: Json | null
-          source_url: string
-          unemployment_rate: number
-          unit?: string
-          updated_at?: string
-        }
-        Update: {
-          age?: string
-          created_at?: string
-          geo?: string
-          geo_label?: string
-          id?: string
-          month?: string
-          seasonal_adjustment?: string
-          sex?: string
-          source_dataset?: string
-          source_meta?: Json | null
-          source_url?: string
-          unemployment_rate?: number
-          unit?: string
           updated_at?: string
         }
         Relationships: []
@@ -341,6 +242,57 @@ export type Database = {
         }
         Relationships: []
       }
+      youth_unemployment_monthly: {
+        Row: {
+          age: string
+          created_at: string
+          geo: string
+          geo_label: string
+          id: string
+          month: string
+          seasonal_adjustment: string
+          sex: string
+          source_dataset: string
+          source_meta: Json | null
+          source_url: string
+          unemployment_rate: number
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          age?: string
+          created_at?: string
+          geo: string
+          geo_label: string
+          id?: string
+          month: string
+          seasonal_adjustment?: string
+          sex?: string
+          source_dataset?: string
+          source_meta?: Json | null
+          source_url: string
+          unemployment_rate: number
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          age?: string
+          created_at?: string
+          geo?: string
+          geo_label?: string
+          id?: string
+          month?: string
+          seasonal_adjustment?: string
+          sex?: string
+          source_dataset?: string
+          source_meta?: Json | null
+          source_url?: string
+          unemployment_rate?: number
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -357,31 +309,33 @@ export type Database = {
   }
 }
 
-type DatabaseWithoutInternals = Omit<Database, '__InternalSupabase'>
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
 
-type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, 'public'>]
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
-    | keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
-        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
-      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])[TableName] extends {
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
-    ? (DefaultSchema['Tables'] & DefaultSchema['Views'])[DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
         Row: infer R
       }
       ? R
@@ -390,23 +344,23 @@ export type Tables<
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema['Tables']
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
-    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Insert: infer I
       }
       ? I
@@ -415,23 +369,23 @@ export type TablesInsert<
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema['Tables']
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
-    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Update: infer U
       }
       ? U
@@ -440,36 +394,36 @@ export type TablesUpdate<
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema['Enums']
+    | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums']
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums'][EnumName]
-  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums']
-    ? DefaultSchema['Enums'][DefaultSchemaEnumNameOrOptions]
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof DefaultSchema['CompositeTypes']
+    | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema['CompositeTypes']
-    ? DefaultSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
 
 export const Constants = {
@@ -477,3 +431,4 @@ export const Constants = {
     Enums: {},
   },
 } as const
+
