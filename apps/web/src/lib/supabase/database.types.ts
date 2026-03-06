@@ -227,6 +227,48 @@ export type Database = {
         }
         Relationships: []
       }
+      rent_monthly: {
+        Row: {
+          avg_rent_m2: number
+          city: string
+          city_label: string
+          created_at: string
+          id: string
+          month: string
+          sample_count: number | null
+          source_label: string
+          source_meta: Json | null
+          source_url: string
+          updated_at: string
+        }
+        Insert: {
+          avg_rent_m2: number
+          city: string
+          city_label: string
+          created_at?: string
+          id?: string
+          month: string
+          sample_count?: number | null
+          source_label?: string
+          source_meta?: Json | null
+          source_url: string
+          updated_at?: string
+        }
+        Update: {
+          avg_rent_m2?: number
+          city?: string
+          city_label?: string
+          created_at?: string
+          id?: string
+          month?: string
+          sample_count?: number | null
+          source_label?: string
+          source_meta?: Json | null
+          source_url?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       newsletter_signups: {
         Row: {
           created_at: string

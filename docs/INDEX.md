@@ -111,7 +111,7 @@ docs/
 | `apps/web/src/lib/utils.ts`                                        | Helpers (formatFuelPrice, getFCILabel, hashString)                                       |
 | `apps/web/src/app/layout.tsx`                                      | Metadata OG, structure HTML, Header/Footer/Toaster                                       |
 | `apps/web/src/app/page.tsx`                                        | Page home — assemblage FCIHero + sections + JSON-LD WebSite                              |
-| `apps/web/src/app/indicators/page.tsx`                             | Page indicateurs — hub FCI + carburants + IPC alimentaire + chômage jeunes + électricité |
+| `apps/web/src/app/indicators/page.tsx`                             | Page indicateurs — hub FCI + carburants + IPC alimentaire + chômage jeunes + électricité + loyers |
 | `apps/web/src/app/sitemap.ts`                                      | Sitemap XML généré via MetadataRoute                                                     |
 | `apps/web/public/robots.txt`                                       | Directives robots (Allow `/`, Disallow `/api/`) + lien sitemap                           |
 | `apps/web/public/og-image.png`                                     | OG image statique (placeholder MVP)                                                      |
@@ -129,6 +129,7 @@ docs/
 | `apps/web/src/components/food/FoodInflationSection.tsx`            | Server Component IPC alimentaire — fetch `ipc_food_monthly` + KPI YoY                    |
 | `apps/web/src/components/youth/YouthUnemploymentSection.tsx`       | Server Component chômage jeunes — FR vs UE-27 + variation 3 mois                         |
 | `apps/web/src/components/electricity/ElectricityTariffSection.tsx` | Server Component TRVE électricité — timeline changements + annotations events            |
+| `apps/web/src/components/rent/RentSection.tsx`                     | Server Component loyers — cartes comparatives 5 villes (loyer moyen/m², variation YoY)  |
 | `apps/web/src/components/vote/CookedVote.tsx`                      | Votes cooked/uncooked, fingerprint, localStorage                                         |
 | `apps/web/src/components/newsletter/NewsletterForm.tsx`            | Formulaire newsletter avec honeypot                                                      |
 | `apps/web/src/components/layout/Header.tsx`                        | Header blanc, masqué au scroll down / réapparaît au scroll up                            |
@@ -143,6 +144,8 @@ docs/
 | `scripts/eurostat-youth-unemployment-backfill/README.md`           | Détails d'exécution (params Eurostat, DRY_RUN, idempotence)                              |
 | `scripts/electricity-trve-backfill/index.ts`                       | Ingestion TRVE électricité (Option Base + HPHC, normalisation ct€/kWh)                   |
 | `scripts/electricity-trve-backfill/README.md`                      | Détails d'exécution (sources CRE/data.gouv, mapping, idempotence)                        |
+| `scripts/rent-backfill/index.ts`                                   | Seed loyers 5 villes (Paris/Lyon/Marseille/Lille/Toulouse, 2018–2024, CLAMEUR/OLAP)      |
+| `scripts/rent-backfill/README.md`                                  | Détails d'exécution (source, licence, dry-run, idempotence)                              |
 | `scripts/deploy/preflight.ts`                                      | Vérifie présence env vars critiques + cohérence configuration                            |
 | `scripts/deploy/verify-cron-endpoint.ts`                           | Vérifie 401/200 + payload du cron endpoint sécurisé                                      |
 | `scripts/deploy/verify-production.ts`                              | Vérifie artefacts production (`robots.txt`, `sitemap.ts`)                                |
@@ -180,6 +183,7 @@ docs/
 | `pnpm run insee:ipc:food:backfill`   | Ingestion INSEE IPC alimentaire (fetch/normalize/store idempotent, mode DRY_RUN)             |
 | `pnpm run eurostat:youth:backfill`   | Ingestion chômage jeunes Eurostat (FR + UE-27)                                               |
 | `pnpm run electricity:trve:backfill` | Ingestion historique TRVE électricité (Option Base + HPHC, normalisé en ct€/kWh)             |
+| `pnpm run rent:backfill`             | Seed loyers 5 villes (Paris/Lyon/Marseille/Lille/Toulouse, 2018–2024, mode DRY_RUN dispo)    |
 | `pnpm run deploy:preflight`          | Vérifier les env vars critiques et la cohérence de config (sans révéler de secrets)          |
 | `pnpm run deploy:verify-production`  | Vérifier les artefacts production requis (`robots.txt`, `sitemap.ts`)                        |
 | `pnpm run deploy:verify-cron`        | Vérifier l’endpoint cron sécurisé (401 sans token, 200 avec token)                           |

@@ -3,6 +3,7 @@
  */
 
 import { ElectricityTariffSection } from '@/components/electricity/ElectricityTariffSection'
+import { RentSection } from '@/components/rent/RentSection'
 import { FCIDecompositionSection } from '@/components/fci/FCIDecompositionSection'
 import { FCIHero } from '@/components/fci/FCIHero'
 import { FoodInflationSection } from '@/components/food/FoodInflationSection'
@@ -34,6 +35,7 @@ const HOME_ANCHORS = [
   { href: '#alimentation', label: 'Alimentation' },
   { href: '#jeunesse', label: 'Jeunesse' },
   { href: '#electricite', label: 'Électricité' },
+  { href: '#loyers', label: 'Loyers' },
   { href: '#vote', label: 'Vote' },
   { href: '#newsletter', label: 'Newsletter' },
 ]
@@ -102,6 +104,11 @@ export default function HomePage() {
       <SectionDivider />
       <ScrollReveal>
         <ElectricityTariffSection />
+      </ScrollReveal>
+
+      <SectionDivider />
+      <ScrollReveal>
+        <RentSection />
       </ScrollReveal>
 
       <SectionDivider />
