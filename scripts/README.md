@@ -17,6 +17,7 @@ scripts/
 ├── insee-ipc-food-backfill/ # Ingestion IPC alimentaire INSEE (fetch/normalize/store)
 ├── eurostat-youth-unemployment-backfill/ # Ingestion chômage jeunes Eurostat (FR vs UE-27)
 ├── electricity-trve-backfill/ # Ingestion historique TRVE électricité (CRE/data.gouv)
+├── rent-backfill/           # Seed loyers 5 villes (Paris/Lyon/Marseille/Lille/Toulouse, CLAMEUR/OLAP)
 ├── deploy/                  # Vérifications production (preflight, cron endpoint, artefacts)
 ├── qa/                      # Automatisation QA Phase 7
 └── seo/                     # Audits Lighthouse + Core Web Vitals (proxy labo)
@@ -117,6 +118,17 @@ DRY_RUN=1 pnpm run electricity:trve:backfill
 ```
 
 Voir [electricity-trve-backfill/README.md](electricity-trve-backfill/README.md) pour le détail.
+
+### `rent:backfill` — Loyers 5 villes (P1)
+
+Seed statique idempotent des loyers moyens au m² pour Paris, Lyon, Marseille, Lille, Toulouse (2018–2024). Source : CLAMEUR annual reports + OLAP data.gouv.fr (Licence Ouverte).
+
+```bash
+pnpm run rent:backfill
+DRY_RUN=1 pnpm run rent:backfill
+```
+
+Voir [rent-backfill/README.md](rent-backfill/README.md) pour le détail.
 
 ### `deploy:*` — Vérifications production (Phase 6)
 
