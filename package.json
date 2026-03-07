@@ -15,6 +15,7 @@
     "validate": "pnpm run typecheck && pnpm run typecheck:scripts && pnpm run lint && pnpm run format:check",
     "db:push": "pnpm dlx supabase@latest db push",
     "db:push:local": "pnpm dlx supabase@latest db push --local",
+    "db:link": "pnpm dlx supabase@latest link",
     "db:push:local:all": "pnpm dlx supabase@latest db push --local --include-all",
     "db:start": "pnpm dlx supabase@latest start --ignore-health-check",
     "db:types": "pnpm dlx supabase@latest gen types typescript --local > apps/web/src/lib/supabase/database.types.ts.tmp && test -s apps/web/src/lib/supabase/database.types.ts.tmp && mv apps/web/src/lib/supabase/database.types.ts.tmp apps/web/src/lib/supabase/database.types.ts || (rm -f apps/web/src/lib/supabase/database.types.ts.tmp && echo 'db:types failed (local DB running?); database.types.ts unchanged' && exit 1)",
@@ -46,7 +47,6 @@
   "devDependencies": {
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.14",
-    "supabase": "^2.76.0",
     "typescript": "^5.5.4"
   },
   "engines": {

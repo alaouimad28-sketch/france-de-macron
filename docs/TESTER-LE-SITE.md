@@ -41,6 +41,8 @@ Ensuite, appliquer les migrations :
 pnpm run db:push
 ```
 
+> **Note :** Si tu n’as pas encore fait `supabase link`, cette commande échouera avec « Cannot find project ref ». Dans ce cas, soit tu fais `link` (ci-dessus), soit tu utilises Supabase en local avec **Option B** et `pnpm run db:push:local`.
+
 **Option B — Supabase en local (Docker)**  
 Si tu préfères tout en local :
 
