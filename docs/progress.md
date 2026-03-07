@@ -412,6 +412,7 @@
 
 - [ ] Module inflation alimentaire (INSEE IPC)
   - [x] P0 scaffold ingestion livré (doc source détaillée + script fetch/normalize/store + migration additive `ipc_food_monthly`)
+  - [x] Affichage en base 2015 (rebasing 2025→2015 via `lib/ipc.ts`) + courbe Recharts 24 mois (FoodInflationChart)
 - [ ] Module loyers
 - [ ] FCI v2 (multi-composantes + pondérations révisées)
 - [ ] Décomposition interactive du score FCI
@@ -436,6 +437,11 @@
 ## Notes de session
 
 > Utiliser cette section pour noter les décisions prises en cours de route, les bugs bloquants, et les déviations par rapport au plan.
+
+### Mars 2026 — Panier alimentaire : base 2015 + courbe
+
+- **Calcul et affichage en base 2015** : les données INSEE sont ingérées en base 2025 ; le front applique un rebasement (moyenne annuelle 2015 = 100, constante `IPC_BASE_2025_AVG_2015_ALIMENTATION` dans `apps/web/src/lib/ipc.ts`, dérivée de la table `ipc_food_monthly`) pour afficher l’indice et les KPIs en base 2015. La variation YoY est inchangée (ratio).
+- **Courbe 24 mois** : composant `FoodInflationChart` (Recharts), même style que le graphique carburants, une ligne IPC alimentaire sur les 24 derniers mois.
 
 ### Mars 2026 — QA guardrails datasets additionnels
 
@@ -536,7 +542,7 @@
 
 ### Mars 2026 — Autonomous Additions P0 (IPC alimentaire INSEE, ingestion live)
 
-- Script `scripts/insee-ipc-food-backfill/index.ts` rendu **opérationnel** : fetch réel API INSEE BDM, parser JSON robuste (TIME_PERIOD/OBS_VALUE + variantes), normalisation mensuelle, upsert idempotent vers `ipc_food_monthly`.
+- Script `scripts/insee-ipc-food-backfill/index.ts` rendu **opérationnel** : fetch réel API INSEE BDM (bdm.insee.fr), parser SDMX XML (obs TIME_PERIOD/OBS_VALUE + variantes), normalisation mensuelle, upsert idempotent vers `ipc_food_monthly`. (Depuis : série 011813717 base 2025, token optionnel — voir note de session « IPC alimentaire : série 011813717, bdm.insee.fr, doc alignée ».)
 - Ajout d’un mode `DRY_RUN=1` pour QA sans écriture base.
 - Échec explicite si payload INSEE ne retourne aucune observation exploitable (évite faux positifs silencieux).
 - Docs mises à jour (`scripts/insee-ipc-food-backfill/README.md`, `scripts/README.md`, `docs/INDEX.md`, `docs/data/sources.md`) pour refléter le passage scaffold → ingestion live.
@@ -614,6 +620,13 @@
 - Navigation d’ancre enrichie avec `#alimentation` pour accès direct au module.
 - `apps/web/src/lib/supabase/database.types.ts` mis à jour avec la table `ipc_food_monthly` pour requêtes typées côté web.
 
+### Mars 2026 — IPC alimentaire : série 011813717, bdm.insee.fr, doc alignée
+
+- **Source** : passage à l’API BDM sur **bdm.insee.fr** (URL dépréciée api.insee.fr). Réponse **SDMX XML** ; parser dédié dans le script (obs TIME_PERIOD / OBS_VALUE, périodes AAAA-MM et AAAA-Qn).
+- **Série** : idBank par défaut **011813717** (IPC **base 2025** – Alimentation, mensuel, données à jour). Ancienne série 001767226 remplacée.
+- **Auth** : `INSEE_API_TOKEN` rendu **optionnel** (accès public bdm.insee.fr sans clé).
+- **Doc** : `docs/data/sources.md`, `docs/data/pipeline.md`, `scripts/insee-ipc-food-backfill/README.md` alignés (URL, idBank, format, incertitudes). Note de session ajoutée ici.
+
 ### Mars 2026 — Autonomous Additions P0 (Eurostat chômage jeunes)
 
 - Migration additive `20240101000009_init_youth_unemployment_monthly.sql` ajoutée (`public.youth_unemployment_monthly`, RLS lecture publique, index, contrainte d’idempotence).
@@ -648,3 +661,10 @@
 - Nouveau module home `FCIDecompositionSection` : affichage contribution par composante (barres + formule `score × poids`) dans le hero FCI.
 - Traçabilité méthodologique robuste : fallback sécurisé `fci_method_version` → `methodology_version` → `components.fci_method_version` → `v1`.
 - Refacto partagé : helpers `apps/web/src/lib/fci-explainability.ts` utilisés à la fois par l’API et l’UI pour éviter les divergences de calcul.
+
+### Mars 2026 — Kickoff Phase 6/7 (lecture complète + état)
+
+- **Brief kickoff suivi** : lecture des 19 fichiers (README, INDEX, progress, vision, PRD, sources, pipeline, methodology, design-system, threat-model, types, database.types, server.ts, utils, layout, tailwind, migrations 0001/0004/0006) + deployment-runbook.
+- **Validation repo** : `pnpm run validate` exécuté — typecheck web + scripts et lint OK ; format corrigé sur `docs/INDEX.md` (Prettier). `deploy:preflight` échoue sans variables d'env (attendu : à lancer avec env prod au moment du déploiement).
+- **Prochaines actions Phase 6** : (1) Configurer projet Vercel (connect repo, env vars, cron) ; (2) Lier Supabase prod + `pnpm run db:push` ; (3) Backfill `pnpm run fuel:backfill` puis `pnpm run fci:backfill` ; (4) Vérifier cron avec `pnpm run deploy:verify-cron` (CRON_SECRET en prod). Suivre `docs/deployment-runbook.md` dans l'ordre.
+- **Phase 7** : après déploiement, exécuter `pnpm run qa:phase7` ; compléter les tests manuels (newsletter, vote, mobile réel, CSP, checklist threat-model).

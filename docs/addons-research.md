@@ -9,8 +9,8 @@
 
 - **Type** : Source de données macro (inflation alimentaire)
 - **Pourquoi c’est prioritaire** : ajoute immédiatement un axe “coût de la vie” lisible, complémentaire aux carburants.
-- **Source** : API INSEE BDM (`SERIES_BDM`) — ex. série IPC alimentaire
-- **Accès** : API key INSEE requise
+- **Source** : API INSEE BDM sur **bdm.insee.fr** (SDMX) — série **011813717** (IPC Alimentation base 2025, mensuel).
+- **Accès** : bdm.insee.fr sans clé ; token optionnel (portail-api.insee.fr). Réponse XML parsée par le script.
 - **Implémentation (notes)** :
   1. Ajouter table `food_inflation_monthly (month, value, yoy, source_meta)`.
   2. Créer script `scripts/insee-food-monthly/` (fetch + normalisation + upsert idempotent).

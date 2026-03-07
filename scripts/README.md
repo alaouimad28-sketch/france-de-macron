@@ -89,7 +89,7 @@ Voir [fci-backfill/README.md](fci-backfill/README.md) pour le détail.
 
 ### `insee:ipc:food:backfill` — Ingestion IPC alimentaire INSEE (P0)
 
-Ingestion mensuelle idempotente (fetch/normalize/store) pour l’IPC alimentaire INSEE.
+Ingestion mensuelle idempotente (fetch/normalize/store) pour l’IPC alimentaire. Source : bdm.insee.fr (SDMX XML), série **011813717** (base 2025) par défaut. Token optionnel.
 
 ```bash
 pnpm run insee:ipc:food:backfill

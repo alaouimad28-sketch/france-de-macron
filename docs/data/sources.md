@@ -170,15 +170,33 @@ Les sources ci-dessous sont ingérées et affichées sur le site (sections dédi
 | Champ         | Valeur                                                         |
 | ------------- | -------------------------------------------------------------- |
 | Source        | INSEE — Indices des Prix à la Consommation (IPC)               |
-| URL           | `https://api.insee.fr/series/BDM/V1/data/SERIES_BDM/001767226` |
-| Format        | JSON (API REST, série BDM)                                     |
+| URL           | `https://bdm.insee.fr/series/sdmx/data/SERIES_BDM/011813717` (voir ci‑dessous) |
+| Format        | SDMX (XML par défaut sur bdm.insee.fr) ; le script parse le XML (obs TIME_PERIOD / OBS_VALUE) |
 | Fréquence     | Mensuel                                                        |
 | Licence       | Licence Ouverte / Open Licence v2.0                            |
-| Disponibilité | Gratuit, clé API requise (inscription INSEE, token Bearer API) |
+| Disponibilité | Gratuit ; **pas de clé requise** pour le service SDMX sur bdm.insee.fr (accès public). Le portail permet un abonnement optionnel (quotas, autre URL). |
+
+#### 2.1.0 Où trouver l’API sur le portail (portail-api.insee.fr)
+
+Sur **[portail-api.insee.fr](https://portail-api.insee.fr/)** (catalogue des API Insee) :
+
+- **L’API à utiliser** : **« Séries chronologiques »** (nom affiché) / **« API BDM »** (nom technique).  
+  C’est celle qui donne accès aux *indices et séries chronologiques* (dont l’IPC alimentaire).
+
+- **Où est l’API (URL / doc) ?**
+  - Dans la fiche de l’API « Séries chronologiques », l’onglet **Documentation** (ou équivalent) décrit les endpoints et peut indiquer une **URL de base** ou un **environnement** (à utiliser éventuellement dans `INSEE_BDM_API_BASE_URL`).
+  - Documentation officielle du service SDMX (même service) : [Service web SDMX | Insee](https://www.insee.fr/fr/information/2862759) — exemples d’URL, paramètres (`detail`, `lastNObservations`, `startPeriod`), accès par **idBank** ou par **dataflow**.
+
+- **URL utilisée dans ce projet** (accès par idBank) :  
+  **Base** : `https://bdm.insee.fr/series/sdmx/data/SERIES_BDM`  
+  **Série IPC alimentaire (idBank)** : `011813717` (base 2025, Alimentation, mensuel)  
+  **URL complète** : `https://bdm.insee.fr/series/sdmx/data/SERIES_BDM/011813717`
+
+- **Abonnement / token** : depuis le portail, en s’abonnant à « Séries chronologiques », tu peux obtenir des identifiants (ex. token Bearer). Si le portail indique une **URL d’environnement** différente de `bdm.insee.fr`, la définir dans `INSEE_BDM_API_BASE_URL`. Limite indiquée sur data.gouv.fr : 30 appels / minute / IP.
 
 #### 2.1.1 Série et stockage (en place)
 
-- Série BDM : **`001767226`** (IPC alimentation, France entière).
+- Série BDM : **`011813717`** par défaut (IPC **base 2025** – *Alimentation*, FREQ=M, données à jour : LAST_UPDATE en fin de mois, ex. 2026-02). Ancienne série base 2015 : `001763856` (série arrêtée). Configurable via `INSEE_IPC_FOOD_SERIES_ID`. L’IPC est diffusé en **mensuel** uniquement (pas de quotidien ni hebdo). Voir `scripts/insee-ipc-food-backfill/README.md` § « Comment trouver / vérifier le bon idBank ». **Affichage** : les valeurs sont stockées en base 2025 ; le front applique un rebasement vers la base 2015 (moyenne de l’année 2015 = 100) via `apps/web/src/lib/ipc.ts`, en utilisant la moyenne des 12 mois de 2015 dans `ipc_food_monthly` comme coefficient.
 - Table : `public.ipc_food_monthly` (migration `20240101000008`).
 - Clé d'idempotence : `(month, source_series_id)`.
 - Granularité : **mensuelle**, sans désaisonnalisation (valeurs brutes publiées).
@@ -186,7 +204,7 @@ Les sources ci-dessous sont ingérées et affichées sur le site (sections dédi
 #### 2.1.2 Ingestion
 
 1. **Fetch** (script `scripts/insee-ipc-food-backfill/index.ts`)
-   - Appel de l'endpoint BDM avec `Authorization: Bearer $INSEE_API_TOKEN`.
+   - Appel de l'endpoint BDM (bdm.insee.fr). `INSEE_API_TOKEN` optionnel (service SDMX public).
    - Variables prévues : `INSEE_BDM_API_BASE_URL`, `INSEE_IPC_FOOD_SERIES_ID`.
 2. **Normalize**
    - Mapper les observations vers `{ month, index_value }`.
@@ -197,8 +215,11 @@ Les sources ci-dessous sont ingérées et affichées sur le site (sections dédi
 
 #### 2.1.3 Incertitudes ouvertes
 
-- Confirmer la stratégie de rotation du token INSEE pour exécution cron.
-- Vérifier si une série plus spécifique « alimentation hors tabac » doit remplacer `001767226`.
+- **Documentation officielle** : *Accès aux indices et séries chronologiques via un service web respectant la norme SDMX*, guide d’utilisation v2.2 (Juin 2020). Décrit les deux canaux (accès direct **bdm.insee.fr** sans inscription ; accès via **api.insee.fr** avec inscription), la forme des requêtes (`/data/SERIES_BDM/idbanks?startPeriod=…&lastNObservations=…`), les formats TIME_PERIOD (AAAA, AAAA-Qn, AAAA-nn…), OBS_VALUE (point décimal, `NaN` si manquant), et l’en-tête Accept (`application/vnd.sdmx.structurespecificdata+xml;version=2.1`). Voir aussi [Service web SDMX | Insee](https://www.insee.fr/fr/information/2862759).
+- **URL** : l’ancienne base `api.insee.fr` est dépréciée ; le projet utilise `bdm.insee.fr/series/sdmx/data/SERIES_BDM`. S’inscrire / gérer les accès sur [portail-api.insee.fr](https://portail-api.insee.fr/).
+- Confirmer la stratégie de rotation du token INSEE pour exécution cron (optionnel : accès public sans token).
+- Série par défaut : **011813717** (IPC base 2025 – Alimentation). Autres idBank (ex. base 2015, séries arrêtées) documentés dans `scripts/insee-ipc-food-backfill/README.md`.
+- Le script gère la réponse SDMX XML de bdm.insee.fr (parser dédié ; pas de JSON attendu en production).
 
 ### 2.2 Chômage jeunes — Eurostat
 
