@@ -185,18 +185,18 @@ Le projet contient `.cursor/mcp.json` : Cursor utilise ce serveur automatiquemen
 
 ### Tables principales
 
-| Table                | Description                                      |
-| -------------------- | ------------------------------------------------ |
-| `data_sources`              | Inventaire des sources de données (URL, licence) |
-| `fuel_daily_agg`            | Agrégats quotidiens carburants (national)        |
-| `events`                    | Annotations d'événements sur les graphiques      |
-| `newsletter_signups`        | Emails collectés (NSM)                           |
-| `votes`                     | Votes cooked/uncooked par section                |
-| `fci_daily`                 | Score French Cooked Index™ quotidien             |
-| `ipc_food_monthly`          | Indice des prix alimentaires mensuel (INSEE)     |
-| `youth_unemployment_monthly`| Chômage jeunes 15–24 mensuel (Eurostat)          |
-| `electricity_tariff_history`| Historique TRVE électricité (CRE / data.gouv)   |
-| `rent_monthly`              | Loyers moyens au m² par ville (CLAMEUR / OLAP)  |
+| Table                        | Description                                      |
+| ---------------------------- | ------------------------------------------------ |
+| `data_sources`               | Inventaire des sources de données (URL, licence) |
+| `fuel_daily_agg`             | Agrégats quotidiens carburants (national)        |
+| `events`                     | Annotations d'événements sur les graphiques      |
+| `newsletter_signups`         | Emails collectés (NSM)                           |
+| `votes`                      | Votes cooked/uncooked par section                |
+| `fci_daily`                  | Score French Cooked Index™ quotidien             |
+| `ipc_food_monthly`           | Indice des prix alimentaires mensuel (INSEE)     |
+| `youth_unemployment_monthly` | Chômage jeunes 15–24 mensuel (Eurostat)          |
+| `electricity_tariff_history` | Historique TRVE électricité (CRE / data.gouv)    |
+| `rent_monthly`               | Loyers moyens au m² par ville (CLAMEUR / OLAP)   |
 
 Voir [docs/data/pipeline.md](docs/data/pipeline.md) pour le détail du schéma et les règles RLS.
 

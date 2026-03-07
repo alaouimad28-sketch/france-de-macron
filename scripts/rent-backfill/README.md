@@ -10,13 +10,13 @@ Seed script for the `rent_monthly` table — average rent per m² for 5 French c
 
 ## Cities
 
-| City      | Code       |
-| --------- | ---------- |
-| Paris     | paris      |
-| Lyon      | lyon       |
-| Marseille | marseille  |
-| Lille     | lille      |
-| Toulouse  | toulouse   |
+| City      | Code      |
+| --------- | --------- |
+| Paris     | paris     |
+| Lyon      | lyon      |
+| Marseille | marseille |
+| Lille     | lille     |
+| Toulouse  | toulouse  |
 
 ## Data
 

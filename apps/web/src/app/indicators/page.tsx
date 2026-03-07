@@ -16,39 +16,39 @@ export default async function IndicatorsPage() {
 
   const [fciResult, fuelResult, foodResult, youthResult, electricityResult, rentResult] =
     await Promise.all([
-    supabase.from('fci_daily').select('day, score').order('day', { ascending: false }).limit(1),
-    supabase
-      .from('fuel_daily_agg')
-      .select('day, avg_price_eur_per_l')
-      .eq('fuel_code', 'gazole')
-      .order('day', { ascending: false })
-      .limit(1),
-    supabase
-      .from('ipc_food_monthly')
-      .select('month, index_value')
-      .order('month', { ascending: false })
-      .limit(1),
-    supabase
-      .from('youth_unemployment_monthly')
-      .select('month, unemployment_rate')
-      .eq('geo', 'FR')
-      .order('month', { ascending: false })
-      .limit(1),
-    supabase
-      .from('electricity_tariff_history')
-      .select('effective_date, value_ct_kwh')
-      .eq('option_code', 'BASE')
-      .eq('subscribed_power_kva', 6)
-      .eq('tariff_component', 'BASE')
-      .order('effective_date', { ascending: false })
-      .limit(1),
-    supabase
-      .from('rent_monthly')
-      .select('month, city, city_label, avg_rent_m2')
-      .eq('city', 'paris')
-      .order('month', { ascending: false })
-      .limit(1),
-  ])
+      supabase.from('fci_daily').select('day, score').order('day', { ascending: false }).limit(1),
+      supabase
+        .from('fuel_daily_agg')
+        .select('day, avg_price_eur_per_l')
+        .eq('fuel_code', 'gazole')
+        .order('day', { ascending: false })
+        .limit(1),
+      supabase
+        .from('ipc_food_monthly')
+        .select('month, index_value')
+        .order('month', { ascending: false })
+        .limit(1),
+      supabase
+        .from('youth_unemployment_monthly')
+        .select('month, unemployment_rate')
+        .eq('geo', 'FR')
+        .order('month', { ascending: false })
+        .limit(1),
+      supabase
+        .from('electricity_tariff_history')
+        .select('effective_date, value_ct_kwh')
+        .eq('option_code', 'BASE')
+        .eq('subscribed_power_kva', 6)
+        .eq('tariff_component', 'BASE')
+        .order('effective_date', { ascending: false })
+        .limit(1),
+      supabase
+        .from('rent_monthly')
+        .select('month, city, city_label, avg_rent_m2')
+        .eq('city', 'paris')
+        .order('month', { ascending: false })
+        .limit(1),
+    ])
 
   const fci = (fciResult.data?.[0] as { day: string; score: number } | undefined) ?? null
   const fuel =

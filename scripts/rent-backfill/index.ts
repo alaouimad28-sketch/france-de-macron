@@ -32,8 +32,7 @@ for (const p of envPaths) {
 }
 
 const DRY_RUN = process.env['DRY_RUN'] === '1'
-const SOURCE_URL =
-  'https://www.data.gouv.fr/fr/datasets/resultats-des-observatoires-des-loyers/'
+const SOURCE_URL = 'https://www.data.gouv.fr/fr/datasets/resultats-des-observatoires-des-loyers/'
 const SOURCE_LABEL = 'CLAMEUR / OLAP data.gouv.fr'
 
 // ---------------------------------------------------------------------------

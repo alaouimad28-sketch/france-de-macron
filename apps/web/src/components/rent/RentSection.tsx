@@ -42,10 +42,7 @@ export async function RentSection() {
         className="scroll-mt-24 px-4 py-12 md:py-16"
       >
         <div className="border-surface-200 mx-auto max-w-4xl rounded-xl border bg-white p-6 text-center shadow-sm">
-          <h2
-            id="loyers-heading"
-            className="font-display text-surface-900 mb-2 text-2xl font-bold"
-          >
+          <h2 id="loyers-heading" className="font-display text-surface-900 mb-2 text-2xl font-bold">
             Loyers — 5 villes
           </h2>
           <p className="text-surface-600 text-sm">
@@ -115,8 +112,8 @@ export async function RentSection() {
             Loyers — 5 grandes villes
           </h2>
           <p className="text-surface-600 mt-1 text-sm">
-            Loyer moyen au m² (secteur privé, hors charges). Source : CLAMEUR / OLAP
-            data.gouv.fr.{referenceMonth ? ` Données : ${formatMonth(referenceMonth)}.` : ''}
+            Loyer moyen au m² (secteur privé, hors charges). Source : CLAMEUR / OLAP data.gouv.fr.
+            {referenceMonth ? ` Données : ${formatMonth(referenceMonth)}.` : ''}
           </p>
         </div>
 
