@@ -2,6 +2,7 @@
 /// <reference path="../fuel-backfill-annee/dotenv.d.ts" />
 
 import * as path from 'path'
+import * as sax from 'sax'
 import { config } from 'dotenv'
 import { createClient } from '@supabase/supabase-js'
 
@@ -16,9 +17,11 @@ for (const p of envPaths) {
   if (process.env['SUPABASE_SERVICE_ROLE_KEY']) break
 }
 
-const DEFAULT_SERIES_ID = process.env['INSEE_IPC_FOOD_SERIES_ID'] ?? '001767226'
+// IPC alimentaire (base 2025, France, mensuel) — données à jour (LAST_UPDATE 2026-02-27, obs. jusqu'à 2026-02). Ancienne base 2015 : 001763856.
+const DEFAULT_SERIES_ID = process.env['INSEE_IPC_FOOD_SERIES_ID'] ?? '011813717'
+// INSEE BDM SDMX: api.insee.fr deprecated → use bdm.insee.fr (see https://portail-api.insee.fr/ and https://www.insee.fr/en/information/2868055)
 const DEFAULT_BASE_URL =
-  process.env['INSEE_BDM_API_BASE_URL'] ?? 'https://api.insee.fr/series/BDM/V1/data/SERIES_BDM'
+  process.env['INSEE_BDM_API_BASE_URL'] ?? 'https://bdm.insee.fr/series/sdmx/data/SERIES_BDM'
 const DEFAULT_TIMEOUT_MS = Number(process.env['INSEE_API_TIMEOUT_MS'] ?? '30000')
 const DRY_RUN = process.env['DRY_RUN'] === '1'
 
@@ -81,7 +84,61 @@ function coercePeriodToMonth(periodRaw: string): string | null {
     return `${m3[1]}-${m3[2]}-01`
   }
 
+  const yyyy = /^(\d{4})$/
+  const m4 = period.match(yyyy)
+  if (m4) {
+    return `${m4[1]}-01-01`
+  }
+
+  // Trimestriel : AAAA-Qn (guide SDMX v2.2 — Juin 2020)
+  const yyyyQ = /^(\d{4})-Q([1-4])$/i
+  const m5 = period.match(yyyyQ)
+  if (m5) {
+    const month = String((Number(m5[2]) - 1) * 3 + 1).padStart(2, '0')
+    return `${m5[1]}-${month}-01`
+  }
+
   return null
+}
+
+/**
+ * Parse SDMX XML response from bdm.insee.fr (StructureSpecificData with Obs elements).
+ */
+function parseSdmxXml(xml: string): Promise<InseeRawObservation[]> {
+  const observations: InseeRawObservation[] = []
+  const parser = sax.createStream(true, { trim: true })
+
+  parser.on('opentag', (node: { name?: string; local?: string; attributes?: Record<string, unknown> }) => {
+    const tagName = (node.name ?? node.local ?? '').toLowerCase()
+    if (tagName !== 'obs') return
+    const attrs = (node.attributes ?? {}) as Record<string, string | undefined>
+    const timePeriod = attrs['TIME_PERIOD'] ?? attrs['time_period']
+    const obsValue = attrs['OBS_VALUE'] ?? attrs['obs_value']
+    if (typeof timePeriod !== 'string' || obsValue === undefined) return
+    if (obsValue === 'NaN' || (typeof obsValue === 'string' && obsValue.trim().toUpperCase() === 'NAN')) return
+    const value = typeof obsValue === 'string' ? Number(obsValue.replace(',', '.')) : Number(obsValue)
+    if (!Number.isFinite(value)) return
+    const month = coercePeriodToMonth(timePeriod)
+    if (!month) return
+    observations.push({
+      period: month,
+      value,
+      rawPayload: { TIME_PERIOD: timePeriod, OBS_VALUE: value },
+    })
+  })
+
+  return new Promise<InseeRawObservation[]>((resolve, reject) => {
+    parser.on('end', () => {
+      const dedup = new Map<string, InseeRawObservation>()
+      for (const obs of observations) {
+        dedup.set(obs.period, obs)
+      }
+      resolve([...dedup.values()].sort((a, b) => a.period.localeCompare(b.period)))
+    })
+    parser.on('error', reject)
+    parser.write(xml)
+    parser.end()
+  })
 }
 
 function parseObservationCandidate(
@@ -162,18 +219,19 @@ function extractObservationsFromJson(payload: JsonValue): InseeRawObservation[] 
 
 async function fetchInseeIpcFoodSeries(seriesId: string): Promise<InseeRawObservation[]> {
   const token = process.env['INSEE_API_TOKEN']
+  const lastN = process.env['INSEE_LAST_N_OBSERVATIONS']
+  const query = lastN ? `?lastNObservations=${encodeURIComponent(lastN)}` : ''
+  const url = `${DEFAULT_BASE_URL}/${encodeURIComponent(seriesId)}${query}`
 
-  if (!token) {
-    throw new Error('[insee-ipc-food] Missing INSEE_API_TOKEN (Bearer token required).')
+  const headers: Record<string, string> = {
+    Accept: 'application/vnd.sdmx.structurespecificdata+xml;version=2.1, application/xml',
+  }
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`
   }
 
-  const url = `${DEFAULT_BASE_URL}/${encodeURIComponent(seriesId)}`
-
   const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/json',
-    },
+    headers,
     signal: AbortSignal.timeout(DEFAULT_TIMEOUT_MS),
   })
 
@@ -184,8 +242,21 @@ async function fetchInseeIpcFoodSeries(seriesId: string): Promise<InseeRawObserv
     )
   }
 
-  const payload = (await response.json()) as JsonValue
-  const observations = extractObservationsFromJson(payload)
+  const contentType = response.headers.get('content-type') ?? ''
+  let observations: InseeRawObservation[]
+
+  if (contentType.includes('application/json')) {
+    const payload = (await response.json()) as JsonValue
+    observations = extractObservationsFromJson(payload)
+  } else if (contentType.includes('application/xml') || contentType.includes('text/xml')) {
+    const text = await response.text()
+    observations = await parseSdmxXml(text)
+  } else {
+    const text = await response.text()
+    throw new Error(
+      `[insee-ipc-food] Unexpected content-type "${contentType}". Body start: ${text.slice(0, 200)}`,
+    )
+  }
 
   if (observations.length === 0) {
     throw new Error(

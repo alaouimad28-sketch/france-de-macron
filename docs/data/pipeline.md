@@ -180,7 +180,7 @@ Voir [scripts/fuel-backfill-annee/README.md](../../scripts/fuel-backfill-annee/R
 **Déclenchement** : manuel
 **Fichier** : `scripts/insee-ipc-food-backfill/index.ts`
 
-Fetch API INSEE BDM (série IPC alimentation), normalise en mensuel, upsert dans `ipc_food_monthly`. Idempotent. Nécessite `INSEE_API_TOKEN` (ou variable configurée). Commande : `pnpm run insee:ipc:food:backfill`. Mode `DRY_RUN=1` pour tester sans écriture.
+Fetch API INSEE BDM (série IPC alimentation, idBank 011813717 base 2025 par défaut), parse SDMX XML, normalise en mensuel, upsert dans `ipc_food_monthly`. Idempotent. `INSEE_API_TOKEN` optionnel (accès public bdm.insee.fr). Commande : `pnpm run insee:ipc:food:backfill`. Mode `DRY_RUN=1` pour tester sans écriture.
 
 Voir [scripts/insee-ipc-food-backfill/README.md](../../scripts/insee-ipc-food-backfill/README.md) et [sources.md](sources.md) § 2.1.
 

@@ -145,3 +145,16 @@ export interface YouthUnemploymentMonthly {
   unemployment_rate: number
   unit: string
 }
+
+// =============================================================================
+// IPC alimentaire
+// =============================================================================
+
+/** Filtre de période pour le graphique IPC alimentaire */
+export type IpcFoodPeriodFilter = '24m' | '5ans' | '10ans' | 'max'
+
+/** Point pour le graphique IPC alimentaire (Recharts), valeurs en base 2015 */
+export interface IpcFoodChartPoint {
+  month: string
+  index_value: number
+}

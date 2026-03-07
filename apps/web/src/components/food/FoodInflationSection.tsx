@@ -1,4 +1,7 @@
+import { ipcToBase2015 } from '@/lib/ipc'
 import { createReadClient } from '@/lib/supabase/server'
+import type { IpcFoodChartPoint } from '@/types'
+import { FoodInflationChart } from './FoodInflationChart'
 
 interface IpcFoodRow {
   month: string
@@ -72,6 +75,15 @@ export async function FoodInflationSection() {
     firstRow,
   )
 
+  // Rebasement base 2025 → base 2015 pour affichage et courbe
+  const latestBase2015 = ipcToBase2015(latest.index_value)
+  const minBase2015 = ipcToBase2015(minRow.index_value)
+  const maxBase2015 = ipcToBase2015(maxRow.index_value)
+  const chartData: IpcFoodChartPoint[] = rows.map((row) => ({
+    month: row.month,
+    index_value: ipcToBase2015(row.index_value),
+  }))
+
   return (
     <section
       id="alimentation"
@@ -89,14 +101,16 @@ export async function FoodInflationSection() {
           >
             Panier alimentaire
           </h2>
-          <p className="text-surface-600 mt-1 text-sm">Source : INSEE IPC alimentaire (mensuel).</p>
+          <p className="text-surface-600 mt-1 text-sm">
+            Source : INSEE IPC alimentaire (mensuel). Indice affiché en base 2015 (100 = année 2015).
+          </p>
         </div>
 
         <div className="grid gap-3 md:grid-cols-3">
           <article className="border-surface-200 rounded-xl border bg-white p-4 shadow-sm">
             <p className="text-surface-600 text-xs uppercase tracking-wide">Dernier indice</p>
             <p className="text-surface-900 mt-1 font-mono text-2xl font-semibold">
-              {latest.index_value.toFixed(1)}
+              {latestBase2015.toFixed(1)}
             </p>
             <p className="text-surface-600 mt-1 text-xs">{formatMonth(latest.month)}</p>
           </article>
@@ -118,12 +132,19 @@ export async function FoodInflationSection() {
           <article className="border-surface-200 rounded-xl border bg-white p-4 shadow-sm">
             <p className="text-surface-600 text-xs uppercase tracking-wide">Fenêtre 24 mois</p>
             <p className="text-surface-900 mt-1 text-sm">
-              Min {minRow.index_value.toFixed(1)} ({formatMonth(minRow.month)})
+              Min {minBase2015.toFixed(1)} ({formatMonth(minRow.month)})
             </p>
             <p className="text-surface-900 mt-1 text-sm">
-              Max {maxRow.index_value.toFixed(1)} ({formatMonth(maxRow.month)})
+              Max {maxBase2015.toFixed(1)} ({formatMonth(maxRow.month)})
             </p>
           </article>
+        </div>
+
+        <div className="border-surface-200 mt-6 rounded-xl border bg-white p-4 shadow-sm">
+          <h3 className="text-surface-700 mb-3 font-mono text-xs font-semibold uppercase tracking-wider">
+            Évolution sur 24 mois
+          </h3>
+          <FoodInflationChart data={chartData} />
         </div>
       </div>
     </section>

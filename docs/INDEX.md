@@ -119,6 +119,7 @@ docs/
 | `apps/web/src/app/api/newsletter/route.ts`                         | POST newsletter (honeypot, email, dedup)                                                 |
 | `apps/web/src/app/api/youth-unemployment/route.ts`                 | GET chômage jeunes (FR/UE-27, limit borné)                                               |
 | `apps/web/src/app/api/fci/decomposition/route.ts`                  | GET décomposition FCI (latest + `day` optionnel)                                         |
+| `apps/web/src/app/api/ipc-food/route.ts`                            | GET IPC alimentaire par période (`?period=24m|5ans|10ans|max`), base 2015                 |
 | `apps/web/src/components/fci/FCIGauge.tsx`                         | Jauge arc 180° (SVG + HTML), bleu/rouge, « depuis hier »                                 |
 | `apps/web/src/components/fci/FCIHero.tsx`                          | Server Component hero — fetch fci_daily                                                  |
 | `apps/web/src/components/fci/FCIDecompositionSection.tsx`          | Section explainability : contributions par composante + version méthodo                  |
@@ -126,7 +127,9 @@ docs/
 | `apps/web/src/components/fuel/FuelChart.tsx`                       | Recharts LineChart 3 carburants, spikes, events                                          |
 | `apps/web/src/components/fuel/PeriodChip.tsx`                      | Sélecteur de période (7j/30j/…)                                                          |
 | `apps/web/src/components/fuel/FuelSection.tsx`                     | Server Component carburants — fetch + pivot                                              |
-| `apps/web/src/components/food/FoodInflationSection.tsx`            | Server Component IPC alimentaire — fetch `ipc_food_monthly` + KPI YoY                    |
+| `apps/web/src/components/food/FoodInflationSection.tsx`            | Server Component IPC alimentaire — fetch `ipc_food_monthly`, KPI base 2015 + courbe 24 mois |
+| `apps/web/src/components/food/FoodInflationChart.tsx`              | Client Component Recharts — courbe IPC (base 2015), filtres 24m / 5ans / 10ans / Max       |
+| `apps/web/src/lib/ipc.ts`                                         | Rebasement IPC base 2025 → base 2015 (constante + `ipcToBase2015`)                          |
 | `apps/web/src/components/youth/YouthUnemploymentSection.tsx`       | Server Component chômage jeunes — FR vs UE-27 + variation 3 mois                         |
 | `apps/web/src/components/electricity/ElectricityTariffSection.tsx` | Server Component TRVE électricité — timeline changements + annotations events            |
 | `apps/web/src/components/vote/CookedVote.tsx`                      | Votes cooked/uncooked, fingerprint, localStorage                                         |
@@ -153,8 +156,8 @@ docs/
 | `scripts/qa/check-security-headers.ts`                             | Vérification headers de sécurité sur app démarrée localement                             |
 | `scripts/qa/check-meta-descriptions.ts`                            | Vérification SEO: meta descriptions présentes et <= 155 caractères                       |
 | `scripts/qa/check-fci-intuition.ts`                                | Validation intuition FCI (benchmarks synthétiques + fenêtres 2020/2022)                  |
-| `scripts/qa/check-electricity-unit.ts`                             | Vérification cohérence unité TRVE (ct€/kWh)                                               |
-| `scripts/qa/check-autonomous-datasets.ts`                          | Validation datasets autonomous (IPC alimentaire + chômage jeunes) en live                 |
+| `scripts/qa/check-electricity-unit.ts`                             | Vérification cohérence unité TRVE (ct€/kWh)                                              |
+| `scripts/qa/check-autonomous-datasets.ts`                          | Validation datasets autonomous (IPC alimentaire + chômage jeunes) en live                |
 | `scripts/seo/run-lighthouse-audit.ts`                              | Audit Lighthouse reproductible (JSON/HTML) + report CWV avec seuils PASS/FAIL            |
 | `supabase/migrations/*.sql`                                        | Schéma DB et RLS                                                                         |
 
@@ -162,39 +165,38 @@ docs/
 
 ## Commandes utiles
 
-| Commande                             | Description                                                                                  |
-| ------------------------------------ | -------------------------------------------------------------------------------------------- |
-| `pnpm install`                       | Installer les dépendances                                                                    |
-| `pnpm dev`                           | Lancer le serveur de dev (Next.js)                                                           |
-| `pnpm build`                         | Build production                                                                             |
-| `pnpm lint`                          | Linter (ESLint)                                                                              |
-| `pnpm run db:start`                  | Démarrer Supabase local (ignore health checks)                                               |
-| `pnpm run db:push:local`             | Appliquer les migrations sur la base **locale** (après db:start)                             |
-| `pnpm run db:push`                   | Appliquer les migrations sur le projet **lié** (nécessite supabase link)                     |
-| `pnpm run db:types`                  | Régénérer les types TypeScript depuis le schéma                                              |
-| `pnpm run fuel:backfill`             | Backfill carburants J-30 (one-shot)                                                          |
-| `pnpm run fuel:backfill:annees`      | Backfill par archives annuelles (2007 → aujourd’hui)                                         |
-| `pnpm run fuel:backfill:last`        | Rafraîchir uniquement hier (et optionnellement aujourd’hui avec `BACKFILL_INCLUDE_TODAY=1`)  |
-| `pnpm run fuel:daily`                | Job quotidien J-1 (ou replay avec `FUEL_DATE=YYYYMMDD`, cron `/api/cron/fuel-daily`)         |
-| `pnpm run fci:backfill`              | Backfill FCI : calcul du score pour tous les jours depuis 2019 (série temporelle)            |
-| `pnpm run insee:ipc:food:backfill`   | Ingestion INSEE IPC alimentaire (fetch/normalize/store idempotent, mode DRY_RUN)             |
-| `pnpm run eurostat:youth:backfill`   | Ingestion chômage jeunes Eurostat (FR + UE-27)                                               |
-| `pnpm run electricity:trve:backfill` | Ingestion historique TRVE électricité (Option Base + HPHC, normalisé en ct€/kWh)             |
-| `pnpm run deploy:preflight`          | Vérifier les env vars critiques et la cohérence de config (sans révéler de secrets)          |
-| `pnpm run deploy:verify-production`  | Vérifier les artefacts production requis (`robots.txt`, `sitemap.ts`)                        |
-| `pnpm run deploy:verify-cron`        | Vérifier l’endpoint cron sécurisé (401 sans token, 200 avec token)                           |
-| `pnpm run deploy:verify`             | Enchaîner preflight + artefacts + vérification endpoint cron                                 |
-| `pnpm run qa:reduced-motion`         | Vérifier la couverture reduced motion                                                        |
-| `pnpm run qa:smoke`                  | Smoke checks routes/pages + APIs (home/about/methodology/votes/newsletter validation)        |
-| `pnpm run qa:security-headers`       | Vérifier les headers de sécurité en local sur l’app buildée                                  |
-| `pnpm run qa:meta-descriptions`      | Vérifier les meta descriptions SEO (présence + longueur <= 155)                              |
-| `pnpm run qa:lighthouse-cwv`         | Exécuter l’audit Lighthouse + vérification CWV (proxy labo) avec sortie artefacts            |
-| `pnpm run seo:lighthouse`            | Alias explicite pour l’audit Lighthouse/CWV reproductible                                    |
-| `pnpm run qa:fci-intuition`          | Valider l’intuition FCI (scénarios synthétiques, et live 2020/2022 si env Supabase présents) |
-| `pnpm run qa:electricity-unit`       | Vérifier la cohérence unité TRVE (`€/kWh × 100 = ct€/kWh`, checks synthétiques + live)       |
-| `pnpm run qa:autonomous-datasets`    | Vérifier les datasets autonomous (IPC alimentaire + chômage jeunes) en live si env Supabase  |
+| Commande                             | Description                                                                                                                                                    |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm install`                       | Installer les dépendances                                                                                                                                      |
+| `pnpm dev`                           | Lancer le serveur de dev (Next.js)                                                                                                                             |
+| `pnpm build`                         | Build production                                                                                                                                               |
+| `pnpm lint`                          | Linter (ESLint)                                                                                                                                                |
+| `pnpm run db:start`                  | Démarrer Supabase local (ignore health checks)                                                                                                                 |
+| `pnpm run db:push:local`             | Appliquer les migrations sur la base **locale** (après db:start)                                                                                               |
+| `pnpm run db:push`                   | Appliquer les migrations sur le projet **lié** (nécessite supabase link)                                                                                       |
+| `pnpm run db:types`                  | Régénérer les types TypeScript depuis le schéma                                                                                                                |
+| `pnpm run fuel:backfill`             | Backfill carburants J-30 (one-shot)                                                                                                                            |
+| `pnpm run fuel:backfill:annees`      | Backfill par archives annuelles (2007 → aujourd’hui)                                                                                                           |
+| `pnpm run fuel:backfill:last`        | Rafraîchir uniquement hier (et optionnellement aujourd’hui avec `BACKFILL_INCLUDE_TODAY=1`)                                                                    |
+| `pnpm run fuel:daily`                | Job quotidien J-1 (ou replay avec `FUEL_DATE=YYYYMMDD`, cron `/api/cron/fuel-daily`)                                                                           |
+| `pnpm run fci:backfill`              | Backfill FCI : calcul du score pour tous les jours depuis 2019 (série temporelle)                                                                              |
+| `pnpm run insee:ipc:food:backfill`   | Ingestion INSEE IPC alimentaire (fetch/normalize/store idempotent, mode DRY_RUN)                                                                               |
+| `pnpm run eurostat:youth:backfill`   | Ingestion chômage jeunes Eurostat (FR + UE-27)                                                                                                                 |
+| `pnpm run electricity:trve:backfill` | Ingestion historique TRVE électricité (Option Base + HPHC, normalisé en ct€/kWh)                                                                               |
+| `pnpm run deploy:preflight`          | Vérifier les env vars critiques et la cohérence de config (sans révéler de secrets)                                                                            |
+| `pnpm run deploy:verify-production`  | Vérifier les artefacts production requis (`robots.txt`, `sitemap.ts`)                                                                                          |
+| `pnpm run deploy:verify-cron`        | Vérifier l’endpoint cron sécurisé (401 sans token, 200 avec token)                                                                                             |
+| `pnpm run deploy:verify`             | Enchaîner preflight + artefacts + vérification endpoint cron                                                                                                   |
+| `pnpm run qa:reduced-motion`         | Vérifier la couverture reduced motion                                                                                                                          |
+| `pnpm run qa:smoke`                  | Smoke checks routes/pages + APIs (home/about/methodology/votes/newsletter validation)                                                                          |
+| `pnpm run qa:security-headers`       | Vérifier les headers de sécurité en local sur l’app buildée                                                                                                    |
+| `pnpm run qa:meta-descriptions`      | Vérifier les meta descriptions SEO (présence + longueur <= 155)                                                                                                |
+| `pnpm run qa:lighthouse-cwv`         | Exécuter l’audit Lighthouse + vérification CWV (proxy labo) avec sortie artefacts                                                                              |
+| `pnpm run seo:lighthouse`            | Alias explicite pour l’audit Lighthouse/CWV reproductible                                                                                                      |
+| `pnpm run qa:fci-intuition`          | Valider l’intuition FCI (scénarios synthétiques, et live 2020/2022 si env Supabase présents)                                                                   |
+| `pnpm run qa:electricity-unit`       | Vérifier la cohérence unité TRVE (`€/kWh × 100 = ct€/kWh`, checks synthétiques + live)                                                                         |
+| `pnpm run qa:autonomous-datasets`    | Vérifier les datasets autonomous (IPC alimentaire + chômage jeunes) en live si env Supabase                                                                    |
 | `pnpm run qa:phase7`                 | Exécuter toute l'automatisation QA Phase 7 (reduced-motion, smoke, security-headers, meta-descriptions, electricity-unit, autonomous-datasets, Lighthouse/CWV) |
-| `pnpm run validate`                  | Vérifier avant commit (typecheck web + scripts, lint, format)                                |
-
+| `pnpm run validate`                  | Vérifier avant commit (typecheck web + scripts, lint, format)                                                                                                  |
 
 **Supabase local** : après `pnpm run db:start`, Studio = http://127.0.0.1:54323, API = http://127.0.0.1:54321, **MCP** = http://127.0.0.1:54321/mcp (pour Cursor / requêtes IA sur la base). Voir [README](../README.md#référence-supabase-local-après-supabase-start) et [TESTER-LE-SITE.md](TESTER-LE-SITE.md).

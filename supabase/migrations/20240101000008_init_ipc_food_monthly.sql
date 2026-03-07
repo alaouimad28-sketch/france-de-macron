@@ -54,7 +54,7 @@ insert into public.data_sources (key, name, url, license, update_frequency)
 values (
   'ipc-alimentaire-insee',
   'Indice des prix à la consommation - alimentation (INSEE BDM)',
-  'https://api.insee.fr/series/BDM/V1/data/SERIES_BDM/001767226',
+  'https://bdm.insee.fr/series/sdmx/data/SERIES_BDM/011813717',
   'Licence Ouverte / Open Licence v2.0',
   'mensuel'
 )
