@@ -102,7 +102,8 @@ export async function FoodInflationSection() {
             Panier alimentaire
           </h2>
           <p className="text-surface-600 mt-1 text-sm">
-            Source : INSEE IPC alimentaire (mensuel). Indice affiché en base 2015 (100 = année 2015).
+            Source : INSEE IPC alimentaire (mensuel). Indice affiché en base 2015 (100 = année
+            2015).
           </p>
         </div>
 

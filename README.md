@@ -185,14 +185,18 @@ Le projet contient `.cursor/mcp.json` : Cursor utilise ce serveur automatiquemen
 
 ### Tables principales
 
-| Table                | Description                                      |
-| -------------------- | ------------------------------------------------ |
-| `data_sources`       | Inventaire des sources de données (URL, licence) |
-| `fuel_daily_agg`     | Agrégats quotidiens carburants (national)        |
-| `events`             | Annotations d'événements sur les graphiques      |
-| `newsletter_signups` | Emails collectés (NSM)                           |
-| `votes`              | Votes cooked/uncooked par section                |
-| `fci_daily`          | Score French Cooked Index™ quotidien             |
+| Table                        | Description                                      |
+| ---------------------------- | ------------------------------------------------ |
+| `data_sources`               | Inventaire des sources de données (URL, licence) |
+| `fuel_daily_agg`             | Agrégats quotidiens carburants (national)        |
+| `events`                     | Annotations d'événements sur les graphiques      |
+| `newsletter_signups`         | Emails collectés (NSM)                           |
+| `votes`                      | Votes cooked/uncooked par section                |
+| `fci_daily`                  | Score French Cooked Index™ quotidien             |
+| `ipc_food_monthly`           | Indice des prix alimentaires mensuel (INSEE)     |
+| `youth_unemployment_monthly` | Chômage jeunes 15–24 mensuel (Eurostat)          |
+| `electricity_tariff_history` | Historique TRVE électricité (CRE / data.gouv)    |
+| `rent_monthly`               | Loyers moyens au m² par ville (CLAMEUR / OLAP)   |
 
 Voir [docs/data/pipeline.md](docs/data/pipeline.md) pour le détail du schéma et les règles RLS.
 
@@ -236,11 +240,13 @@ scripts/
 ├── fuel-daily/          # Job quotidien J-1 (ou FUEL_DATE=YYYYMMDD pour replay)
 ├── fci-backfill/            # Backfill FCI : score pour tous les jours depuis 2019 (série temporelle)
 ├── insee-ipc-food-backfill/ # Ingestion P0 IPC alimentaire INSEE (fetch/normalize/store)
+├── electricity-trve-backfill/ # Ingestion P1 TRVE électricité (CRE/data.gouv)
+├── rent-backfill/           # Seed P1 loyers 5 villes (CLAMEUR/OLAP, 2018–2024)
 ├── deploy/                  # Vérifications prod (preflight, artefacts, cron endpoint)
 └── qa/                      # Automatisation QA
 ```
 
-Voir [scripts/README.md](scripts/README.md). Commandes : `pnpm run fuel:backfill` (J-30), `pnpm run fuel:backfill:last` (dernier jour), `pnpm run fuel:backfill:annees` (archives), `pnpm run fuel:daily` (quotidien ou replay), `pnpm run fci:backfill` (historique FCI depuis 2019), `pnpm run insee:ipc:food:backfill` (ingestion IPC alimentaire), `pnpm run eurostat:youth:backfill` (chômage jeunes FR + UE-27), `pnpm run electricity:trve:backfill` (historique TRVE électricité), `pnpm run deploy:verify` (préflight + artefacts + cron).
+Voir [scripts/README.md](scripts/README.md). Commandes : `pnpm run fuel:backfill` (J-30), `pnpm run fuel:backfill:last` (dernier jour), `pnpm run fuel:backfill:annees` (archives), `pnpm run fuel:daily` (quotidien ou replay), `pnpm run fci:backfill` (historique FCI depuis 2019), `pnpm run insee:ipc:food:backfill` (ingestion IPC alimentaire), `pnpm run eurostat:youth:backfill` (chômage jeunes FR + UE-27), `pnpm run electricity:trve:backfill` (historique TRVE électricité), `pnpm run rent:backfill` (loyers 5 villes), `pnpm run deploy:verify` (préflight + artefacts + cron).
 
 ---
 

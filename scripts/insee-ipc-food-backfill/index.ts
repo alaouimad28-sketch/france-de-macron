@@ -108,24 +108,32 @@ function parseSdmxXml(xml: string): Promise<InseeRawObservation[]> {
   const observations: InseeRawObservation[] = []
   const parser = sax.createStream(true, { trim: true })
 
-  parser.on('opentag', (node: { name?: string; local?: string; attributes?: Record<string, unknown> }) => {
-    const tagName = (node.name ?? node.local ?? '').toLowerCase()
-    if (tagName !== 'obs') return
-    const attrs = (node.attributes ?? {}) as Record<string, string | undefined>
-    const timePeriod = attrs['TIME_PERIOD'] ?? attrs['time_period']
-    const obsValue = attrs['OBS_VALUE'] ?? attrs['obs_value']
-    if (typeof timePeriod !== 'string' || obsValue === undefined) return
-    if (obsValue === 'NaN' || (typeof obsValue === 'string' && obsValue.trim().toUpperCase() === 'NAN')) return
-    const value = typeof obsValue === 'string' ? Number(obsValue.replace(',', '.')) : Number(obsValue)
-    if (!Number.isFinite(value)) return
-    const month = coercePeriodToMonth(timePeriod)
-    if (!month) return
-    observations.push({
-      period: month,
-      value,
-      rawPayload: { TIME_PERIOD: timePeriod, OBS_VALUE: value },
-    })
-  })
+  parser.on(
+    'opentag',
+    (node: { name?: string; local?: string; attributes?: Record<string, unknown> }) => {
+      const tagName = (node.name ?? node.local ?? '').toLowerCase()
+      if (tagName !== 'obs') return
+      const attrs = (node.attributes ?? {}) as Record<string, string | undefined>
+      const timePeriod = attrs['TIME_PERIOD'] ?? attrs['time_period']
+      const obsValue = attrs['OBS_VALUE'] ?? attrs['obs_value']
+      if (typeof timePeriod !== 'string' || obsValue === undefined) return
+      if (
+        obsValue === 'NaN' ||
+        (typeof obsValue === 'string' && obsValue.trim().toUpperCase() === 'NAN')
+      )
+        return
+      const value =
+        typeof obsValue === 'string' ? Number(obsValue.replace(',', '.')) : Number(obsValue)
+      if (!Number.isFinite(value)) return
+      const month = coercePeriodToMonth(timePeriod)
+      if (!month) return
+      observations.push({
+        period: month,
+        value,
+        rawPayload: { TIME_PERIOD: timePeriod, OBS_VALUE: value },
+      })
+    },
+  )
 
   return new Promise<InseeRawObservation[]>((resolve, reject) => {
     parser.on('end', () => {

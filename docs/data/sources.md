@@ -8,7 +8,7 @@
 | **IPC alimentaire** (INSEE BDM)          | Implémenté    | `ipc_food_monthly`            | `pnpm run insee:ipc:food:backfill`   |
 | **Chômage jeunes** (Eurostat)            | Implémenté    | `youth_unemployment_monthly`  | `pnpm run eurostat:youth:backfill`   |
 | **TRVE électricité** (CRE / data.gouv)   | Implémenté    | `electricity_tariff_history`  | `pnpm run electricity:trve:backfill` |
-| **Loyers** (CLAMEUR / OLL)               | Roadmap       | —                             | À venir                              |
+| **Loyers** (CLAMEUR / OLAP data.gouv)    | Implémenté    | `rent_monthly`                | `pnpm run rent:backfill`             |
 | **Eurostat multi-pays** (v2 comparaison) | Roadmap       | —                             | À venir                              |
 
 Le **score FCI** (0–100) est calculé uniquement à partir des **carburants** (v1). Les autres sources alimentent des modules affichés à part sur le site. Voir [methodology.md](methodology.md) et [pipeline.md](pipeline.md).
@@ -87,11 +87,11 @@ On ne conserve pas les ZIP/XML : on télécharge, on parse, on agrège par (jour
 
 ### 1.2.2 Où sont stockées les données ?
 
-| Lieu                      | Rôle                                                                                                                                                                                                                                                                                      |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Source (gouvernement)** | [donnees.roulez-eco.fr](https://donnees.roulez-eco.fr) — serveurs du ministère. Données brutes (ZIP/XML). On ne stocke pas ces fichiers nous-mêmes.                                                                                                                                       |
-| **Notre base (Supabase)** | PostgreSQL (Supabase). Tables : `fuel_daily_agg`, `fci_daily` (carburants + FCI) ; `ipc_food_monthly` (IPC alimentaire) ; `youth_unemployment_monthly` (chômage jeunes) ; `electricity_tariff_history` (TRVE). On ne garde que les agrégats / séries normalisées, pas les fichiers bruts. |
-| **Front**                 | Next.js lit uniquement dans Supabase (SSR). Le client ne contacte jamais roulez-eco.fr.                                                                                                                                                                                                   |
+| Lieu                      | Rôle                                                                                                                                                                                                                                                                                                                         |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Source (gouvernement)** | [donnees.roulez-eco.fr](https://donnees.roulez-eco.fr) — serveurs du ministère. Données brutes (ZIP/XML). On ne stocke pas ces fichiers nous-mêmes.                                                                                                                                                                          |
+| **Notre base (Supabase)** | PostgreSQL (Supabase). Tables : `fuel_daily_agg`, `fci_daily` (carburants + FCI) ; `ipc_food_monthly` (IPC alimentaire) ; `youth_unemployment_monthly` (chômage jeunes) ; `electricity_tariff_history` (TRVE) ; `rent_monthly` (loyers 5 villes). On ne garde que les agrégats / séries normalisées, pas les fichiers bruts. |
+| **Front**                 | Next.js lit uniquement dans Supabase (SSR). Le client ne contacte jamais roulez-eco.fr.                                                                                                                                                                                                                                      |
 
 En résumé : la **source de vérité** est roulez-eco.fr ; notre **stockage** est Supabase (agrégats uniquement).
 
@@ -167,13 +167,13 @@ Les sources ci-dessous sont ingérées et affichées sur le site (sections dédi
 
 ### 2.1 Inflation alimentaire — INSEE
 
-| Champ         | Valeur                                                         |
-| ------------- | -------------------------------------------------------------- |
-| Source        | INSEE — Indices des Prix à la Consommation (IPC)               |
-| URL           | `https://bdm.insee.fr/series/sdmx/data/SERIES_BDM/011813717` (voir ci‑dessous) |
-| Format        | SDMX (XML par défaut sur bdm.insee.fr) ; le script parse le XML (obs TIME_PERIOD / OBS_VALUE) |
-| Fréquence     | Mensuel                                                        |
-| Licence       | Licence Ouverte / Open Licence v2.0                            |
+| Champ         | Valeur                                                                                                                                                |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Source        | INSEE — Indices des Prix à la Consommation (IPC)                                                                                                      |
+| URL           | `https://bdm.insee.fr/series/sdmx/data/SERIES_BDM/011813717` (voir ci‑dessous)                                                                        |
+| Format        | SDMX (XML par défaut sur bdm.insee.fr) ; le script parse le XML (obs TIME_PERIOD / OBS_VALUE)                                                         |
+| Fréquence     | Mensuel                                                                                                                                               |
+| Licence       | Licence Ouverte / Open Licence v2.0                                                                                                                   |
 | Disponibilité | Gratuit ; **pas de clé requise** pour le service SDMX sur bdm.insee.fr (accès public). Le portail permet un abonnement optionnel (quotas, autre URL). |
 
 #### 2.1.0 Où trouver l’API sur le portail (portail-api.insee.fr)
@@ -181,7 +181,7 @@ Les sources ci-dessous sont ingérées et affichées sur le site (sections dédi
 Sur **[portail-api.insee.fr](https://portail-api.insee.fr/)** (catalogue des API Insee) :
 
 - **L’API à utiliser** : **« Séries chronologiques »** (nom affiché) / **« API BDM »** (nom technique).  
-  C’est celle qui donne accès aux *indices et séries chronologiques* (dont l’IPC alimentaire).
+  C’est celle qui donne accès aux _indices et séries chronologiques_ (dont l’IPC alimentaire).
 
 - **Où est l’API (URL / doc) ?**
   - Dans la fiche de l’API « Séries chronologiques », l’onglet **Documentation** (ou équivalent) décrit les endpoints et peut indiquer une **URL de base** ou un **environnement** (à utiliser éventuellement dans `INSEE_BDM_API_BASE_URL`).
@@ -196,7 +196,7 @@ Sur **[portail-api.insee.fr](https://portail-api.insee.fr/)** (catalogue des API
 
 #### 2.1.1 Série et stockage (en place)
 
-- Série BDM : **`011813717`** par défaut (IPC **base 2025** – *Alimentation*, FREQ=M, données à jour : LAST_UPDATE en fin de mois, ex. 2026-02). Ancienne série base 2015 : `001763856` (série arrêtée). Configurable via `INSEE_IPC_FOOD_SERIES_ID`. L’IPC est diffusé en **mensuel** uniquement (pas de quotidien ni hebdo). Voir `scripts/insee-ipc-food-backfill/README.md` § « Comment trouver / vérifier le bon idBank ». **Affichage** : les valeurs sont stockées en base 2025 ; le front applique un rebasement vers la base 2015 (moyenne de l’année 2015 = 100) via `apps/web/src/lib/ipc.ts`, en utilisant la moyenne des 12 mois de 2015 dans `ipc_food_monthly` comme coefficient.
+- Série BDM : **`011813717`** par défaut (IPC **base 2025** – _Alimentation_, FREQ=M, données à jour : LAST_UPDATE en fin de mois, ex. 2026-02). Ancienne série base 2015 : `001763856` (série arrêtée). Configurable via `INSEE_IPC_FOOD_SERIES_ID`. L’IPC est diffusé en **mensuel** uniquement (pas de quotidien ni hebdo). Voir `scripts/insee-ipc-food-backfill/README.md` § « Comment trouver / vérifier le bon idBank ». **Affichage** : les valeurs sont stockées en base 2025 ; le front applique un rebasement vers la base 2015 (moyenne de l’année 2015 = 100) via `apps/web/src/lib/ipc.ts`, en utilisant la moyenne des 12 mois de 2015 dans `ipc_food_monthly` comme coefficient.
 - Table : `public.ipc_food_monthly` (migration `20240101000008`).
 - Clé d'idempotence : `(month, source_series_id)`.
 - Granularité : **mensuelle**, sans désaisonnalisation (valeurs brutes publiées).
@@ -215,7 +215,7 @@ Sur **[portail-api.insee.fr](https://portail-api.insee.fr/)** (catalogue des API
 
 #### 2.1.3 Incertitudes ouvertes
 
-- **Documentation officielle** : *Accès aux indices et séries chronologiques via un service web respectant la norme SDMX*, guide d’utilisation v2.2 (Juin 2020). Décrit les deux canaux (accès direct **bdm.insee.fr** sans inscription ; accès via **api.insee.fr** avec inscription), la forme des requêtes (`/data/SERIES_BDM/idbanks?startPeriod=…&lastNObservations=…`), les formats TIME_PERIOD (AAAA, AAAA-Qn, AAAA-nn…), OBS_VALUE (point décimal, `NaN` si manquant), et l’en-tête Accept (`application/vnd.sdmx.structurespecificdata+xml;version=2.1`). Voir aussi [Service web SDMX | Insee](https://www.insee.fr/fr/information/2862759).
+- **Documentation officielle** : _Accès aux indices et séries chronologiques via un service web respectant la norme SDMX_, guide d’utilisation v2.2 (Juin 2020). Décrit les deux canaux (accès direct **bdm.insee.fr** sans inscription ; accès via **api.insee.fr** avec inscription), la forme des requêtes (`/data/SERIES_BDM/idbanks?startPeriod=…&lastNObservations=…`), les formats TIME_PERIOD (AAAA, AAAA-Qn, AAAA-nn…), OBS_VALUE (point décimal, `NaN` si manquant), et l’en-tête Accept (`application/vnd.sdmx.structurespecificdata+xml;version=2.1`). Voir aussi [Service web SDMX | Insee](https://www.insee.fr/fr/information/2862759).
 - **URL** : l’ancienne base `api.insee.fr` est dépréciée ; le projet utilise `bdm.insee.fr/series/sdmx/data/SERIES_BDM`. S’inscrire / gérer les accès sur [portail-api.insee.fr](https://portail-api.insee.fr/).
 - Confirmer la stratégie de rotation du token INSEE pour exécution cron (optionnel : accès public sans token).
 - Série par défaut : **011813717** (IPC base 2025 – Alimentation). Autres idBank (ex. base 2015, séries arrêtées) documentés dans `scripts/insee-ipc-food-backfill/README.md`.
@@ -272,16 +272,35 @@ Sur **[portail-api.insee.fr](https://portail-api.insee.fr/)** (catalogue des API
 - Versionnement méthodologique : `method_version` (défaut `trve_v1`)
 - Timeline événements : annotations éditoriales stockées dans `public.events` avec `scope='electricity'` (migration `20260304184600_add_electricity_scope_events.sql`), affichées dans le module UI électricité.
 
+### 2.4 Loyers — CLAMEUR / OLAP data.gouv.fr
+
+| Champ     | Valeur                                                                         |
+| --------- | ------------------------------------------------------------------------------ |
+| Source    | CLAMEUR (rapports annuels) + Observatoire des Loyers (OLAP) via data.gouv.fr   |
+| URL       | `https://www.data.gouv.fr/fr/datasets/resultats-des-observatoires-des-loyers/` |
+| Format    | Données statiques seed (moyennes annuelles CLAMEUR publiées dans les rapports) |
+| Fréquence | Annuel — snapshot mis à jour à la publication du rapport suivant               |
+| Licence   | Licence Ouverte / Open License (data.gouv.fr)                                  |
+
+#### 2.4.1 Pipeline ingestion (implémenté)
+
+- Migration additive : `supabase/migrations/20260306000011_init_rent_monthly.sql`
+- Script seed statique : `scripts/rent-backfill/index.ts`
+- Commande : `pnpm run rent:backfill` (safe à rejouer, `DRY_RUN=1` supporté)
+- Périmètre : Paris, Lyon, Marseille, Lille, Toulouse (loyer moyen au m², secteur privé, hors charges)
+- Période : 2018–2024, moyennes annuelles normalisées en entrées mensuelles (snapshot annuel)
+- Idempotence : upsert clé `(month, city)`
+
+#### 2.4.2 Limites et évolutions
+
+- Les valeurs sont des moyennes annuelles issues de rapports CLAMEUR / OLAP — **données indicatives**, non temps réel.
+- Pour une précision infra-annuelle ou un périmètre plus large, envisager l'intégration directe de l'API OLAP data.gouv.fr en v2.
+
 ---
 
 ## 3. Sources futures (roadmap)
 
-### 3.1 Loyers — CLAMEUR / OLAP
-
-- Disponibilité partielle (certaines villes uniquement)
-- À évaluer pour FCI v2 / module loyers
-
-### 3.2 Données Eurostat multi-pays (v2 comparaison)
+### 3.1 Données Eurostat multi-pays (v2 comparaison)
 
 | Dataset         | Description                                                   |
 | --------------- | ------------------------------------------------------------- |
@@ -297,6 +316,7 @@ Sur **[portail-api.insee.fr](https://portail-api.insee.fr/)** (catalogue des API
 - **Carburants, IPC INSEE** : Licence Ouverte / Open Licence v2.0 (équivalent CC-BY).
 - **Eurostat** : politique de réutilisation Eurostat (source à citer).
 - **TRVE (data.gouv)** : licence du jeu à confirmer (dataset parfois « notspecified »).
+- **Loyers (CLAMEUR / OLAP)** : Licence Ouverte / Open License (data.gouv.fr) ; les valeurs CLAMEUR citées viennent des rapports annuels publics.
 - Citation de la source obligatoire dans l'interface (footer + page Méthodologie).
 - Pas de redistribution des données brutes (on redistribue les agrégats)
 - Les archives annuelles ne sont téléchargées qu'une fois (pas de scraping intensif)

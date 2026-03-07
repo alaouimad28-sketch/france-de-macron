@@ -29,7 +29,7 @@ DRY_RUN=0 # mettre 1 pour tester sans écrire en base
 
 ## Notes
 
-- **Référence** : guide officiel *Accès aux indices et séries chronologiques via un service web respectant la norme SDMX*, v2.2 (Juin 2020) — deux canaux (bdm.insee.fr direct sans clé ; api.insee.fr avec inscription), paramètres `startPeriod`, `endPeriod`, `lastNObservations`, `firstNObservations`, format StructureSpecificData (Accept: `application/vnd.sdmx.structurespecificdata+xml;version=2.1`). Voir [insee.fr 2862759](https://www.insee.fr/fr/information/2862759).
+- **Référence** : guide officiel _Accès aux indices et séries chronologiques via un service web respectant la norme SDMX_, v2.2 (Juin 2020) — deux canaux (bdm.insee.fr direct sans clé ; api.insee.fr avec inscription), paramètres `startPeriod`, `endPeriod`, `lastNObservations`, `firstNObservations`, format StructureSpecificData (Accept: `application/vnd.sdmx.structurespecificdata+xml;version=2.1`). Voir [insee.fr 2862759](https://www.insee.fr/fr/information/2862759).
 - **URL** : l’API BDM utilise `bdm.insee.fr/series/sdmx/data/SERIES_BDM`. Variable optionnelle `INSEE_LAST_N_OBSERVATIONS` pour limiter la réponse (ex. `24` = 24 dernières observations).
 - Le parser est volontairement robuste au shape JSON (traversée récursive + clés supportées). Si bdm.insee.fr renvoie du XML (SDMX), le script devra être adapté.
 - En cas de payload non reconnu (0 observation), le script échoue explicitement pour éviter un faux positif silencieux.
@@ -84,10 +84,10 @@ Ou mettre `INSEE_IPC_FOOD_SERIES_ID=001763856` dans `apps/web/.env.local` (sans 
 
 ### idBank retenu pour ce projet
 
-| idBank     | Description (confirmé via API BDM) |
-| ---------- | ----------------------------------- |
+| idBank          | Description (confirmé via API BDM)                                                                                                                                                                                                                                                            |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **`011813717`** | **Indice des prix à la consommation - Base 2025 - Ensemble des ménages - France - Alimentation** (FREQ=M). Série active, mise à jour régulière (LAST_UPDATE typiquement en fin de mois, ex. 2026-02-27). Données jusqu’au mois courant ou J-1 (ex. 2026-02). **Valeur par défaut du script.** |
-| `001763856` | IPC base 2015 – Alimentation y compris restaurants, cantines, cafés (série arrêtée, dernier millésime ~ 2025-12). |
-| `011813759` | IPC base 2025 – Alimentation **hors produits frais** uniquement (si tu veux exclure le frais). |
+| `001763856`     | IPC base 2015 – Alimentation y compris restaurants, cantines, cafés (série arrêtée, dernier millésime ~ 2025-12).                                                                                                                                                                             |
+| `011813759`     | IPC base 2025 – Alimentation **hors produits frais** uniquement (si tu veux exclure le frais).                                                                                                                                                                                                |
 
 L’IPC n’existe qu’en **mensuel** (pas de série quotidienne ou hebdo côté Insee pour l’alimentation).

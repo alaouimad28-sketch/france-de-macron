@@ -371,7 +371,7 @@
 - [x] **Ajouter composante tarifs électricité (TRVE CRE/data.gouv)**
   - **Acceptance criteria** : historique tarifaire ingéré et versionné, événements de changement tarifaire visibles sur timeline, tests de cohérence unité (ct€/kWh).
   - Livré : intégration timeline événements dans le module `ElectricityTariffSection` (TRVE Base 6 kVA) + migration d’extension `events.scope='electricity'` avec seeds ; check QA `pnpm run qa:electricity-unit` (cohérence `value_eur_kwh × 100 = value_ct_kwh` + bornes sanity).
-- [ ] **Piloter module loyers sur 5 villes**
+- [x] **Piloter module loyers sur 5 villes**
   - **Acceptance criteria** : dataset normalisé pour Paris/Lyon/Marseille/Lille/Toulouse, pipeline documenté (source/licence), composant UI comparatif livré.
 
 ### P2 — Exploration encadrée (différenciation)
@@ -646,6 +646,14 @@
 - Intégration des événements dédiés : migration `20260304184600_add_electricity_scope_events.sql` (scope `electricity` + seeds de changements tarifaires majeurs).
 - QA dédiée ajoutée : `scripts/qa/check-electricity-unit.ts`, commande `pnpm run qa:electricity-unit`, et inclusion dans `qa:phase7`.
 - Hub `/indicators` enrichi avec carte “Électricité TRVE” (ancre `/#electricite`).
+
+### Mars 2026 — P1 Module loyers (5 villes)
+
+- Migration additive `20260306000011_init_rent_monthly.sql` ajoutée (`public.rent_monthly`, RLS lecture publique, contrainte d'idempotence `(month, city)`).
+- Nouveau job statique `scripts/rent-backfill/` + commande `pnpm run rent:backfill` (seed annuel 2018–2024 pour Paris, Lyon, Marseille, Lille, Toulouse, données CLAMEUR/OLAP data.gouv.fr, `DRY_RUN=1`).
+- Nouveau composant home `RentSection` : cartes comparatives par ville avec loyer moyen au m², barre proportionnelle, variation YoY. Anchor `#loyers`.
+- Hub `/indicators` enrichi avec carte "Loyers — 5 villes".
+- `database.types.ts` mis à jour avec la table `rent_monthly`.
 
 ### Mars 2026 — Autonomous Additions P0 (FCI Explainability)
 

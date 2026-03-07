@@ -14,34 +14,41 @@ interface IndicatorCard {
 export default async function IndicatorsPage() {
   const supabase = await createReadClient()
 
-  const [fciResult, fuelResult, foodResult, youthResult, electricityResult] = await Promise.all([
-    supabase.from('fci_daily').select('day, score').order('day', { ascending: false }).limit(1),
-    supabase
-      .from('fuel_daily_agg')
-      .select('day, avg_price_eur_per_l')
-      .eq('fuel_code', 'gazole')
-      .order('day', { ascending: false })
-      .limit(1),
-    supabase
-      .from('ipc_food_monthly')
-      .select('month, index_value')
-      .order('month', { ascending: false })
-      .limit(1),
-    supabase
-      .from('youth_unemployment_monthly')
-      .select('month, unemployment_rate')
-      .eq('geo', 'FR')
-      .order('month', { ascending: false })
-      .limit(1),
-    supabase
-      .from('electricity_tariff_history')
-      .select('effective_date, value_ct_kwh')
-      .eq('option_code', 'BASE')
-      .eq('subscribed_power_kva', 6)
-      .eq('tariff_component', 'BASE')
-      .order('effective_date', { ascending: false })
-      .limit(1),
-  ])
+  const [fciResult, fuelResult, foodResult, youthResult, electricityResult, rentResult] =
+    await Promise.all([
+      supabase.from('fci_daily').select('day, score').order('day', { ascending: false }).limit(1),
+      supabase
+        .from('fuel_daily_agg')
+        .select('day, avg_price_eur_per_l')
+        .eq('fuel_code', 'gazole')
+        .order('day', { ascending: false })
+        .limit(1),
+      supabase
+        .from('ipc_food_monthly')
+        .select('month, index_value')
+        .order('month', { ascending: false })
+        .limit(1),
+      supabase
+        .from('youth_unemployment_monthly')
+        .select('month, unemployment_rate')
+        .eq('geo', 'FR')
+        .order('month', { ascending: false })
+        .limit(1),
+      supabase
+        .from('electricity_tariff_history')
+        .select('effective_date, value_ct_kwh')
+        .eq('option_code', 'BASE')
+        .eq('subscribed_power_kva', 6)
+        .eq('tariff_component', 'BASE')
+        .order('effective_date', { ascending: false })
+        .limit(1),
+      supabase
+        .from('rent_monthly')
+        .select('month, city, city_label, avg_rent_m2')
+        .eq('city', 'paris')
+        .order('month', { ascending: false })
+        .limit(1),
+    ])
 
   const fci = (fciResult.data?.[0] as { day: string; score: number } | undefined) ?? null
   const fuel =
@@ -52,6 +59,10 @@ export default async function IndicatorsPage() {
   const electricity =
     (electricityResult.data?.[0] as { effective_date: string; value_ct_kwh: number } | undefined) ??
     null
+  const rent =
+    (rentResult.data?.[0] as
+      | { month: string; city: string; city_label: string; avg_rent_m2: number }
+      | undefined) ?? null
 
   const cards: IndicatorCard[] = [
     {
@@ -96,6 +107,16 @@ export default async function IndicatorsPage() {
         : 'Historique non disponible',
       href: '/#electricite',
     },
+    {
+      id: 'rent',
+      title: 'Loyers — 5 villes',
+      summary: 'Loyer moyen au m² pour Paris, Lyon, Marseille, Lille, Toulouse.',
+      value: rent
+        ? `Paris ${rent.avg_rent_m2.toFixed(2).replace('.', ',')} €/m²`
+        : 'Donnée indisponible',
+      details: rent ? `Données : ${rent.month}` : 'Historique non disponible',
+      href: '/#loyers',
+    },
   ]
 
   return (
@@ -110,8 +131,8 @@ export default async function IndicatorsPage() {
           </h1>
           <p className="text-surface-600 mt-3 max-w-2xl text-sm md:text-base">
             Cette page regroupe les modules live du projet : FCI, carburants, IPC alimentaire,
-            chômage jeunes et électricité TRVE. Chaque carte te renvoie vers la section détaillée de
-            la home.
+            chômage jeunes, électricité TRVE et loyers. Chaque carte te renvoie vers la section
+            détaillée de la home.
           </p>
         </header>
 
