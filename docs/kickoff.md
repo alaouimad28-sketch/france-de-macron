@@ -103,7 +103,7 @@ Le serveur apparaît dans Cursor sous un nom du type `project-0-france-de-macron
 
 ### Priorités actuelles (Phase 6 / 7 / addons)
 
-Les Phases 1 à 5 sont livrées (pipeline, composants UI, home, APIs, SEO). **Objectif courant** : Phase 6 (déploiement Vercel + Supabase prod, backfill, cron), Phase 7 (QA complète, smoke, sécurité, soft launch). Optionnel : P1 loyers (5 villes), P2 exploration (pression orientation, FCI v2).
+Les Phases 1 à 5 sont livrées (pipeline, composants UI, home, APIs, SEO). **P1 loyers (5 villes) livré** (rent_monthly, RentSection, rent:backfill). **Objectif courant** : Phase 6 (déploiement Vercel + Supabase prod, backfill, cron), Phase 7 (QA complète, smoke, sécurité, soft launch). P2 exploration : pression orientation, FCI v2.
 
 1. **Lire en priorité** : `docs/progress.md` (sections PHASE 6 et PHASE 7), `docs/deployment-runbook.md`, `docs/product/PRD.md` § 6 et `docs/design/design-system.md`.
 2. **Ordre de réalisation** : Suivre progress.md — Phase 6 (config Vercel, env, db:push prod, backfill, verify cron) puis Phase 7 (tests manuels, checklist sécurité, lancement).

@@ -56,7 +56,7 @@
 | Indicateur                     | Source         | Fréquence   |
 | ------------------------------ | -------------- | ----------- |
 | Inflation alimentaire          | INSEE (IPC)    | Mensuel     |
-| Loyers (Paris + autres villes) | CLAMEUR / OLAP | Trimestriel |
+| Loyers (Paris + autres villes) | CLAMEUR / OLAP | Trimestriel — **P1 pilote 5 villes livré** (Paris/Lyon/Marseille/Lille/Toulouse, `rent:backfill`, #loyers) |
 | Salaires réels (vs inflation)  | DARES          | Trimestriel |
 | Chômage jeunes (15-24 ans)     | Eurostat       | Trimestriel |
 | Précarité étudiante            | CREDOC / OVE   | Annuel      |

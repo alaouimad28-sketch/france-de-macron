@@ -62,7 +62,7 @@ Elle montre "à quel point on est cooked" via le **French Cooked Index™ (FCI)*
 - Auth utilisateur
 - Mode sombre
 
-_Note : Des indicateurs additionnels (inflation alimentaire IPC, chômage jeunes Eurostat, tarifs électricité TRVE, décomposition FCI) ont été livrés en post-MVP via le pipeline « Autonomous Additions » (voir docs/progress.md et docs/addons-research.md)._
+_Note : Des indicateurs additionnels (inflation alimentaire IPC, chômage jeunes Eurostat, tarifs électricité TRVE, loyers 5 villes P1, décomposition FCI) ont été livrés en post-MVP via le pipeline « Autonomous Additions » (voir docs/progress.md et docs/addons-research.md)._
 
 ---
 

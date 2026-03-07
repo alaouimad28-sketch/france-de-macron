@@ -35,7 +35,7 @@
 | [docs/data/pipeline.md](data/pipeline.md)                                                                           | Architecture du pipeline, jobs fuel-backfill / fuel-daily, calcul FCI, idempotence |
 | [docs/data/methodology.md](data/methodology.md)                                                                     | Méthodologie French Cooked Index™ (FCI) — formule v1, labels, limites              |
 | [docs/data/sources.md](data/sources.md)                                                                             | Sources de données (carburants roulez-eco.fr, structure XML, contraintes)          |
-| [scripts/README.md](../scripts/README.md)                                                                           | Scripts d’ingestion — fuel-backfill-j30, fuel-backfill-last, fuel-daily            |
+| [scripts/README.md](../scripts/README.md)                                                                           | Scripts d’ingestion — fuel, fci, insee, eurostat, electricity, rent-backfill, deploy, qa, seo            |
 | [scripts/shared/README.md](../scripts/shared/README.md)                                                             | Module partagé (download, parse, upsert) pour jobs quotidiens                      |
 | [scripts/fuel-daily/README.md](../scripts/fuel-daily/README.md)                                                     | Détail du job quotidien fuel-daily                                                 |
 | [scripts/fuel-backfill-j30/README.md](../scripts/fuel-backfill-j30/README.md)                                       | Détail du backfill J-30                                                            |
@@ -43,6 +43,8 @@
 | [scripts/fci-backfill/README.md](../scripts/fci-backfill/README.md)                                                 | Backfill FCI : calcul du score pour tous les jours depuis 2019 (série temporelle)  |
 | [scripts/insee-ipc-food-backfill/README.md](../scripts/insee-ipc-food-backfill/README.md)                           | Ingestion IPC alimentaire INSEE (P0)                                               |
 | [scripts/eurostat-youth-unemployment-backfill/README.md](../scripts/eurostat-youth-unemployment-backfill/README.md) | Ingestion chômage jeunes Eurostat (FR vs UE-27)                                    |
+| [scripts/electricity-trve-backfill/README.md](../scripts/electricity-trve-backfill/README.md)                     | Ingestion TRVE électricité (Option Base + HPHC, ct€/kWh)                           |
+| [scripts/rent-backfill/README.md](../scripts/rent-backfill/README.md)                                               | Seed loyers 5 villes (Paris/Lyon/Marseille/Lille/Toulouse, CLAMEUR/OLAP, DRY_RUN) |
 | [scripts/deploy/README.md](../scripts/deploy/README.md)                                                             | Préflight production, vérification artefacts et endpoint cron sécurisé             |
 | [scripts/qa/README.md](../scripts/qa/README.md)                                                                     | Automatisation QA Phase 7 (smoke, reduced motion, headers sécurité)                |
 | [scripts/seo/README.md](../scripts/seo/README.md)                                                                   | Audit Lighthouse reproductible + Core Web Vitals (proxy labo) avec artefacts       |

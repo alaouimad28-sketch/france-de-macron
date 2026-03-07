@@ -88,11 +88,12 @@ Quand le serveur est prêt, ouvre dans le navigateur :
 
 ## 4. Vérifications optionnelles
 
-| Commande             | Rôle                                      |
-| -------------------- | ----------------------------------------- |
-| `pnpm run lint`      | Vérifier le code (ESLint)                 |
-| `pnpm run typecheck` | Vérifier les types TypeScript             |
-| `pnpm run build`     | Build de production (détecte les erreurs) |
+| Commande                 | Rôle                                                                 |
+| ------------------------ | -------------------------------------------------------------------- |
+| `pnpm run lint`          | Vérifier le code (ESLint)                                            |
+| `pnpm run typecheck`     | Vérifier les types TypeScript                                        |
+| `pnpm run build`         | Build de production (détecte les erreurs)                            |
+| `pnpm run rent:backfill` | Seed loyers 5 villes (section #loyers sur la home ; optionnel, `DRY_RUN=1` pour test) |
 
 ---
 

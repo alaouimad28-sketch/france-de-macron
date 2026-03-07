@@ -13,8 +13,9 @@ Plusieurs pipelines alimentent la base. Le **cron quotidien** ne concerne que le
 | **IPC alimentaire**                | API INSEE BDM                      | `ipc_food_monthly`            | Manuel                | `pnpm run insee:ipc:food:backfill`                      |
 | **Chômage jeunes**                 | API Eurostat (`une_rt_m`)          | `youth_unemployment_monthly`  | Manuel                | `pnpm run eurostat:youth:backfill`                      |
 | **TRVE électricité**               | CRE / data.gouv (CSV)              | `electricity_tariff_history`  | Manuel                | `pnpm run electricity:trve:backfill`                    |
+| **Loyers 5 villes (P1)**           | CLAMEUR / OLAP (data.gouv.fr)      | `rent_monthly`                | Manuel                | `pnpm run rent:backfill`                                |
 
-Le **score FCI affiché** est toujours calculé à partir des **carburants uniquement** (v1). Les autres indicateurs (IPC, chômage, électricité) sont affichés en modules séparés sur le site et ne modifient pas le chiffre FCI. Voir [methodology.md](methodology.md).
+Le **score FCI affiché** est toujours calculé à partir des **carburants uniquement** (v1). Les autres indicateurs (IPC, chômage, électricité, loyers) sont affichés en modules séparés sur le site et ne modifient pas le chiffre FCI. Voir [methodology.md](methodology.md).
 
 ---
 

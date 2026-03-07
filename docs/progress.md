@@ -414,6 +414,7 @@
   - [x] P0 scaffold ingestion livré (doc source détaillée + script fetch/normalize/store + migration additive `ipc_food_monthly`)
   - [x] Affichage en base 2015 (rebasing 2025→2015 via `lib/ipc.ts`) + courbe Recharts 24 mois (FoodInflationChart)
 - [ ] Module loyers
+  - [x] P1 pilote 5 villes livré : `rent_monthly`, `pnpm run rent:backfill` (CLAMEUR/OLAP), `RentSection` (ancre #loyers), hub `/indicators`
 - [ ] FCI v2 (multi-composantes + pondérations révisées)
 - [ ] Décomposition interactive du score FCI
 

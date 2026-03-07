@@ -98,6 +98,7 @@
 - ✅ Eurostat chômage jeunes : ingestion FR + UE-27 (`une_rt_m`) + section UI variation 3 mois livrées.
 - ✅ Explainability FCI : livré (endpoint `/api/fci/decomposition` + UI FCIDecompositionSection).
 - ✅ TRVE électricité (P1) : backend ingestion + schéma + timeline events + test unité dédiés livrés.
+- ✅ Pilote loyers (5 villes) (P1) : livré — table `rent_monthly`, script `rent:backfill` (CLAMEUR/OLAP, Paris/Lyon/Marseille/Lille/Toulouse 2018–2024), composant `RentSection` (cartes comparatives, ancre #loyers), hub `/indicators`.
 
 ## Définition de done (global)
 

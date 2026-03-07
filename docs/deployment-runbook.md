@@ -92,7 +92,7 @@ pnpm run db:push
 
 Validation SQL rapide (via Supabase SQL editor ou MCP):
 
-- tables attendues présentes (`fuel_daily_agg`, `fci_daily`, `votes`, `newsletter_signups`)
+- tables attendues présentes (`fuel_daily_agg`, `fci_daily`, `votes`, `newsletter_signups`, `ipc_food_monthly`, `youth_unemployment_monthly`, `electricity_tariff_history`, `rent_monthly`, `events`, etc.)
 - RLS activé sur toutes les tables critiques
 - `votes` / `newsletter_signups` non-insérables en anon
 
@@ -116,13 +116,16 @@ pnpm run fuel:backfill
 
 # 2) Backfill FCI historique
 pnpm run fci:backfill
+
+# 3) Optionnel — seed loyers 5 villes (section #loyers sur la home)
+pnpm run rent:backfill
 ```
 
 Validation attendue:
 
 - `fuel_daily_agg` peuplée
 - `fci_daily` peuplée
-- Home affiche score FCI + séries carburants
+- Home affiche score FCI + séries carburants (+ section loyers si rent:backfill exécuté)
 
 ---
 
@@ -147,6 +150,7 @@ pnpm run deploy:verify-cron
 | ------------------------------ | ---------------------------------------------------- | ------------------------------------------- |
 | Home charge (desktop + mobile) | Page rendue sans erreur runtime/hydration            | Crash, écran blanc, erreur runtime          |
 | Graph carburants visible       | 3 séries visibles + tooltip fonctionnel              | Graph manquant ou données invalides         |
+| Section loyers (si seed)      | Cartes 5 villes visibles (ancre #loyers)             | Section vide ou erreur si rent:backfill fait |
 | Vote                           | 1er vote accepté, 2e vote même jour refusé           | Double vote accepté ou erreur serveur       |
 | Newsletter                     | Email valide accepté, doublon géré sans fuite d’info | Erreur non gérée, fuite d’info, endpoint KO |
 | Cron endpoint                  | `pnpm run deploy:verify-cron` passe                  | Vérification cron en échec                  |
